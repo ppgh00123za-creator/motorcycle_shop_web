@@ -20,6 +20,19 @@ __pycache__/
 static/รูปภาพ/พื้นหลัง/*_files/
 static/รูปภาพ/พื้นหลัง/อธิบาย*
 
+# Internal notes and presentation guides
+PRESENTATION_GUIDE.md
+คำอธิบายโครงสร้าง.txt
+รายการไฟล์.txt
+วิธีเปิดโปรแกรม.txt
+อธิบายโค้ด.txt
+
+# Internal test scripts and scratch folder
+scratch/
+generate_assets.py
+generate_refined_assets.py
+test_app.py
+
 # Environment Variables
 .env
 .env.local
