@@ -1,0 +1,149 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}
+  {% if action == 'add' %}เพิ่มรถจักรยานยนต์ใหม่{% else %}แก้ไขข้อมูลรถ {{ product.model }}{% endif %} - {{ shop_config.name }}
+{% endblock %}
+
+{% block page_title %}
+  {% if action == 'add' %}เพิ่มรถจักรยานยนต์ใหม่ (≤ 160 cc){% else %}แก้ไขข้อมูลรถ {{ product.model }}{% endif %}
+{% endblock %}
+
+{% block page_desc %}
+  {% if action == 'add' %}บันทึกข้อมูลรถใหม่เข้าสู่ระบบฐานข้อมูลร้านค้า{% else %}แก้ไขรายละเอียด สเปก ราคา และสต็อกของรถรหัส {{ product.code }}{% endif %}
+{% endblock %}
+
+{% block admin_content %}
+<div style="max-width: 860px; margin: 0 auto; width: 100%;">
+  <div style="margin-bottom: 1.25rem;">
+    <a href="{{ url_for('admin.products') }}" class="admin-btn admin-btn-outline admin-btn-sm">
+      &larr; กลับไปหน้ารายการสินค้า
+    </a>
+  </div>
+
+  <div class="admin-form-wrap">
+    <form action="{% if action == 'add' %}{{ url_for('admin.product_add') }}{% else %}{{ url_for('admin.product_edit', product_id=product.id) }}{% endif %}" method="POST" enctype="multipart/form-data">
+      
+      <!-- หมวด 1: ข้อมูลพื้นฐาน -->
+      <div class="form-section-block">
+        <h3 class="form-section-title">1. ข้อมูลพื้นฐานรถจักรยานยนต์</h3>
+        
+        <div class="form-row form-row-2">
+          <div class="admin-form-group">
+            <label for="code" class="admin-form-label">รหัสสินค้า (Product Code) <span class="required">*</span></label>
+            <input type="text" name="code" id="code" class="admin-form-control" placeholder="เช่น BK-AT-09" value="{{ product.code if product else '' }}" {% if action == 'edit' %}readonly{% else %}required{% endif %}>
+            <span class="admin-form-hint">รหัสเฉพาะสำหรับอ้างอิงในระบบสต็อก</span>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="brand" class="admin-form-label">ยี่ห้อ (Brand) <span class="required">*</span></label>
+            <select name="brand" id="brand" class="admin-form-control" required>
+              <option value="Honda" {% if product and product.brand == 'Honda' %}selected{% endif %}>Honda</option>
+              <option value="Yamaha" {% if product and product.brand == 'Yamaha' %}selected{% endif %}>Yamaha</option>
+              <option value="Suzuki" {% if product and product.brand == 'Suzuki' %}selected{% endif %}>Suzuki</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row form-row-2">
+          <div class="admin-form-group">
+            <label for="model" class="admin-form-label">ชื่อรุ่นรถจักรยานยนต์ <span class="required">*</span></label>
+            <input type="text" name="model" id="model" class="admin-form-control" placeholder="เช่น Click 160, Wave 110i" value="{{ product.model if product else '' }}" required>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="model_year" class="admin-form-label">ปีรุ่น (Model Year)</label>
+            <input type="text" name="model_year" id="model_year" class="admin-form-control" placeholder="เช่น 2024 หรือ ไม่ทราบปี" value="{{ product.model_year if product else '2024' }}">
+          </div>
+        </div>
+      </div>
+
+      <!-- หมวด 2: สเปกทางเทคนิคและประเภท -->
+      <div class="form-section-block">
+        <h3 class="form-section-title">2. สเปกทางเทคนิคและประเภทรถ</h3>
+
+        <div class="form-row form-row-2">
+          <div class="admin-form-group">
+            <label for="engine_cc" class="admin-form-label">
+              ความจุเครื่องยนต์ (CC) <span class="required">* (ห้ามเกิน 160 cc)</span>
+            </label>
+            <input type="number" name="engine_cc" id="engine_cc" class="admin-form-control" placeholder="เช่น 109, 124, 156" max="160" min="50" value="{{ product.engine_cc if product else '' }}" required>
+            <span class="admin-form-hint">มาตรฐานร้าน 160 ธีระ สายซิ่ง เฉพาะรถไม่เกิน 160 cc เท่านั้น</span>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="category" class="admin-form-label">ประเภทรถ <span class="required">*</span></label>
+            <select name="category" id="category" class="admin-form-control" required>
+              <option value="ครอบครัว" {% if product and product.category == 'ครอบครัว' %}selected{% endif %}>ครอบครัว</option>
+              <option value="ออโตเมติก" {% if product and product.category == 'ออโตเมติก' %}selected{% endif %}>ออโตเมติก</option>
+              <option value="สปอร์ต/มินิ" {% if product and product.category == 'สปอร์ต/มินิ' %}selected{% endif %}>สปอร์ต/มินิ</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- หมวด 3: ราคาและสต็อก -->
+      <div class="form-section-block">
+        <h3 class="form-section-title">3. ราคาจำหน่ายและสต็อกคงคลัง</h3>
+
+        <div class="form-row form-row-3">
+          <div class="admin-form-group">
+            <label for="price" class="admin-form-label">ราคาจำหน่าย (บาท) <span class="required">*</span></label>
+            <input type="number" name="price" id="price" class="admin-form-control" placeholder="เช่น 44400" min="0" step="100" value="{{ product.price if product else '' }}" required>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="stock" class="admin-form-label">จำนวนสต็อก (คัน) <span class="required">*</span></label>
+            <input type="number" name="stock" id="stock" class="admin-form-control" placeholder="เช่น 5" min="0" value="{{ product.stock if product else '5' }}" required>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="status" class="admin-form-label">สถานะการจำหน่าย <span class="required">*</span></label>
+            <select name="status" id="status" class="admin-form-control" required>
+              <option value="available" {% if product and product.status == 'available' %}selected{% endif %}>มีสินค้าพร้อมจำหน่าย</option>
+              <option value="out_of_stock" {% if product and product.status == 'out_of_stock' %}selected{% endif %}>สินค้าหมดสต็อก</option>
+              <option value="discontinued" {% if product and product.status == 'discontinued' %}selected{% endif %}>เลิกจำหน่าย</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- หมวด 4: รายละเอียดและรูปภาพ -->
+      <div class="form-section-block">
+        <h3 class="form-section-title">4. รายละเอียดและรูปภาพ</h3>
+
+        <div class="admin-form-group" style="margin-bottom: 1rem;">
+          <label for="description" class="admin-form-label">รายละเอียด / จุดเด่นของรถ</label>
+          <textarea name="description" id="description" class="admin-form-control" rows="3" placeholder="ระบุข้อมูลเครื่องยนต์ ระบบเบรก จุดเด่น...">{{ product.description if product else '' }}</textarea>
+        </div>
+
+        <div class="admin-form-group">
+          <label for="image_file" class="admin-form-label">อัปโหลดรูปภาพรถ</label>
+          <input type="file" name="image_file" id="image_file" class="admin-form-control" accept="image/*">
+          <span class="admin-form-hint">รองรับไฟล์ JPG, PNG, WEBP (หากไม่เลือกจะใช้ภาพมาตรฐานของรุ่น)</span>
+
+          {% if product and product.image_url %}
+            <div style="margin-top: 0.75rem; display: flex; align-items: center; gap: 0.85rem; padding: 0.5rem; background: var(--admin-gray-50); border: 1px solid var(--admin-gray-200); border-radius: 4px;">
+              <img src="{{ product.image_url|bike_img }}" style="height: 48px; width: 70px; object-fit: contain; border-radius: 4px; background: #111;">
+              <div>
+                <span style="font-size: 0.8rem; font-weight: 600; color: var(--admin-gray-800); display: block;">รูปภาพปัจจุบัน:</span>
+                <span style="font-size: 0.88rem; color: var(--admin-gray-500);">{{ product.image_url }}</span>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Actions Footer -->
+      <div class="form-actions-footer">
+        <a href="{{ url_for('admin.products') }}" class="admin-btn admin-btn-outline">
+          ยกเลิก
+        </a>
+        <button type="submit" class="admin-btn admin-btn-primary">
+          {% if action == 'add' %}บันทึกเพิ่มสินค้าใหม่{% else %}บันทึกการแก้ไขข้อมูล{% endif %}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}

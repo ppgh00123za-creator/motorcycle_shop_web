@@ -1,0 +1,443 @@
+{% extends 'admin/base_admin.html' %}
+{% from 'macros.html' import status_badge %}
+
+{% block title %}Dashboard แดชบอร์ดภาพรวม - {{ shop_config.name }}{% endblock %}
+
+{% block page_title %}Dashboard แดชบอร์ดภาพรวม{% endblock %}
+{% block page_desc %}สรุปข้อมูลสำคัญ ยอดขายจริง และงานที่ต้องจัดการ ร้าน 160 ธีระ สายซิ่ง{% endblock %}
+
+{% block admin_content %}
+
+<!-- ============================================================
+     ส่วนที่ 1: สรุปข้อมูลสำคัญ (Key Metrics Summary)
+     การ์ดสรุปจำนวนไม่มาก มีชื่อชัดเจน ตัวเลขอ่านง่าย คำอธิบายหน่วยถูกต้อง
+     ============================================================ -->
+<div class="kpi-cards-grid">
+  <!-- การ์ด 1: จำนวนรุ่นสินค้าทั้งหมด -->
+  <div class="kpi-metric-card card-primary">
+    <div class="kpi-metric-header">
+      <span class="kpi-metric-label">จำนวนรุ่นสินค้า</span>
+      <span class="kpi-tag">&le; 160 cc</span>
+    </div>
+    <div class="kpi-metric-value text-red">
+      {{ total_models }} <span class="kpi-metric-unit">รุ่น</span>
+    </div>
+    <div class="kpi-metric-desc">
+      จำนวนรุ่นรถที่ไม่ซ้ำกันในระบบจำหน่าย
+    </div>
+  </div>
+
+  <!-- การ์ด 2: จำนวนรถคงเหลือในสต็อกจริง -->
+  <div class="kpi-metric-card card-info">
+    <div class="kpi-metric-header">
+      <span class="kpi-metric-label">จำนวนรถคงเหลือ</span>
+      <span class="kpi-tag">สต็อกจริง</span>
+    </div>
+    <div class="kpi-metric-value">
+      {{ total_stock_units }} <span class="kpi-metric-unit">คัน</span>
+    </div>
+    <div class="kpi-metric-desc">
+      จำนวนรถรวมทุกรุ่นที่มีพร้อมส่งมอบจริงในสต็อก
+    </div>
+  </div>
+
+  <!-- การ์ด 3: คำสั่งซื้อที่รอดำเนินการ -->
+  <div class="kpi-metric-card card-warning">
+    <div class="kpi-metric-header">
+      <span class="kpi-metric-label">คำสั่งซื้อที่รอดำเนินการ</span>
+      {% if new_orders_count > 0 %}
+        <span class="kpi-tag" style="background: #fef3c7; color: #b45309;">รอดำเนินการ</span>
+      {% else %}
+        <span class="kpi-tag">ปกติ</span>
+      {% endif %}
+    </div>
+    <div class="kpi-metric-value text-amber">
+      {{ new_orders_count }} <span class="kpi-metric-unit">รายการ</span>
+    </div>
+    <div class="kpi-metric-desc">
+      คำสั่งซื้อใหม่ที่รอชำระเงินหรือรอตรวจสอบ
+    </div>
+  </div>
+
+  <!-- การ์ด 4: ยอดขายตามเกณฑ์ที่ระบบใช้จริง -->
+  <div class="kpi-metric-card card-success">
+    <div class="kpi-metric-header">
+      <span class="kpi-metric-label">ยอดขายที่ได้รับชำระแล้ว</span>
+      <span class="kpi-tag" style="background: #ecfdf5; color: #065f46;">รับเงินจริง</span>
+    </div>
+    <div class="kpi-metric-value text-green">
+      ฿{{ total_sales|currency }}
+    </div>
+    <div class="kpi-metric-desc">
+      ยอดขายสุทธิจากคำสั่งซื้อที่ชำระเงินแล้วจริง
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     ส่วนที่ 2: งานที่ต้องจัดการ (Action Items)
+     แสดงเฉพาะข้อมูลที่จำเป็น และมีลิงก์ไปยังหน้าจัดการรายการนั้นโดยตรง
+     ============================================================ -->
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h2 class="admin-card-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--admin-red);">
+        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+      </svg>
+      งานที่ต้องจัดการ
+    </h2>
+    <span class="admin-card-sub">รายการที่ต้องให้ผู้ดูแลระบบตรวจสอบและดำเนินการ</span>
+  </div>
+
+  <!-- แถบทางลัดงานด่วน (Quick Action Strips) -->
+  <div class="action-status-strip">
+    <a href="{{ url_for('admin.orders') }}" class="action-alert-pill {% if new_orders_count > 0 %}alert-active-red{% endif %}">
+      <div>
+        <div class="action-alert-title">คำสั่งซื้อใหม่ (รอชำระ)</div>
+        <div class="action-alert-sub">ตรวจสอบรายการสั่งซื้อใหม่</div>
+      </div>
+      <span class="action-alert-count">{{ new_orders_count }}</span>
+    </a>
+
+    <a href="{{ url_for('admin.payments') }}" class="action-alert-pill {% if pending_payments > 0 %}alert-active-amber{% endif %}">
+      <div>
+        <div class="action-alert-title">สลิปโอนเงินรอตรวจสอบ</div>
+        <div class="action-alert-sub">ตรวจหลักฐานการชำระเงิน</div>
+      </div>
+      <span class="action-alert-count">{{ pending_payments }}</span>
+    </a>
+
+    <a href="{{ url_for('admin.products') }}" class="action-alert-pill {% if low_stock_count > 0 %}alert-active-blue{% endif %}">
+      <div>
+        <div class="action-alert-title">สินค้าใกล้หมด (&lt; 3 คัน)</div>
+        <div class="action-alert-sub">รายการที่ต้องพิจารณาเติมสต็อก</div>
+      </div>
+      <span class="action-alert-count">{{ low_stock_count }}</span>
+    </a>
+  </div>
+
+  <!-- ตารางคำสั่งซื้อล่าสุด และ กล่องสินค้าใกล้หมด -->
+  <div class="action-items-grid">
+    <!-- ฝั่งซ้าย: คำสั่งซื้อล่าสุด -->
+    <div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+        <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--admin-gray-900); margin: 0;">
+          คำสั่งซื้อล่าสุด
+        </h3>
+        <a href="{{ url_for('admin.orders') }}" class="admin-btn admin-btn-outline admin-btn-sm">
+          ดูคำสั่งซื้อทั้งหมด &rarr;
+        </a>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>เลขที่คำสั่งซื้อ</th>
+              <th>ลูกค้า</th>
+              <th class="text-right">ยอดสุทธิ</th>
+              <th class="text-center">สถานะ</th>
+              <th class="text-center">จัดการ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for o in recent_orders %}
+              <tr>
+                <td>
+                  <a href="{{ url_for('admin.order_detail', order_id=o.id) }}" style="font-weight: 700; color: var(--admin-red); text-decoration: none;">
+                    {{ o.order_number }}
+                  </a>
+                  <div style="font-size: 0.85rem; color: var(--admin-gray-500);">{{ o.created_at|thai_date }}</div>
+                </td>
+                <td>
+                  <div style="font-weight: 600;">{{ o.customer_name }}</div>
+                  <div style="font-size: 0.85rem; color: var(--admin-gray-500);">{{ o.customer_phone }}</div>
+                </td>
+                <td class="text-right price-text">
+                  ฿{{ o.total_amount|currency }}
+                </td>
+                <td class="text-center">
+                  {{ status_badge(o.status, 'small') }}
+                </td>
+                <td class="text-center">
+                  <a href="{{ url_for('admin.order_detail', order_id=o.id) }}" class="admin-btn admin-btn-outline admin-btn-sm">
+                    ดู
+                  </a>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="5" class="text-center" style="padding: 2rem; color: var(--admin-gray-500);">
+                  ยังไม่มีคำสั่งซื้อในระบบ
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ฝั่งขวา: สินค้าใกล้หมดสต็อก -->
+    <div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+        <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--admin-gray-900); margin: 0;">
+          สินค้าที่ต้องพิจารณาเติมสต็อก
+        </h3>
+        <a href="{{ url_for('admin.stock_history') }}" class="admin-btn admin-btn-outline admin-btn-sm">
+          ประวัติสต็อก &rarr;
+        </a>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>รุ่นรถ</th>
+              <th class="text-center">คงเหลือ</th>
+              <th class="text-center">จัดการ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in low_stock_items %}
+              <tr>
+                <td>
+                  <strong style="color: var(--admin-gray-900);">{{ item.model }}</strong>
+                  <div style="font-size: 0.85rem; color: var(--admin-gray-500);">{{ item.brand }} | {{ item.category }}</div>
+                </td>
+                <td class="text-center">
+                  {% if item.stock == 0 %}
+                    <span class="admin-badge badge-danger">หมดสต็อก (0 คัน)</span>
+                  {% else %}
+                    <span class="admin-badge badge-warning">{{ item.stock }} คัน</span>
+                  {% endif %}
+                </td>
+                <td class="text-center">
+                  <a href="{{ url_for('admin.product_edit', product_id=item.id) }}" class="admin-btn admin-btn-outline admin-btn-sm">
+                    เติมสต็อก
+                  </a>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="3" class="text-center" style="padding: 2rem; color: #059669; font-weight: 600;">
+                  ✓ สต็อกสินค้าทุกรุ่นอยู่ในเกณฑ์ปกติ (&ge; 3 คัน)
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     ส่วนที่ 3: รายงานและข้อมูลเชิงลึก (Reports & Analytics)
+     แยกส่วนรายงานออกจากงานที่ต้องดำเนินการ เพื่อไม่ให้ข้อมูลกองรวมกัน
+     ============================================================ -->
+<div class="analytics-section" id="sales-analytics">
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h2 class="admin-card-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--admin-red);">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+        รายงานและข้อมูลเชิงลึก (Sales Analytics)
+      </h2>
+      <a href="{{ url_for('admin.reports') }}" class="admin-btn admin-btn-outline admin-btn-sm">
+        ดูรายงานสรุปแบบละเอียด &rarr;
+      </a>
+    </div>
+
+    <!-- แถบตัวกรองช่วงเวลา (Period Filter Bar - Full HTML Form) -->
+    <div class="analytics-filter-bar">
+      <div>
+        <span style="font-size: 0.85rem; font-weight: 700; color: var(--admin-gray-700); margin-right: 0.5rem;">ช่วงเวลา:</span>
+        <div class="filter-period-buttons" style="display: inline-flex;">
+          <a href="{{ url_for('admin.dashboard', period='today') }}#sales-analytics" class="btn-filter {% if period == 'today' %}active{% endif %}">วันนี้</a>
+          <a href="{{ url_for('admin.dashboard', period='month') }}#sales-analytics" class="btn-filter {% if period == 'month' %}active{% endif %}">เดือนนี้</a>
+          <a href="{{ url_for('admin.dashboard', period='year') }}#sales-analytics" class="btn-filter {% if period == 'year' %}active{% endif %}">ปีนี้</a>
+          <a href="{{ url_for('admin.dashboard', period='all') }}#sales-analytics" class="btn-filter {% if period == 'all' or not period %}active{% endif %}">ทั้งหมด</a>
+        </div>
+      </div>
+
+      <!-- ฟอร์มกำหนดช่วงวันที่เอง (Pure HTML Form, Page Reload) -->
+      <form method="GET" action="{{ url_for('admin.dashboard') }}" class="custom-date-form">
+        <input type="hidden" name="period" value="custom">
+        <label for="start_date">ตั้งแต่วันที่:</label>
+        <input type="date" name="start_date" id="start_date" class="custom-date-input" value="{{ start_date }}" required>
+        <label for="end_date">ถึงวันที่:</label>
+        <input type="date" name="end_date" id="end_date" class="custom-date-input" value="{{ end_date }}" required>
+        <button type="submit" class="btn-filter-submit">กรองข้อมูล</button>
+      </form>
+    </div>
+
+    <!-- กราฟยอดขายย้อนหลัง 7 วัน (Pure CSS Bar Chart, Zero JS) -->
+    <div style="margin-top: 1.25rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+        <div>
+          <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--admin-gray-900); margin: 0;">
+            ยอดขายจริงย้อนหลัง 7 วัน
+          </h3>
+          <span style="font-size: 0.88rem; color: var(--admin-gray-500);">คำนวณจากคำสั่งซื้อที่อนุมัติแล้วในฐานข้อมูล SQLite</span>
+        </div>
+        <div style="font-size: 0.88rem; font-weight: 700; color: var(--admin-red);">
+          รวม 7 วันล่าสุด: ฿{{ sales_7days_total|currency }}
+        </div>
+      </div>
+
+      <div class="css-bar-chart">
+        {% for d in daily_sales %}
+          <div class="chart-bar-col">
+            <span class="chart-bar-val">
+              {% if d.amount > 0 %}฿{{ (d.amount/1000)|round(1) }}k{% else %}0{% endif %}
+            </span>
+            <div class="chart-bar-bg">
+              <div class="chart-bar-fill" style="height: {{ d.height_percent if d.height_percent > 4 else (4 if d.amount > 0 else 0) }}%;"></div>
+            </div>
+            <span class="chart-bar-lbl">{{ d.label.split(' ')[0] }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- สองคอลัมน์: รุ่นรถที่ขายดี & รายการที่ยังไม่มียอดขาย -->
+    <div class="analytics-grid-two" style="margin-top: 1.25rem;">
+      <!-- รุ่นรถที่ขายดี -->
+      <div style="background: var(--admin-gray-50); border: 1px solid var(--admin-gray-200); border-radius: var(--admin-radius-sm); padding: 1rem;">
+        <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--admin-gray-900); margin: 0 0 0.75rem 0; display: flex; align-items: center; justify-content: space-between;">
+          <span>★ รุ่นรถที่ขายดี (Top Selling)</span>
+          <span style="font-size: 0.85rem; color: var(--admin-gray-500); font-weight: normal;">ช่วง: {{ period }}</span>
+        </h4>
+
+        {% if top_selling_models %}
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            {% for top in top_selling_models %}
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.65rem; background: #ffffff; border: 1px solid var(--admin-gray-200); border-radius: 4px;">
+                <div>
+                  <strong style="color: var(--admin-gray-900); font-size: 0.85rem;">{{ top.model }}</strong>
+                  <div style="font-size: 0.85rem; color: var(--admin-gray-500);">{{ top.brand }}</div>
+                </div>
+                <div class="text-right">
+                  <div style="font-weight: 700; color: #059669; font-size: 0.85rem;">ขายได้ {{ top.units_sold }} คัน</div>
+                  <div style="font-size: 0.85rem; color: var(--admin-gray-500);">฿{{ top.total_revenue|currency }}</div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div style="padding: 1.5rem; text-align: center; color: var(--admin-gray-500); font-size: 0.82rem;">
+            ยังไม่มียอดขายที่อนุมัติในช่วงเวลานี้
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- รายการสินค้าที่ยังไม่มียอดขาย -->
+      <div style="background: var(--admin-gray-50); border: 1px solid var(--admin-gray-200); border-radius: var(--admin-radius-sm); padding: 1rem;">
+        <h4 style="font-size: 0.9rem; font-weight: 800; color: var(--admin-gray-900); margin: 0 0 0.75rem 0; display: flex; align-items: center; justify-content: space-between;">
+          <span>รายการที่ยังไม่มียอดขาย ({{ zero_sales_items|length }} รุ่น)</span>
+          <span style="font-size: 0.85rem; color: var(--admin-gray-500); font-weight: normal;">ช่วง: {{ period }}</span>
+        </h4>
+
+        {% if zero_sales_items %}
+          <div style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 220px; overflow-y: auto;">
+            {% for z in zero_sales_items %}
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.65rem; background: #ffffff; border: 1px solid var(--admin-gray-200); border-radius: 4px;">
+                <div>
+                  <strong style="color: var(--admin-gray-900); font-size: 0.85rem;">{{ z.model }}</strong>
+                  <div style="font-size: 0.85rem; color: var(--admin-gray-500);">{{ z.brand }} | {{ z.category }}</div>
+                </div>
+                <div class="text-right">
+                  <div style="font-weight: 700; color: var(--admin-red); font-size: 0.85rem;">฿{{ z.price|currency }}</div>
+                  <div style="font-size: 0.85rem; color: var(--admin-gray-500);">คงเหลือ {{ z.stock }} คัน</div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div style="padding: 1.5rem; text-align: center; color: #059669; font-size: 0.82rem; font-weight: 600;">
+            ✓ สินค้าทุกรุ่นมียอดขายในช่วงเวลาที่เลือก
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- ข้อมูลสต็อกที่ต้องพิจารณา (ระบบแนะนำการเติมสต็อก) -->
+    <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--admin-gray-200);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+        <div>
+          <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--admin-gray-900); margin: 0;">
+            ข้อแนะนำการบริหารสต็อกสินค้า (Replenishment Engine)
+          </h3>
+          <span style="font-size: 0.88rem; color: var(--admin-gray-500);">คำนวณจากอัตราขายจริงย้อนหลัง 30 / 60 / 90 วัน ร่วมกับสต็อกคงเหลือจริง</span>
+        </div>
+        <a href="{{ url_for('admin.stock_history') }}" class="admin-btn admin-btn-outline admin-btn-sm">
+          ประวัติสต็อก (Audit Log) &rarr;
+        </a>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>รุ่นรถ</th>
+              <th class="text-center">สต็อกคงเหลือ</th>
+              <th class="text-center">ยอดขายจริง<br/><span style="font-size: 0.85rem; font-weight: normal; color: var(--admin-gray-500);">(30 / 60 / 90 วัน)</span></th>
+              <th class="text-center">สถานะแนะนำ</th>
+              <th>คำแนะนำการจัดการสต็อก</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for rec in replenishment_recommendations %}
+              <tr>
+                <td>
+                  <strong style="color: var(--admin-gray-900);">{{ rec.product.model }}</strong>
+                  <div style="font-size: 0.85rem; color: var(--admin-gray-500);">{{ rec.product.brand }} | {{ rec.product.category }} (รหัส: {{ rec.product.code }})</div>
+                </td>
+                <td class="text-center">
+                  {% if rec.current_stock == 0 %}
+                    <span style="color: #dc2626; font-weight: 800;">0 คัน</span>
+                  {% elif rec.current_stock <= 2 %}
+                    <span style="color: #d97706; font-weight: 800;">{{ rec.current_stock }} คัน</span>
+                  {% else %}
+                    <span style="color: #059669; font-weight: 700;">{{ rec.current_stock }} คัน</span>
+                  {% endif %}
+                </td>
+                <td class="text-center" style="font-size: 0.82rem;">
+                  <strong>{{ rec.sales_30 }}</strong> / {{ rec.sales_60 }} / {{ rec.sales_90 }} <span style="font-size: 0.85rem; color: var(--admin-gray-500);">คัน</span>
+                </td>
+                <td class="text-center">
+                  {% if rec.rec_level == 'urgent' %}
+                    <span class="admin-badge badge-danger">{{ rec.rec_badge }}</span>
+                  {% elif rec.rec_level == 'warning' %}
+                    <span class="admin-badge badge-warning">{{ rec.rec_badge }}</span>
+                  {% elif rec.rec_level == 'slow' %}
+                    <span class="admin-badge badge-info">{{ rec.rec_badge }}</span>
+                  {% else %}
+                    <span class="admin-badge badge-success">{{ rec.rec_badge }}</span>
+                  {% endif %}
+                </td>
+                <td style="font-size: 0.82rem; color: var(--admin-gray-700); line-height: 1.4;">
+                  {{ rec.rec_reason }}
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="5" class="text-center" style="padding: 2rem; color: var(--admin-gray-500);">
+                  ไม่มีข้อมูลสินค้า
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

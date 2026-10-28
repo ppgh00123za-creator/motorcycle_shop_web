@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}เข้าสู่ระบบ - {{ shop_config.name }}{% endblock %}
+
+{% block content %}
+  <div class="auth-wrapper">
+    <div class="auth-header">
+      <h2>เข้าสู่ระบบ</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">เข้าใช้งานเพื่อสั่งซื้อและติดตามสถานะคำสั่งซื้อ</p>
+    </div>
+
+    <form action="{{ url_for('auth.login') }}" method="POST">
+      <input type="hidden" name="next" value="{{ request.args.get('next', '') }}">
+
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="email">อีเมล (Email)</label>
+        <input type="email" name="email" id="email" class="form-control" placeholder="name@example.com" value="{{ email or '' }}" required autofocus>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+          <label for="password" style="margin-bottom: 0;">รหัสผ่าน (Password)</label>
+          <a href="{{ url_for('auth.forgot_password') }}" style="font-size: 0.85rem; color: var(--primary-red); text-decoration: none; font-weight: 500;">
+            ลืมรหัสผ่าน?
+          </a>
+        </div>
+        <div class="password-field-wrapper">
+          <input type="password" name="password" id="password" class="form-control" placeholder="••••••••" required>
+          <button type="button" class="toggle-password-btn" data-target="password" title="แสดงรหัสผ่าน" aria-label="แสดงรหัสผ่าน">
+            <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <svg class="eye-off-icon" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+              <line x1="1" y1="1" x2="23" y2="23"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem;">
+        เข้าสู่ระบบ
+      </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted); border-top: 1px solid var(--border-light); padding-top: 1rem;">
+      ยังไม่มีบัญชีสมาชิก? <a href="{{ url_for('auth.register') }}" style="color: var(--primary-red); font-weight: 600;">สมัครสมาชิกใหม่ที่นี่</a>
+    </div>
+  </div>
+{% endblock %}

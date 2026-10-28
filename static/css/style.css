@@ -1,0 +1,1096 @@
+/* ====================================================================
+   160 TEERA SAI SING - HONDA-INSPIRED MINIMAL CLEAN STYLESHEET
+   ฟอนต์ตระกูล Unknow-Zero:
+   - "Unknow-Zero Light" (300): ข้อความรอง
+   - "Unknow-Zero" (400): เนื้อหาทั่วไป
+   - "Unknow-Zero Bold" (700): หัวข้อและปุ่ม
+   - "Unknow-Zero ExtraBold" (800): หัวข้อใหญ่
+   ==================================================================== */
+
+@font-face {
+  font-family: 'Unknow-Zero';
+  src: url('/static/fonts/Unknow-Zero%20Light.ttf') format('truetype'),
+       url('/static/fonts/Unknow-Zero Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Unknow-Zero';
+  src: url('/static/fonts/Unknow-Zero.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Unknow-Zero';
+  src: url('/static/fonts/Unknow-Zero%20Bold.ttf') format('truetype'),
+       url('/static/fonts/Unknow-Zero Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Unknow-Zero';
+  src: url('/static/fonts/Unknow-Zero%20ExtraBold.ttf') format('truetype'),
+       url('/static/fonts/Unknow-Zero ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-primary: 'Unknow-Zero', sans-serif;
+  --primary-red: #cc0000;
+  --primary-hover: #a30000;
+  --dark-black: #111111;
+  --text-main: #1f2428;
+  --text-muted: #666666;
+  --text-light: #999999;
+  --bg-white: #ffffff;
+  --bg-light: #f7f8fa;
+  --border-light: #eaeaea;
+  --border-subtle: #f0f0f0;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-full: 9999px;
+  --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 20px;
+}
+
+body {
+  font-family: var(--font-primary);
+  font-size: 1.06rem;
+  background-color: var(--bg-white);
+  color: var(--text-main);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+input, textarea, select, button, .btn, h1, h2, h3, h4, h5, h6, .brand-title, .brand-subtitle, table, th, td {
+  font-family: var(--font-primary);
+}
+
+/* ลำดับน้ำหนักฟอนต์ Unknow-Zero */
+.text-muted, .text-light, small, .brand-subtitle {
+  font-weight: 300 !important;
+}
+
+body, p, span, td, input, textarea, select {
+  font-weight: 400;
+}
+
+h2, h3, h4, h5, h6, th, .btn, button, strong {
+  font-weight: 700;
+}
+
+h1, .brand-title {
+  font-weight: 800;
+}
+
+/* ================== NAVBAR (Minimalist White) ================== */
+.navbar {
+  background-color: var(--bg-white);
+  border-bottom: 1px solid var(--border-light);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 0.6rem 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.nav-container {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-decoration: none;
+}
+
+.brand-logo img {
+  height: 52px;
+  width: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary-red);
+}
+
+.brand-text-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--dark-black);
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+}
+
+.brand-title span.red {
+  color: var(--primary-red);
+}
+
+.brand-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 1.75rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: var(--text-main);
+  font-weight: 500;
+  font-size: 1.05rem;
+  padding: 0.4rem 0.2rem;
+  position: relative;
+  transition: var(--transition);
+}
+
+.nav-link:hover, .nav-link.active {
+  color: var(--primary-red);
+}
+
+.nav-badge {
+  background-color: var(--primary-red);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+  margin-left: 0.25rem;
+}
+
+.nav-admin-link {
+  color: var(--primary-red) !important;
+  font-weight: 700;
+}
+
+.nav-auth {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--dark-black);
+  cursor: pointer;
+}
+
+/* ================== BUTTONS ================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-xs);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--transition);
+  line-height: 1.4;
+}
+
+.btn-primary {
+  background-color: var(--primary-red);
+  color: #ffffff;
+  border-color: var(--primary-red);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  color: #ffffff;
+}
+
+.btn-outline {
+  background-color: #ffffff;
+  color: var(--text-main);
+  border-color: #cccccc;
+}
+
+.btn-outline:hover {
+  border-color: var(--dark-black);
+  color: var(--dark-black);
+  background-color: var(--bg-light);
+}
+
+.btn-outline-red {
+  background-color: transparent;
+  color: var(--primary-red);
+  border-color: var(--primary-red);
+}
+
+.btn-outline-red:hover {
+  background-color: var(--primary-red);
+  color: #ffffff;
+}
+
+.btn-sm {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.88rem;
+}
+
+.btn-lg {
+  padding: 0.85rem 2rem;
+  font-size: 1.05rem;
+}
+
+.btn:disabled, .btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ================== LAYOUT & CONTAINER ================== */
+.main-wrapper {
+  flex: 1;
+  max-width: 1360px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.admin-wrapper {
+  max-width: 1400px;
+}
+
+/* ================== FLASH NOTIFICATIONS ================== */
+.flash-container {
+  margin-bottom: 1.25rem;
+}
+
+.flash-message {
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-xs);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.92rem;
+  background-color: #fff;
+  border-left: 4px solid var(--primary-red);
+  border-top: 1px solid var(--border-light);
+  border-right: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.flash-success {
+  border-left-color: #10b981;
+}
+
+.flash-danger {
+  border-left-color: var(--primary-red);
+}
+
+/* ====================================================================
+   HERO BANNER (Full-Width, Honda-Style Clean Showcase)
+   ==================================================================== */
+.honda-hero-section {
+  position: relative;
+  width: 100%;
+  background-color: #050505;
+  border-bottom: 2px solid var(--primary-red);
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+}
+
+.honda-hero-banner {
+  width: 100%;
+  max-height: 520px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Brand Intro Bar (Clean White, No Heavy Box) */
+.brand-intro-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 3rem;
+}
+
+.brand-intro-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.brand-emblem-large {
+  width: 90px;
+  height: 90px;
+  min-width: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary-red);
+}
+
+.brand-intro-title {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--dark-black);
+  margin: 0 0 0.25rem 0;
+  letter-spacing: -0.5px;
+}
+
+.brand-intro-title span.red {
+  color: var(--primary-red);
+}
+
+.brand-intro-slogan {
+  font-size: 1.05rem;
+  color: #333333;
+  font-weight: 500;
+}
+
+.brand-intro-meta {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.brand-intro-right {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ====================================================================
+   SECTION HEADERS (Honda Clean Design)
+   ==================================================================== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--dark-black);
+}
+
+.section-header h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--dark-black);
+  letter-spacing: -0.3px;
+  position: relative;
+}
+
+.section-header p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 0.15rem;
+}
+
+/* ====================================================================
+   CATEGORIES (Clean Text Strip, No Nested Boxes)
+   ==================================================================== */
+.category-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3.5rem;
+}
+
+.category-tile {
+  display: block;
+  text-decoration: none;
+  background-color: var(--bg-light);
+  padding: 1.5rem;
+  border-left: 3px solid transparent;
+  transition: var(--transition);
+}
+
+.category-tile:hover {
+  background-color: #ffffff;
+  border-left-color: var(--primary-red);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.category-tile .tile-num {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--primary-red);
+  margin-bottom: 0.25rem;
+}
+
+.category-tile h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--dark-black);
+  margin-bottom: 0.35rem;
+}
+
+.category-tile p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ====================================================================
+   PRODUCT CARDS (Clean Minimal, Hero Bike Images, No Nested Frames)
+   ==================================================================== */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 2rem 1.5rem;
+  margin-bottom: 3.5rem;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-bottom: 2px solid transparent;
+  transition: var(--transition);
+  position: relative;
+}
+
+.product-card:hover {
+  border-bottom-color: var(--primary-red);
+}
+
+.card-image-wrap {
+  position: relative;
+  background-color: #f7f8fa;
+  aspect-ratio: 16 / 11;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.card-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.25s ease;
+}
+
+.product-card:hover .card-image-wrap img {
+  transform: scale(1.05);
+}
+
+.badge-status {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 0.28rem 0.65rem;
+  border-radius: var(--radius-xs);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: white;
+  line-height: 1.35;
+  letter-spacing: 0.3px;
+}
+
+.badge-available {
+  background-color: #10b981;
+}
+
+.badge-low-stock {
+  background-color: #f59e0b;
+}
+
+.badge-out-of-stock {
+  background-color: #ef4444;
+}
+
+.badge-discontinued {
+  background-color: #6b7280;
+}
+
+.card-body {
+  padding: 1rem 0.25rem 0.25rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.brand-pill {
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--primary-red);
+  letter-spacing: 0.5px;
+}
+
+.cc-pill {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.card-title {
+  font-size: 1.18rem;
+  font-weight: 800;
+  color: var(--dark-black);
+  margin-bottom: 0.25rem;
+  line-height: 1.45;
+}
+
+.card-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.card-title a:hover {
+  color: var(--primary-red);
+}
+
+.card-category {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.card-price-row {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.price-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.price-value {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--primary-red);
+}
+
+.card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+/* ====================================================================
+   FILTERS & FORMS (Minimal, Clean White)
+   ==================================================================== */
+.filter-card {
+  background-color: var(--bg-light);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+  border-left: 3px solid var(--primary-red);
+}
+
+.filter-form {
+  display: grid;
+  grid-template-columns: 2fr repeat(4, 1fr) auto;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.form-group label {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--dark-black);
+  margin-bottom: 0.15rem;
+}
+
+.form-control {
+  font-family: inherit;
+  font-size: 0.98rem;
+  padding: 0.55rem 0.85rem;
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius-xs);
+  color: var(--dark-black);
+  outline: none;
+  transition: var(--transition);
+  line-height: 1.5;
+}
+
+.form-control:focus {
+  border-color: var(--primary-red);
+}
+
+/* Password field with toggle visibility button */
+.password-field-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.password-field-wrapper .form-control {
+  width: 100%;
+  padding-right: 2.75rem;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.35rem 0.45rem;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-xs, 4px);
+  transition: color 0.15s ease, background-color 0.15s ease;
+  z-index: 2;
+  user-select: none;
+}
+
+.toggle-password-btn:hover {
+  color: var(--primary-red);
+  background-color: rgba(217, 4, 41, 0.08);
+}
+
+.toggle-password-btn:focus-visible {
+  outline: 2px solid var(--primary-red);
+  outline-offset: 1px;
+}
+
+/* ====================================================================
+   PRODUCT DETAIL (Honda-Style Minimal & Large Visuals)
+   ==================================================================== */
+.product-detail-layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 3.5rem;
+  align-items: start;
+}
+
+.detail-img-wrap {
+  background-color: var(--bg-light);
+  padding: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 420px;
+}
+
+.detail-img-wrap img {
+  max-width: 100%;
+  max-height: 380px;
+  object-fit: contain;
+}
+
+.detail-info h1 {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--dark-black);
+  margin-bottom: 0.25rem;
+  line-height: 1.2;
+}
+
+.detail-price-box {
+  background-color: var(--bg-light);
+  padding: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1.5rem 0;
+  border-left: 4px solid var(--primary-red);
+}
+
+.detail-price-box .price {
+  font-size: 2.1rem;
+  font-weight: 900;
+  color: var(--primary-red);
+}
+
+/* Specs Table (Clean Crisp Table) */
+.specs-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.specs-table th,
+.specs-table td {
+  padding: 0.85rem 0.65rem;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.specs-table th {
+  color: var(--text-muted);
+  font-weight: 600;
+  text-align: left;
+  width: 38%;
+}
+
+.specs-table td {
+  color: var(--dark-black);
+}
+
+/* Technical Specs Container */
+.specs-container {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--dark-black);
+}
+
+.specs-section-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--dark-black);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.specs-highlight-box {
+  background-color: var(--bg-light);
+  padding: 1.25rem;
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: #333333;
+  border-left: 3px solid var(--primary-red);
+}
+
+/* ====================================================================
+   DATA TABLES (Cart & Admin)
+   ==================================================================== */
+.data-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border-light);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.95rem 1.15rem;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.data-table th {
+  background-color: var(--bg-light);
+  color: var(--dark-black);
+  font-weight: 700;
+  text-align: left;
+}
+
+.data-table td {
+  color: var(--text-main);
+}
+
+.summary-card {
+  background-color: #ffffff;
+  border: 1px solid var(--border-light);
+  padding: 1.5rem;
+}
+
+/* ====================================================================
+   FOOTER (Clean Minimalist Dark Gray / Black)
+   ==================================================================== */
+footer {
+  background-color: var(--dark-black);
+  color: #a0a0a0;
+  margin-top: auto;
+  border-top: 3px solid var(--primary-red);
+}
+
+.footer-container {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 1.5rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 2.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.footer-col h3 {
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.footer-col p {
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid #222222;
+  font-size: 0.82rem;
+  color: #777777;
+}
+
+/* ====================================================================
+   RESPONSIVE DESIGN
+   ==================================================================== */
+@media (max-width: 992px) {
+  .product-detail-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .category-row {
+    grid-template-columns: 1fr;
+  }
+  .filter-form {
+    grid-template-columns: 1fr 1fr;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #ffffff;
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--border-light);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+  .nav-links.show {
+    display: flex;
+  }
+  .mobile-toggle {
+    display: block;
+  }
+  .filter-form {
+    grid-template-columns: 1fr;
+  }
+  .brand-intro-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ================== PURE CSS RESPONSIVE NAV (NO JS) ================== */
+.nav-toggle-label {
+  display: none;
+  cursor: pointer;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  font-size: 1.25rem;
+  line-height: 1;
+  background: var(--bg-white);
+  color: var(--dark-black);
+}
+#nav-toggle-check:checked ~ .nav-links {
+  display: flex !important;
+}
+@media (max-width: 768px) {
+  .nav-toggle-label {
+    display: inline-block;
+  }
+  .mobile-toggle {
+    display: none !important;
+  }
+}
+
+/* ================== PURE CSS BAR CHART (NO JS / NO CHART.JS) ================== */
+.css-chart-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  height: 220px;
+  padding: 1rem 0.5rem 0.25rem;
+  border-bottom: 2px solid var(--border-light);
+  margin-top: 1rem;
+  width: 100%;
+}
+.css-chart-col {
+  flex: 1;
+  min-width: 55px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+.css-chart-val {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary-red);
+  margin-bottom: 0.35rem;
+  text-align: center;
+  white-space: nowrap;
+}
+.css-chart-bar-bg {
+  width: 100%;
+  max-width: 40px;
+  height: 150px;
+  background-color: #f1f3f5;
+  border-radius: 4px 4px 0 0;
+  display: flex;
+  align-items: flex-end;
+}
+.css-chart-bar-fill {
+  width: 100%;
+  background: linear-gradient(180deg, #ea2027 0%, #cc0000 100%);
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+}
+.css-chart-lbl {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ================== BADGES (Replenishment & Tickets) ================== */
+.badge-rec-urgent {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-block;
+}
+.badge-rec-warning {
+  background-color: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fcd34d;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-block;
+}
+.badge-rec-slow {
+  background-color: #eef2ff;
+  color: #4338ca;
+  border: 1px solid #c7d2fe;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-block;
+}
+.badge-rec-normal {
+  background-color: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-block;
+}
+.badge-status-pending {
+  background-color: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.badge-status-progress {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.badge-status-replied {
+  background-color: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.badge-status-closed {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #e5e7eb;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}

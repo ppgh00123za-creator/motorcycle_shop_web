@@ -1,0 +1,100 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}ตั้งค่าร้านค้า - {{ shop_config.name }}{% endblock %}
+
+{% block page_title %}ตั้งค่าและข้อมูลร้านค้า (Shop Settings){% endblock %}
+{% block page_desc %}ข้อมูลตัวตนร้านค้า อัตลักษณ์แบรนด์ และการกำหนดค่าระบบ 160 ธีระ สายซิ่ง{% endblock %}
+
+{% block admin_content %}
+<div class="admin-section-header">
+  <div>
+    <h2 class="section-header-title">ข้อมูลอัตลักษณ์และการตั้งค่าร้านค้า</h2>
+    <p class="section-header-desc">ข้อมูลทั่วไปของร้าน 160 ธีระ สายซิ่ง เวลาทำการ และการตั้งค่าระบบ</p>
+  </div>
+</div>
+
+<div class="analytics-grid-two">
+  <!-- Shop Identity Card -->
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h3 class="admin-card-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--admin-red);">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        ข้อมูลร้านค้า (Identity)
+      </h3>
+    </div>
+
+    <table class="admin-table">
+      <tbody>
+        <tr>
+          <th style="width: 150px;">ชื่อร้านภาษาไทย:</th>
+          <td><strong>{{ shop_config.name }}</strong></td>
+        </tr>
+        <tr>
+          <th>ชื่อภาษาอังกฤษ:</th>
+          <td>{{ shop_config.name_en }}</td>
+        </tr>
+        <tr>
+          <th>คำโปรยร้าน:</th>
+          <td style="color: var(--admin-red); font-style: italic;">&ldquo;{{ shop_config.slogan }}&rdquo;</td>
+        </tr>
+        <tr>
+          <th>ประเภทธุรกิจ:</th>
+          <td>{{ shop_config.business_type }} ({{ shop_config.type }})</td>
+        </tr>
+        <tr>
+          <th>ข้อกำหนดความจุ:</th>
+          <td>
+            <span class="admin-badge badge-danger">ไม่เกิน {{ shop_config.max_cc_limit }} cc เท่านั้น</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Opening Hours & Contact Card -->
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h3 class="admin-card-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--admin-red);">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        เวลาทำการและการติดต่อ
+      </h3>
+    </div>
+
+    <table class="admin-table">
+      <tbody>
+        <tr>
+          <th style="width: 150px;">วันเปิดทำการ:</th>
+          <td><strong style="color: #16a34a;">{{ shop_config.opening_days }}</strong></td>
+        </tr>
+        <tr>
+          <th>เวลาทำการ:</th>
+          <td><strong style="color: #16a34a;">{{ shop_config.opening_hours }}</strong></td>
+        </tr>
+        <tr>
+          <th>หมายเหตุตาราง:</th>
+          <td style="font-size: 0.82rem; color: var(--admin-gray-600);">{{ shop_config.schedule_note }}</td>
+        </tr>
+        <tr>
+          <th>เบอร์โทรศัพท์:</th>
+          <td><strong>{{ shop_config.phone }}</strong></td>
+        </tr>
+        <tr>
+          <th>อีเมลติดต่อ:</th>
+          <td>{{ shop_config.email }}</td>
+        </tr>
+        <tr>
+          <th>ที่ตั้งร้าน:</th>
+          <td style="font-size: 0.85rem; color: var(--admin-gray-700);">{{ shop_config.address }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

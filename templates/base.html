@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ shop_config.name }} ({{ shop_config.name_en }}){% endblock %} | ร้านมอเตอร์ไซค์ไม่เกิน 160 cc</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Navigation Bar (Clean Minimalist White) -->
+  {% block navbar %}
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="{{ url_for('shop.home') }}" class="brand-logo">
+        <img src="{{ shop_config.logo_url }}" alt="{{ shop_config.name }}">
+        <div class="brand-text-wrap">
+          <span class="brand-title">160 <span class="red">ธีระ สายซิ่ง</span></span>
+          <span class="brand-subtitle">{{ shop_config.name_en }} &bull; พิกัดไม่เกิน 160 cc</span>
+        </div>
+      </a>
+
+      <input type="checkbox" id="nav-toggle-check" class="nav-toggle-check" style="display: none;">
+      <label for="nav-toggle-check" class="mobile-toggle" aria-label="Toggle navigation">&#9776;</label>
+
+      <nav class="nav-links" id="navLinks">
+        <a href="{{ url_for('shop.home') }}" class="nav-link">หน้าแรก</a>
+        <a href="{{ url_for('shop.products') }}" class="nav-link">รถมอเตอร์ไซค์ทั้งหมด (≤160cc)</a>
+        
+        <a href="{{ url_for('shop.cart') }}" class="nav-link" id="navCartLink">
+          ตะกร้าสินค้า
+          <span class="nav-badge" id="cartBadge" style="{% if cart_count <= 0 %}display:none;{% endif %}" title="{{ cart_items_count }} รุ่น ({{ cart_total_qty }} คัน)">
+            <span id="cartBadgeQty">{{ cart_count }}</span>
+          </span>
+        </a>
+
+        {% if is_logged_in %}
+          {% if is_admin %}
+            <a href="{{ url_for('admin.dashboard') }}" class="nav-link" style="color: var(--primary-red); font-weight: 700;">
+              [แผงควบคุมแอดมิน]
+            </a>
+          {% else %}
+            <a href="{{ url_for('customer.orders') }}" class="nav-link">ประวัติคำสั่งซื้อ</a>
+            <a href="{{ url_for('customer.tickets') }}" class="nav-link">แจ้งปัญหา</a>
+            <a href="{{ url_for('auth.profile') }}" class="nav-link" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+              {% if current_user and current_user.avatar %}
+                <img src="{{ url_for('static', filename='ไฟล์ที่ผู้ใช้อัปโหลด/avatars/' + current_user.avatar) }}" alt="{{ current_user.name }}" style="width: 22px; height: 22px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--primary-red);">
+              {% endif %}
+              โปรไฟล์
+            </a>
+          {% endif %}
+        {% endif %}
+
+        <div class="nav-auth">
+          {% if is_logged_in %}
+            <span style="font-size: 0.9rem; color: var(--text-muted); padding: 0 0.25rem;">
+              สวัสดี, <strong>{{ current_user.name if current_user else 'คุณ' }}</strong>
+            </span>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-outline btn-sm">ออกจากระบบ</a>
+          {% else %}
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline btn-sm">เข้าสู่ระบบ</a>
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-sm">สมัครสมาชิก</a>
+          {% endif %}
+        </div>
+      </nav>
+    </div>
+  </header>
+  {% endblock %}
+
+  {% block body_content %}
+  <!-- Flash Messages Banner -->
+  <div class="main-wrapper" style="padding-bottom: 0;">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-container">
+          {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">
+              <span>{{ message }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% if not_found %}
+      <div style="text-align: center; padding: 4rem 1rem;">
+        <h1 style="font-size: 3rem; color: var(--primary-red); margin-bottom: 1rem;">404</h1>
+        <h2>ไม่พบหน้าที่คุณต้องการ</h2>
+        <p style="color: var(--text-muted); margin: 1rem 0 2rem;">หน้าที่คุณกำลังพยายามเข้าถึงอาจถูกย้าย ลบ หรือไม่มีอยู่จริง</p>
+        <a href="{{ url_for('shop.home') }}" class="btn btn-primary">กลับสู่หน้าแรก</a>
+      </div>
+    {% elif forbidden %}
+      <div style="text-align: center; padding: 4rem 1rem;">
+        <h1 style="font-size: 3rem; color: var(--primary-red); margin-bottom: 1rem;">403</h1>
+        <h2>คุณไม่มีสิทธิ์เข้าถึงหน้านี้</h2>
+        <p style="color: var(--text-muted); margin: 1rem 0 2rem;">เฉพาะผู้ดูแลระบบหรือเจ้าของบัญชีเท่านั้นที่สามารถเข้าถึงข้อมูลนี้ได้</p>
+        <a href="{{ url_for('shop.home') }}" class="btn btn-primary">กลับสู่หน้าแรก</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Page Content -->
+  <main class="main-wrapper {% block wrapper_class %}{% endblock %}">
+    {% block content %}{% endblock %}
+  </main>
+  {% endblock %}
+
+  <!-- Footer -->
+  {% block footer %}
+  <footer>
+    <div class="footer-container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div style="margin-bottom: 1.25rem; display: flex; align-items: center; gap: 1.25rem;">
+            <img src="{{ shop_config.logo_url }}" alt="{{ shop_config.name }}" style="height: 100px; width: 100px; min-width: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-red); box-shadow: 0 6px 18px rgba(217, 4, 41, 0.45);">
+            <div>
+              <span style="font-size: 1.65rem; font-weight: 900; color: white; display: block; line-height: 1.2;">160 <span style="color: var(--primary-red);">ธีระ สายซิ่ง</span></span>
+              <span style="font-size: 0.85rem; color: #a1a1aa; font-weight: 500;">{{ shop_config.name_en }}</span>
+            </div>
+          </div>
+          <p style="color: #cbd5e1; font-weight: 500;">
+            &ldquo;{{ shop_config.slogan }}&rdquo;
+          </p>
+          <p style="margin-top: 0.5rem; font-size: 0.85rem; color: #94a3b8;">
+            {{ shop_config.business_type }} • {{ shop_config.type }}
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h3>หมวดหมู่สินค้า (≤ 160 cc)</h3>
+          <p><a href="{{ url_for('shop.products', category='ครอบครัว') }}" style="color: inherit; text-decoration: none;">• รถครอบครัว (100 - 125 cc)</a></p>
+          <p><a href="{{ url_for('shop.products', category='ออโตเมติก') }}" style="color: inherit; text-decoration: none;">• รถออโตเมติก (110 - 160 cc)</a></p>
+          <p><a href="{{ url_for('shop.products', category='สปอร์ต/มินิ') }}" style="color: inherit; text-decoration: none;">• รถสปอร์ตและมินิไบค์ (125 - 155 cc)</a></p>
+        </div>
+
+        <div class="footer-col">
+          <h3>ติดต่อและเวลาเปิดทำการ</h3>
+          <p><strong>ที่อยู่:</strong> {{ shop_config.address }}</p>
+          <p><strong>โทรศัพท์:</strong> {{ shop_config.phone }}</p>
+          <p><strong>เวลาทำการ:</strong> <span style="color: #4ade80; font-weight: 700;">เปิดวันพุธ 09:00 - 18:00 น.</span></p>
+          <p style="font-size: 0.8rem; color: #94a3b8;">(วันพฤหัสบดี - วันอังคาร ปิดทำการ)</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 {{ shop_config.name }} ({{ shop_config.name_en }}). สงวนลิขสิทธิ์</p>
+      </div>
+    </div>
+  </footer>
+  {% endblock %}
+
+  <!-- Toggle Password Visibility Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.toggle-password-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          var targetId = this.getAttribute('data-target');
+          var input = document.getElementById(targetId);
+          if (!input) return;
+
+          var eye = this.querySelector('.eye-icon');
+          var eyeOff = this.querySelector('.eye-off-icon');
+
+          if (input.type === 'password') {
+            input.type = 'text';
+            this.setAttribute('title', 'ซ่อนรหัสผ่าน');
+            this.setAttribute('aria-label', 'ซ่อนรหัสผ่าน');
+            if (eye) eye.style.display = 'none';
+            if (eyeOff) eyeOff.style.display = 'inline-block';
+          } else {
+            input.type = 'password';
+            this.setAttribute('title', 'แสดงรหัสผ่าน');
+            this.setAttribute('aria-label', 'แสดงรหัสผ่าน');
+            if (eye) eye.style.display = 'inline-block';
+            if (eyeOff) eyeOff.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

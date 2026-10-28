@@ -1,0 +1,94 @@
+{% extends 'admin/base_admin.html' %}
+{% from 'macros.html' import payment_badge %}
+
+{% block title %}ตรวจสอบการชำระเงิน - {{ shop_config.name }}{% endblock %}
+
+{% block page_title %}ตรวจสอบสลิปการโอนเงิน (Payment Slips){% endblock %}
+{% block page_desc %}ตรวจสอบความถูกต้องของสลิปโอนเงินเพื่ออนุมัติหรือปฏิเสธคำสั่งซื้อ มีทั้งหมด {{ payments|length }} รายการ{% endblock %}
+
+{% block admin_content %}
+<div class="admin-section-header">
+  <div>
+    <h2 class="section-header-title">รายการสลิปการโอนเงินของลูกค้า</h2>
+    <p class="section-header-desc">คลิกที่รูปภาพสลิปเพื่อเปิดดูภาพขนาดเต็ม และอนุมัติเพื่อเปลี่ยนสถานะคำสั่งซื้อเป็น "ชำระเงินแล้ว"</p>
+  </div>
+  <a href="{{ url_for('admin.orders') }}" class="admin-btn admin-btn-outline">
+    &larr; ไปหน้าคำสั่งซื้อ
+  </a>
+</div>
+
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th style="width: 90px;">รูปสลิป</th>
+        <th>คำสั่งซื้อ / ลูกค้า</th>
+        <th class="text-right">ยอดที่ต้องโอน</th>
+        <th>วันที่แนบสลิป</th>
+        <th class="text-center">สถานะสลิป</th>
+        <th>ผู้ตรวจสอบ</th>
+        <th class="text-center" style="width: 240px;">การดำเนินการ</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in payments %}
+        <tr>
+          <td>
+            <a href="{{ url_for('static', filename='ไฟล์ที่ผู้ใช้อัปโหลด/slips/' + p.slip_image) }}" target="_blank" title="คลิกดูภาพขยาย">
+              <img src="{{ url_for('static', filename='ไฟล์ที่ผู้ใช้อัปโหลด/slips/' + p.slip_image) }}" 
+                   alt="สลิป" 
+                   style="width: 65px; height: 85px; object-fit: contain; border-radius: 4px; border: 1px solid var(--admin-gray-300); background: #222;">
+            </a>
+          </td>
+          <td>
+            <a href="{{ url_for('admin.order_detail', order_id=p.order_id) }}" style="font-weight: 700; color: var(--admin-red); text-decoration: none;">
+              {{ p.order_number }}
+            </a>
+            <div style="font-weight: 600; color: var(--admin-gray-900); margin-top: 0.2rem;">{{ p.customer_name }}</div>
+            <div style="font-size: 0.85rem; color: var(--admin-gray-500);">โทร: {{ p.customer_phone }}</div>
+          </td>
+          <td class="text-right price-text red" style="font-size: 1rem;">
+            ฿{{ p.amount|currency }}
+          </td>
+          <td style="font-size: 0.82rem; color: var(--admin-gray-600);">
+            {{ p.payment_date|thai_date }}
+          </td>
+          <td class="text-center">
+            {{ payment_badge(p.status, p.reject_reason) }}
+          </td>
+          <td style="font-size: 0.82rem; color: var(--admin-gray-600);">
+            {% if p.verified_by_name %}
+              <strong>{{ p.verified_by_name }}</strong><br/>
+              <span style="font-size: 0.85rem; color: var(--admin-gray-500);">{{ p.verified_at|thai_date }}</span>
+            {% else %}
+              <span style="color: var(--admin-gray-400);">- ยังไม่ได้ตรวจ -</span>
+            {% endif %}
+          </td>
+          <td class="text-center">
+            {% if p.status == 'pending' %}
+              <form action="{{ url_for('admin.payment_verify', order_id=p.order_id) }}" method="POST" style="display: flex; gap: 0.35rem; justify-content: center;">
+                <button type="submit" name="action" value="approve" class="admin-btn admin-btn-success admin-btn-sm" onclick="return confirm('ยืนยันอนุมัติสลิปนี้?');">
+                  ✓ อนุมัติ
+                </button>
+                <button type="submit" name="action" value="reject" class="admin-btn admin-btn-danger admin-btn-sm" onclick="return confirm('ยืนยันปฏิเสธสลิปนี้?');">
+                  ✕ ปฏิเสธ
+                </button>
+              </form>
+            {% else %}
+              <a href="{{ url_for('admin.order_detail', order_id=p.order_id) }}" class="admin-btn admin-btn-outline admin-btn-sm">
+                ดูคำสั่งซื้อ
+              </a>
+            {% endif %}
+          </td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="7" class="text-center" style="padding: 3rem; color: var(--admin-gray-500);">
+            ไม่มีรายการสลิปการโอนเงินที่ต้องตรวจสอบ
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

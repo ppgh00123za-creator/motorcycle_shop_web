@@ -1,0 +1,248 @@
+{% extends 'base.html' %}
+
+{% block title %}คำสั่งซื้อ {{ order.order_number }} - MOTO 160 BIKE SHOP{% endblock %}
+
+{% block content %}
+  <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <div style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.25rem;">
+        <a href="{{ url_for('customer.orders') }}" style="color: inherit; text-decoration: none;">&larr; กลับไปหน้ารายการคำสั่งซื้อ</a>
+      </div>
+      <h2>คำสั่งซื้อเลขที่: <span style="color: var(--primary-red);">{{ order.order_number }}</span></h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">
+        วันที่สั่งซื้อ: {{ order.created_at|thai_date }} | อัปเดตล่าสุด: {{ order.updated_at|thai_date }}
+      </p>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem; align-items: center;">
+      {% if payment and payment.status == 'approved' %}
+        <a href="{{ url_for('customer.download_receipt', order_id=order.id) }}" class="btn btn-primary">
+          ดาวน์โหลดใบเสร็จ PDF (Official Receipt)
+        </a>
+      {% endif %}
+
+      {% if order.status in ['รอชำระเงิน', 'รอตรวจสอบการชำระเงิน'] %}
+        <form action="{{ url_for('customer.cancel_order', order_id=order.id) }}" method="POST">
+          <button type="submit" class="btn btn-outline" style="color: #dc2626; border-color: #fca5a5;">
+            ยกเลิกคำสั่งซื้อ
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="cart-layout">
+    <!-- Left Column: Order Items & Delivery Info -->
+    <div>
+      <!-- Items Card -->
+      <div class="summary-card" style="margin-bottom: 1.5rem;">
+        <h3>รายการรถจักรยานยนต์ในคำสั่งซื้อ</h3>
+        <div class="data-table-wrap" style="box-shadow: none; border: none; margin-bottom: 0;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>รายการ</th>
+                <th style="text-align: right;">ราคาต่อคัน</th>
+                <th style="text-align: center;">จำนวน</th>
+                <th style="text-align: right;">รวม (บาท)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for it in items %}
+                <tr>
+                  <td>
+                    <div style="font-weight: 700;">{{ it.product_name }}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">รหัสสินค้า: {{ it.product_code or '-' }}</div>
+                  </td>
+                  <td style="text-align: right;">฿{{ it.price|currency }}</td>
+                  <td style="text-align: center; font-weight: 600;">{{ it.quantity }}</td>
+                  <td style="text-align: right; font-weight: 700; color: var(--primary-red);">฿{{ it.subtotal|currency }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div style="padding-top: 1rem; border-top: 2px solid var(--border-light); font-size: 0.95rem;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+            <span style="color: var(--text-muted);">ราคาสินค้าก่อนภาษี:</span>
+            <strong>฿{{ ((order.subtotal or order.total_amount) - (order.vat_amount or 0))|currency }}</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+            <span style="color: var(--text-muted);">ภาษีมูลค่าเพิ่ม (VAT {{ ((order.vat_rate or 0.07) * 100)|int }}%):</span>
+            <strong style="color: var(--text-main);">฿{{ (order.vat_amount or 0)|currency }}</strong>
+          </div>
+          {% if order.discount and order.discount > 0 %}
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+            <span style="color: var(--text-muted);">ส่วนลด:</span>
+            <strong style="color: #dc2626;">-฿{{ order.discount|currency }}</strong>
+          </div>
+          {% endif %}
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span style="color: var(--text-muted);">ค่าจัดส่ง ({{ 'จัดส่งทางขนส่ง' if order.shipping_method == 'delivery' else 'รับที่หน้าร้าน' }}):</span>
+            <strong>
+              {% if order.shipping_method == 'delivery' %}
+                {% if order.is_shipping_estimated and (not order.shipping_fee or order.shipping_fee == 0) %}
+                  <span style="color: #d97706;">รอแอดมินประเมินค่าจัดส่ง</span>
+                {% else %}
+                  ฿{{ (order.shipping_fee or 0)|currency }}
+                {% endif %}
+              {% else %}
+                <span style="color: #059669;">ฟรี (รับที่ร้าน)</span>
+              {% endif %}
+            </strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding-top: 0.5rem; border-top: 1px dashed var(--border-light); font-size: 1.25rem; font-weight: 800;">
+            <span>ยอดรวมสุทธิ:</span>
+            <span style="color: var(--primary-red);">฿{{ order.total_amount|currency }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer & Shipping Card -->
+      <div class="summary-card" style="margin-bottom: 1.5rem;">
+        <h3>ข้อมูลผู้สั่งซื้อและสถานที่จัดส่ง/รับรถ</h3>
+        <table class="specs-table">
+          <tbody>
+            <tr>
+              <th>ชื่อผู้สั่งซื้อ:</th>
+              <td>{{ order.customer_name }}</td>
+            </tr>
+            <tr>
+              <th>เบอร์โทรศัพท์:</th>
+              <td>{{ order.customer_phone }}</td>
+            </tr>
+            <tr>
+              <th>ที่อยู่จัดส่ง / รับเอกสาร:</th>
+              <td>{{ order.customer_address }}</td>
+            </tr>
+            <tr>
+              <th>สถานะปัจจุบัน:</th>
+              <td>
+                <span class="badge-status" style="position: static; display: inline-block; background-color: var(--primary-red);">
+                  {{ order.status }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Timeline History Card -->
+      <div class="summary-card">
+        <h3>ประวัติสถานะคำสั่งซื้อ (Audit Timeline)</h3>
+        {% if history %}
+          <ul class="timeline">
+            {% for h in history %}
+              <li class="timeline-item">
+                <span class="timeline-dot"></span>
+                <div class="timeline-content">
+                  <h4>{{ h.status }}</h4>
+                  <time>{{ h.created_at|thai_date }} | โดย: {{ h.changed_by }}</time>
+                  {% if h.notes %}
+                    <p style="font-size: 0.85rem; color: #4b5563; margin-top: 0.25rem;">{{ h.notes }}</p>
+                  {% endif %}
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p style="color: var(--text-muted); font-size: 0.9rem;">ไม่มีประวัติการเปลี่ยนสถานะ</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Right Column: Payment & Slip Upload Section -->
+    <div>
+      <div class="summary-card" style="position: sticky; top: 80px;">
+        <h3>การชำระเงินและแนบหลักฐาน</h3>
+
+        <!-- Bank Account Info -->
+        <div style="background-color: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.25rem;">
+          <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--dark-bg); margin-bottom: 0.5rem;">
+            ช่องทางโอนเงิน (บัญชีทางการของร้าน):
+          </h4>
+          <div style="font-size: 0.85rem; line-height: 1.6; color: #374151;">
+            <div><strong>ธนาคาร:</strong> กสิกรไทย (KBANK)</div>
+            <div><strong>ชื่อบัญชี:</strong> 160 ธีระ สายซิ่ง</div>
+            <div><strong>เลขที่บัญชี:</strong> <code style="font-weight: 700; font-size: 1rem; color: var(--primary-red);">123-2-99999-0</code></div>
+            <div style="margin-top: 0.5rem;"><strong>ยอดเงินที่ต้องชำระ:</strong> <strong style="color: var(--primary-red); font-size: 1.1rem;">฿{{ order.total_amount|currency }}</strong></div>
+          </div>
+        </div>
+
+        <!-- Payment Status Feedback -->
+        {% if payment %}
+          <div style="margin-bottom: 1.25rem;">
+            <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem;">หลักฐานสลิปที่แนบไว้:</div>
+            <div style="border: 1px solid var(--border-light); border-radius: var(--radius-sm); overflow: hidden; max-height: 220px; background: #111; display: flex; align-items: center; justify-content: center;">
+              <a href="{{ url_for('static', filename='ไฟล์ที่ผู้ใช้อัปโหลด/slips/' + payment.slip_image) }}" target="_blank">
+                <img src="{{ url_for('static', filename='ไฟล์ที่ผู้ใช้อัปโหลด/slips/' + payment.slip_image) }}" alt="สลิปการโอนเงิน" style="max-width: 100%; max-height: 220px; object-fit: contain;">
+              </a>
+            </div>
+            <div style="font-size: 0.88rem; color: var(--text-muted); text-align: center; margin-top: 0.25rem;">
+              (คลิกที่รูปเพื่อเปิดดูขนาดเต็ม)
+            </div>
+          </div>
+
+          {% if payment.status == 'approved' %}
+            <div style="background-color: #d1fae5; border-left: 4px solid #10b981; padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem;">
+              <h4 style="color: #065f46; font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem;">✓ อนุมัติการชำระเงินเรียบร้อยแล้ว</h4>
+              <p style="color: #047857; font-size: 0.85rem;">
+                เจ้าหน้าที่ได้ตรวจสอบยอดเงินเรียบร้อยแล้ว ใบเสร็จรับเงินถูกสร้างขึ้นอย่างเป็นทางการ สามารถดาวน์โหลดได้ทันที
+              </p>
+              <a href="{{ url_for('customer.download_receipt', order_id=order.id) }}" class="btn btn-primary btn-sm" style="margin-top: 0.75rem; width: 100%;">
+                ดาวน์โหลดใบเสร็จ PDF ตอนนี้
+              </a>
+            </div>
+
+          {% elif payment.status == 'pending' %}
+            <div style="background-color: #e0f2fe; border-left: 4px solid #0284c7; padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem;">
+              <h4 style="color: #075985; font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem;">กำลังรอเจ้าหน้าที่ตรวจสอบ</h4>
+              <p style="color: #0369a1; font-size: 0.85rem;">
+                สลิปของคุณถูกส่งเข้าระบบเรียบร้อยแล้ว เจ้าหน้าที่ Admin กำลังตรวจสอบความถูกต้อง เมื่ออนุมัติแล้วจะสามารถดาวน์โหลดใบเสร็จ PDF ได้
+              </p>
+            </div>
+
+          {% elif payment.status == 'rejected' %}
+            <div style="background-color: #fee2e2; border-left: 4px solid #ef4444; padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1.25rem;">
+              <h4 style="color: #991b1b; font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem;">สลิปถูกปฏิเสธ</h4>
+              <p style="color: #b91c1c; font-size: 0.85rem; margin-bottom: 0.5rem;">
+                <strong>เหตุผล:</strong> {{ payment.reject_reason or 'ข้อมูลไม่ถูกต้อง' }}
+              </p>
+              <p style="color: #7f1d1d; font-size: 0.8rem;">
+                กรุณาแนบไฟล์สลิปหลักฐานที่ถูกต้องใหม่อีกครั้งผ่านแบบฟอร์มด้านล่าง
+              </p>
+            </div>
+          {% endif %}
+        {% endif %}
+
+        <!-- Slip Upload Form (Available if not approved and not cancelled) -->
+        {% if order.status not in ['ชำระเงินแล้ว', 'กำลังจัดเตรียมสินค้า', 'จัดส่งแล้ว', 'ยกเลิก'] %}
+          <form action="{{ url_for('customer.pay_order', order_id=order.id) }}" method="POST" enctype="multipart/form-data">
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="slip_file" style="font-weight: 700;">
+                {% if payment and payment.status == 'rejected' %}
+                  แนบสลิปใหม่เพื่อตรวจสอบอีกครั้ง *
+                {% else %}
+                  แนบสลิปหลักฐานการโอนเงิน *
+                {% endif %}
+              </label>
+              <input type="file" name="slip_file" id="slip_file" class="form-control" accept="image/png, image/jpeg, image/jpg, image/webp" required>
+              <span style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.25rem; display: block;">
+                รองรับไฟล์: .png, .jpg, .jpeg, .webp (ขนาดไม่เกิน 5 MB)
+              </span>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+              อัปโหลดสลิปยืนยันการชำระเงิน
+            </button>
+          </form>
+        {% elif order.status == 'ยกเลิก' %}
+          <div style="padding: 1rem; background: #f3f4f6; border-radius: var(--radius-sm); color: #6b7280; font-size: 0.85rem; text-align: center;">
+            คำสั่งซื้อนี้ถูกยกเลิกแล้ว ไม่สามารถทำรายการชำระเงินได้
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

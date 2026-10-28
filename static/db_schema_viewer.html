@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>คู่มือโครงสร้างฐานข้อมูล (Database Schema) — 160 ธีระ สายซิ่ง</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'TH Sarabun New', 'Sarabun', Tahoma, sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      margin: 0;
+      padding: 2rem 1.5rem;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header-card {
+      background: #ffffff;
+      border: 1.5px solid #000;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    h1 { font-size: 28px; margin: 0 0 0.4rem 0; font-weight: 700; }
+    .subtitle { font-size: 20px; color: #475569; margin: 0; }
+    .btn-print {
+      background: #000;
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.25rem;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .module-title {
+      font-size: 24px;
+      font-weight: 700;
+      border-bottom: 2px solid #000;
+      padding-bottom: 0.4rem;
+      margin: 2rem 0 1rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .table-card {
+      background: #fff;
+      border: 1.5px solid #000;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .table-header {
+      background: #f1f5f9;
+      border-bottom: 1.5px solid #000;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .table-name { font-size: 21px; font-weight: 700; }
+    .table-badge {
+      background: #0369a1;
+      color: #fff;
+      padding: 0.2rem 0.6rem;
+      font-size: 15px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .table-desc {
+      padding: 0.75rem 1.25rem;
+      font-size: 18px;
+      color: #334155;
+      background: #fafafa;
+      border-bottom: 1px dashed #cbd5e1;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 17px;
+    }
+    th, td {
+      border-bottom: 1px solid #e2e8f0;
+      padding: 0.55rem 1.25rem;
+      text-align: left;
+    }
+    th {
+      background: #ffffff;
+      color: #475569;
+      font-weight: 700;
+      border-bottom: 1.5px solid #000;
+    }
+    .key-pk {
+      background: #fee2e2;
+      color: #dc2626;
+      padding: 0.1rem 0.4rem;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 3px;
+    }
+    .key-fk {
+      background: #e0f2fe;
+      color: #0284c7;
+      padding: 0.1rem 0.4rem;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 3px;
+    }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .btn-print { display: none; }
+      .table-card { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header-card">
+      <div>
+        <h1>คู่มือโครงสร้างฐานข้อมูล (SQLite Database Schema)</h1>
+        <p class="subtitle">ระบบร้านขายรถจักรยานยนต์ไม่เกิน 160 cc (160 ธีระ สายซิ่ง)</p>
+      </div>
+      <button class="btn-print" onclick="window.print()">🖨️ พิมพ์เอกสาร / บันทึกเป็น PDF</button>
+    </div>
+
+    <!-- หมวดที่ 1 -->
+    <div class="module-title">👤 หมวดที่ 1: ระบบสมาชิกและความปลอดภัย (User & Authentication)</div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-name">1. ตาราง users (ข้อมูลผู้ใช้งาน)</span>
+        <span class="table-badge">ตารางหลัก</span>
+      </div>
+      <div class="table-desc">เก็บข้อมูลบัญชีผู้ใช้งานทั้งลูกค้าทั่วไปและผู้ดูแลระบบ (Admin) พร้อมระบบเข้ารหัสรหัสผ่านที่ปลอดภัย</div>
+      <table>
+        <thead>
+          <tr><th>ชื่อฟิลด์ (Field)</th><th>ประเภท (Type)</th><th>คีย์ (Key)</th><th>คำอธิบายหน้าที่</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>id</b></td><td>INTEGER</td><td><span class="key-pk">PK</span></td><td>รหัสประจำตัวผู้ใช้ (รันอัตโนมัติ)</td></tr>
+          <tr><td><b>name</b></td><td>TEXT</td><td>-</td><td>ชื่อ-นามสกุล ของผู้ใช้</td></tr>
+          <tr><td><b>email</b></td><td>TEXT</td><td>UNIQUE</td><td>อีเมลสำหรับเข้าสู่ระบบ (ห้ามซ้ำ)</td></tr>
+          <tr><td><b>password_hash</b></td><td>TEXT</td><td>-</td><td>รหัสผ่านที่ผ่านการแฮช (pbkdf2:sha256) ป้องกันการขโมยรหัส</td></tr>
+          <tr><td><b>role</b></td><td>TEXT</td><td>-</td><td>สิทธิ์การใช้งาน ('customer' หรือ 'admin')</td></tr>
+          <tr><td><b>phone</b></td><td>TEXT</td><td>-</td><td>เบอร์โทรศัพท์สำหรับติดต่อส่งของ</td></tr>
+          <tr><td><b>address</b></td><td>TEXT</td><td>-</td><td>ที่อยู่สำหรับจัดส่งสินค้า</td></tr>
+          <tr><td><b>avatar</b></td><td>TEXT</td><td>-</td><td>พาธรูปโปรไฟล์ผู้ใช้</td></tr>
+          <tr><td><b>is_banned</b></td><td>INTEGER</td><td>-</td><td>สถานะการระงับบัญชี (0 = ปกติ, 1 = ถูกระงับ)</td></tr>
+          <tr><td><b>created_at</b></td><td>TIMESTAMP</td><td>-</td><td>วันเวลาที่สมัครสมาชิก</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-name">2. ตาราง password_resets (โทเค็นรีเซ็ตรหัสผ่าน)</span>
+      </div>
+      <div class="table-desc">เก็บรหัสลับชั่วคราว (Token) สำหรับให้ลูกค้ากู้คืนรหัสผ่านทางอีเมล</div>
+      <table>
+        <thead>
+          <tr><th>ชื่อฟิลด์ (Field)</th><th>ประเภท (Type)</th><th>คีย์ (Key)</th><th>คำอธิบายหน้าที่</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>id</b></td><td>INTEGER</td><td><span class="key-pk">PK</span></td><td>ลำดับรายการ</td></tr>
+          <tr><td><b>user_id</b></td><td>INTEGER</td><td><span class="key-fk">FK -> users.id</span></td><td>รหัสผู้ใช้ที่ขอรีเซ็ต</td></tr>
+          <tr><td><b>token</b></td><td>TEXT</td><td>-</td><td>โทเค็นสุ่มความยาวสูงสำหรับยืนยันตัวตน</td></tr>
+          <tr><td><b>expires_at</b></td><td>TIMESTAMP</td><td>-</td><td>วันเวลาหมดอายุของลิงก์รีเซ็ต</td></tr>
+          <tr><td><b>used</b></td><td>INTEGER</td><td>-</td><td>สถานะการใช้งาน (0 = ยังไม่ใช้, 1 = ใช้แล้ว)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- หมวดที่ 2 -->
+    <div class="module-title">🏍️ หมวดที่ 2: สินค้าและคลังสต็อก (Products & Inventory)</div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-name">3. ตาราง products (ข้อมูลรถจักรยานยนต์ ≤ 160 cc)</span>
+        <span class="table-badge">ตารางหลัก</span>
+      </div>
+      <div class="table-desc">เก็บข้อมูลสเปกรถมอเตอร์ไซค์ที่วางจำหน่ายในร้าน จำกัดเฉพาะเครื่องยนต์ไม่เกิน 160 ซีซี ตามธีมร้าน</div>
+      <table>
+        <thead>
+          <tr><th>ชื่อฟิลด์ (Field)</th><th>ประเภท (Type)</th><th>คีย์ (Key)</th><th>คำอธิบายหน้าที่</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>id</b></td><td>INTEGER</td><td><span class="key-pk">PK</span></td><td>รหัสประจำคัน (Auto Increment)</td></tr>
+          <tr><td><b>code</b></td><td>TEXT</td><td>UNIQUE</td><td>รหัสสินค้าสากล เช่น BIKE-HND-001</td></tr>
+          <tr><td><b>brand</b></td><td>TEXT</td><td>-</td><td>ยี่ห้อรถ (Honda, Yamaha, Suzuki, GPX, Lambretta)</td></tr>
+          <tr><td><b>model</b></td><td>TEXT</td><td>-</td><td>ชื่อรุ่นรถ เช่น Click 160, PCX 160, Aerox 155</td></tr>
+          <tr><td><b>model_year</b></td><td>TEXT</td><td>-</td><td>ปีโมเดล เช่น 2024</td></tr>
+          <tr><td><b>engine_cc</b></td><td>INTEGER</td><td>-</td><td>ขนาดกระบอกสูบ (พิกัด $\le 160$ ซีซี)</td></tr>
+          <tr><td><b>category</b></td><td>TEXT</td><td>-</td><td>ประเภทรถ (Sport, Scooter, Family, Vintage)</td></tr>
+          <tr><td><b>price</b></td><td>REAL</td><td>-</td><td>ราคาขายต่อคัน (บาท)</td></tr>
+          <tr><td><b>stock</b></td><td>INTEGER</td><td>-</td><td>จำนวนรถที่มีพร้อมส่งในสต็อก</td></tr>
+          <tr><td><b>image_url</b></td><td>TEXT</td><td>-</td><td>ชื่อหรือพาธไฟล์รูปภาพตัวรถ</td></tr>
+          <tr><td><b>specs_json</b></td><td>TEXT</td><td>-</td><td>สเปกละเอียด (ระบบเบรก, น้ำหนัก, ความจุถังน้ำมัน) ในรูปแบบ JSON</td></tr>
+          <tr><td><b>status</b></td><td>TEXT</td><td>-</td><td>สถานะสินค้า ('active' พร้อมขาย, 'inactive' พักการขาย)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-name">4. ตาราง stock_adjustments (บันทึกประวัติการปรับสต็อก)</span>
+      </div>
+      <div class="table-desc">Audit Trail บันทึกทุกครั้งที่มีการเพิ่ม-ลดสต็อกรถ ป้องกันการทุจริตและของสูญหาย</div>
+      <table>
+        <thead>
+          <tr><th>ชื่อฟิลด์ (Field)</th><th>ประเภท (Type)</th><th>คีย์ (Key)</th><th>คำอธิบายหน้าที่</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>id</b></td><td>INTEGER</td><td><span class="key-pk">PK</span></td><td>ลำดับรายการบันทึก</td></tr>
+          <tr><td><b>product_id</b></td><td>INTEGER</td><td><span class="key-fk">FK -> products.id</span></td><td>รหัสรถที่ปรับสต็อก</td></tr>
+          <tr><td><b>old_stock</b></td><td>INTEGER</td><td>-</td><td>จำนวนสต็อกเดิมก่อนปรับ</td></tr>
+          <tr><td><b>new_stock</b></td><td>INTEGER</td><td>-</td><td>จำนวนสต็อกใหม่หลังปรับ</td></tr>
+          <tr><td><b>change_qty</b></td><td>INTEGER</td><td>-</td><td>ผลต่างจำนวน (+ เพิ่ม, - ลด)</td></tr>
+          <tr><td><b>reason</b></td><td>TEXT</td><td>-</td><td>เหตุผล เช่น รับของเข้าโกดัง, คืนสต็อกจากการยกเลิก</td></tr>
+          <tr><td><b>admin_name</b></td><td>TEXT</td><td>-</td><td>ชื่อผู้ดูแลระบบที่เป็นคนทำรายการ</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- หมวดที่ 3 -->
+    <div class="module-title">📦 หมวดที่ 3: คำสั่งซื้อและการชำระเงิน (Orders & Payments)</div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-name">5. ตาราง orders (บิลคำสั่งซื้อ)</span>
+        <span class="table-badge">ตารางหลัก</span>
+      </div>
+      <div class="table-desc">เก็บข้อมูลหัวบิลคำสั่งซื้อ ยอดเงินรวม ภาษี ค่าส่ง และสถานะการดำเนินการตั้งแต่สั่งซื้อจนส่งมอบรถ</div>
+      <table>
+        <thead>
+          <tr><th>ชื่อฟิลด์ (Field)</th><th>ประเภท (Type)</th><th>คีย์ (Key)</th><th>คำอธิบายหน้าที่</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>id</b></td><td>INTEGER</td><td><span class="key-pk">PK</span></td><td>รหัสอ้างอิงภายใน</td></tr>
+          <tr><td><b>order_number</b></td><td>TEXT</td><td>UNIQUE</td><td>เลขที่คำสั่งซื้อ เช่น ORD-20261028-001</td></tr>
+          <tr><td><b>user_id</b></td><td>INTEGER</td><td><span class="key-fk">FK -> users.id</span></td><td>รหัสลูกค้าผู้สั่งซื้อ</td></tr>
+          <tr><td><b>customer_name</b></td><td>TEXT</td><td>-</td><td>ชื่อผู้รับสินค้า</td></tr>
+          <tr><td><b>customer_phone</b></td><td>TEXT</td><td>-</td><td>เบอร์ติดต่อผู้รับ</td></tr>
+          <tr><td><b>customer_address</b></td><td>TEXT</td><td>-</td><td>สถานที่จัดส่งรถมอเตอร์ไซค์</td></tr>
+          <tr><td><b>total_amount</b></td><td>REAL</td><td>-</td><td>ยอดชำระสุทธิทั้งหมด (รวมภาษีและค่าจัดส่ง)</td></tr>
+          <tr><td><b>status</b></td><td>TEXT</td><td>-</td><td>สถานะ ('pending', 'approved', 'shipped', 'completed', 'cancelled')</td></tr>
+          <tr><td><b>shipping_method</b></td><td>TEXT</td><td>-</td><td>วิธีรับของ (รับเองที่หน้าร้าน, จัดส่งรถสไลด์ถึงบ้าน)</td></tr>
+          <tr><td><b>shipping_fee</b></td><td>REAL</td><td>-</td><td>ค่าธรรมเนียมจัดส่ง</td></tr>
+          <tr><td><b>is_restocked</b></td><td>INTEGER</td><td>-</td><td>ตัวบอกว่าได้คืนสต็อกหรือยัง (กรณีถูกยกเลิก)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-name">6. ตาราง order_items (รายการรถในคำสั่งซื้อ)</span>
+      </div>
+      <div class="table-desc">เก็บรายละเอียดรถแต่ละรุ่นในคำสั่งซื้อนั้น ๆ พร้อมบันทึกราคา ณ วันที่สั่งซื้อจริง</div>
+      <table>
+        <thead>
+          <tr><th>ชื่อฟิลด์ (Field)</th><th>ประเภท (Type)</th><th>คีย์ (Key)</th><th>คำอธิบายหน้าที่</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>id</b></td><td>INTEGER</td><td><span class="key-pk">PK</span></td><td>ลำดับรายการ</td></tr>
+          <tr><td><b>order_id</b></td><td>INTEGER</td><td><span class="key-fk">FK -> orders.id</span></td><td>ผูกกับคำสั่งซื้อหลัก</td></tr>
+          <tr><td><b>product_id</b></td><td>INTEGER</td><td><span class="key-fk">FK -> products.id</span></td><td>รหัสรถมอเตอร์ไซค์</td></tr>
+          <tr><td><b>product_name</b></td><td>TEXT</td><td>-</td><td>ชื่อรุ่นรถ ณ วันที่สั่ง</td></tr>
+          <tr><td><b>price</b></td><td>REAL</td><td>-</td><td>ราคาขายต่อคัน ณ วันที่สั่งซื้อ</td></tr>
+          <tr><td><b>quantity</b></td><td>INTEGER</td><td>-</td><td>จำนวนคันที่สั่ง</td></tr>
+          <tr><td><b>subtotal</b></td><td>REAL</td><td>-</td><td>ราคารวมของรายการนี้ (price × quantity)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-name">7. ตาราง payments (หลักฐานการชำระเงิน)</span>
+      </div>
+      <div class="table-desc">เก็บไฟล์สลิปโอนเงิน ยอดเงินที่โอน และผลการตรวจสอบของแอดมิน</div>
+      <table>
+        <thead>
+          <tr><th>ชื่อฟิลด์ (Field)</th><th>ประเภท (Type)</th><th>คีย์ (Key)</th><th>คำอธิบายหน้าที่</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>id</b></td><td>INTEGER</td><td><span class="key-pk">PK</span></td><td>ลำดับรายการชำระเงิน</td></tr>
+          <tr><td><b>order_id</b></td><td>INTEGER</td><td><span class="key-fk">FK -> orders.id</span></td><td>คำสั่งซื้อที่ชำระเงิน</td></tr>
+          <tr><td><b>slip_image</b></td><td>TEXT</td><td>-</td><td>ชื่อไฟล์รูปสลิปที่ลูกค้าแนบเข้ามา</td></tr>
+          <tr><td><b>amount</b></td><td>REAL</td><td>-</td><td>ยอดเงินที่โอนจริงตามสลิป</td></tr>
+          <tr><td><b>status</b></td><td>TEXT</td><td>-</td><td>สถานะตรวจสลิป ('pending' รอตรวจ, 'approved' ถูกต้อง, 'rejected' สลิปไม่ผ่าน)</td></tr>
+          <tr><td><b>reject_reason</b></td><td>TEXT</td><td>-</td><td>เหตุผลที่ปฏิเสธ (เช่น ยอดไม่ตรง, สลิปซ้ำ)</td></tr>
+          <tr><td><b>verified_by</b></td><td>INTEGER</td><td><span class="key-fk">FK -> users.id</span></td><td>แอดมินผู้ตรวจสอบ</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-name">8. ตาราง receipts (ใบเสร็จรับเงิน)</span>
+      </div>
+      <div class="table-desc">เก็บเลขที่ใบเสร็จรับเงินทางการสำหรับออกเอกสารดาวน์โหลดเป็น PDF ให้ลูกค้า</div>
+      <table>
+        <thead>
+          <tr><th>ชื่อฟิลด์ (Field)</th><th>ประเภท (Type)</th><th>คีย์ (Key)</th><th>คำอธิบายหน้าที่</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>id</b></td><td>INTEGER</td><td><span class="key-pk">PK</span></td><td>ลำดับใบเสร็จ</td></tr>
+          <tr><td><b>receipt_number</b></td><td>TEXT</td><td>UNIQUE</td><td>เลขที่ใบเสร็จ เช่น REC-20261028-001</td></tr>
+          <tr><td><b>order_id</b></td><td>INTEGER</td><td><span class="key-fk">FK -> orders.id</span></td><td>ผูกกับคำสั่งซื้อที่ยืนยันเงินแล้ว</td></tr>
+          <tr><td><b>issued_at</b></td><td>TIMESTAMP</td><td>-</td><td>วันเวลาที่ออกใบเสร็จ</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- หมวดที่ 4 -->
+    <div class="module-title">💬 หมวดที่ 4: บริการหลังการขายและแจ้งปัญหา (Support Tickets)</div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-name">9. ตาราง support_tickets (ระบบแจ้งปัญหาและบริการ)</span>
+      </div>
+      <div class="table-desc">ช่องทางให้ลูกค้าเปิดคำร้องแจ้งปัญหา ติดตามเอกสารทะเบียน หรือสอบถามบริการหลังการขาย</div>
+      <table>
+        <thead>
+          <tr><th>ชื่อฟิลด์ (Field)</th><th>ประเภท (Type)</th><th>คีย์ (Key)</th><th>คำอธิบายหน้าที่</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>id</b></td><td>INTEGER</td><td><span class="key-pk">PK</span></td><td>ลำดับคำร้อง</td></tr>
+          <tr><td><b>ticket_code</b></td><td>TEXT</td><td>UNIQUE</td><td>รหัสคำร้อง เช่น TCK-20261028-001</td></tr>
+          <tr><td><b>user_id</b></td><td>INTEGER</td><td><span class="key-fk">FK -> users.id</span></td><td>ลูกค้าผู้แจ้งเรื่อง</td></tr>
+          <tr><td><b>category</b></td><td>TEXT</td><td>-</td><td>หมวดหมู่ปัญหา (การสั่งซื้อ, การชำระเงิน, ทะเบียน/พ.ร.บ., ตัวรถ)</td></tr>
+          <tr><td><b>subject</b></td><td>TEXT</td><td>-</td><td>หัวข้อเรื่องที่แจ้ง</td></tr>
+          <tr><td><b>details</b></td><td>TEXT</td><td>-</td><td>รายละเอียดเนื้อหาปัญหา</td></tr>
+          <tr><td><b>status</b></td><td>TEXT</td><td>-</td><td>สถานะ ('pending' รอร้านตอบ, 'replied' ร้านตอบแล้ว, 'closed' จบงาน)</td></tr>
+          <tr><td><b>admin_reply</b></td><td>TEXT</td><td>-</td><td>ข้อความตอบกลับจากแอดมิน</td></tr>
+          <tr><td><b>replied_by</b></td><td>INTEGER</td><td><span class="key-fk">FK -> users.id</span></td><td>แอดมินที่ตอบเรื่อง</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</body>
+</html>

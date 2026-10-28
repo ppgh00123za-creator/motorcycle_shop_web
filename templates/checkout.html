@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}ยืนยันการสั่งซื้อ - {{ shop_config.name }}{% endblock %}
+
+{% block content %}
+  <div class="section-header">
+    <div>
+      <h2>ยืนยันคำสั่งซื้อ (Checkout)</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">กรุณาตรวจสอบข้อมูลการจัดส่ง ภาษีมูลค่าเพิ่ม และรายการสินค้าก่อนยืนยันคำสั่งซื้อ</p>
+    </div>
+  </div>
+
+  <div class="cart-layout">
+    <!-- Form Info Column -->
+    <div>
+      <div class="summary-card" style="margin-bottom: 1.5rem;">
+        <h3>1. ข้อมูลผู้ซื้อและวิธีการรับสินค้า</h3>
+        
+        <form action="{{ url_for('customer.checkout') }}" method="POST" id="checkoutForm">
+          <input type="hidden" name="checkout_token" value="{{ checkout_token }}">
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="customer_name">ชื่อ - นามสกุล ผู้สั่งซื้อ *</label>
+            <input type="text" name="customer_name" id="customer_name" class="form-control" value="{{ user.name if user else '' }}" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="customer_phone">เบอร์โทรศัพท์ติดต่อ *</label>
+            <input type="tel" name="customer_phone" id="customer_phone" class="form-control" value="{{ user.phone if user else '' }}" placeholder="เช่น 081-234-5678" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label for="customer_address">ที่อยู่สำหรับจัดส่งหรือนัดรับรถ / ออกใบเสร็จ *</label>
+            <textarea name="customer_address" id="customer_address" class="form-control" rows="3" required placeholder="บ้านเลขที่ ถนน ตำบล/แขวง อำเภอ/เขต จังหวัด รหัสไปรษณีย์">{{ user.address if user else '' }}</textarea>
+          </div>
+
+          <!-- วิธีการรับสินค้า -->
+          <div style="margin-bottom: 1.25rem; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 1rem; background: #fafafa;">
+            <label style="font-weight: 700; display: block; margin-bottom: 0.75rem; color: var(--dark-bg);">วิธีการรับสินค้า *</label>
+            
+            <div style="margin-bottom: 0.75rem; display: flex; align-items: flex-start; gap: 0.5rem;">
+              <input type="radio" id="ship_pickup" name="shipping_method" value="pickup" {% if shipping_method != 'delivery' %}checked{% endif %} style="margin-top: 0.25rem;">
+              <label for="ship_pickup" style="cursor: pointer; line-height: 1.4;">
+                <strong>รับสินค้าเองที่หน้าร้าน (ไม่มีค่าจัดส่ง)</strong><br>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">
+                  สถานที่: {{ shop_config.address }} (เปิดวันพุธ 09:00 - 18:00 น.)
+                </span>
+              </label>
+            </div>
+
+            <div style="display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.75rem;">
+              <input type="radio" id="ship_delivery" name="shipping_method" value="delivery" {% if shipping_method == 'delivery' %}checked{% endif %} style="margin-top: 0.25rem;">
+              <label for="ship_delivery" style="cursor: pointer; line-height: 1.4;">
+                <strong>จัดส่งพัสดุ / ขนส่งรถจักรยานยนต์ถึงที่อยู่</strong><br>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">
+                  จัดส่งโดยรถกระบะขนส่งเฉพาะทางหรือไปรษณีย์ไทย ปลอดภัย มั่นใจได้
+                </span>
+              </label>
+            </div>
+
+            <div style="margin-left: 1.75rem; padding-top: 0.5rem; border-top: 1px dashed var(--border-light);">
+              <span style="font-size: 0.85rem; font-weight: 600; color: #475569; display: block; margin-bottom: 0.35rem;">ตัวเลือกอัตราค่าจัดส่ง (กรณีเลือกจัดส่ง):</span>
+              <div style="margin-bottom: 0.35rem;">
+                <input type="radio" id="ship_std" name="shipping_estimate_choice" value="standard" checked>
+                <label for="ship_std" style="font-size: 0.85rem; cursor: pointer;">
+                  ค่าจัดส่งมาตรฐานเหมาจ่าย (฿1,500.00 ทั่วประเทศ)
+                </label>
+              </div>
+              <div>
+                <input type="radio" id="ship_est" name="shipping_estimate_choice" value="custom_estimate">
+                <label for="ship_est" style="font-size: 0.85rem; cursor: pointer;">
+                  ให้ร้านค้าประเมินค่าขนส่งตามระยะทางจริง (แอดมินจะแจ้งยอดและอัปเดตในใบสั่งซื้อ)
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label for="delivery_notes">หมายเหตุเพิ่มเติมถึงร้านค้า (ไม่บังคับ)</label>
+            <input type="text" name="delivery_notes" id="delivery_notes" class="form-control" placeholder="เช่น วันและเวลาที่สะดวกรับสาย, ข้อความกำกับการจัดส่ง">
+          </div>
+
+          <div style="background-color: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1.5rem;">
+            <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--dark-bg);">
+              วิธีการชำระเงิน: โอนเงินผ่านธนาคาร (แนบสลิป)
+            </h4>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+              หลังจากกดยืนยันคำสั่งซื้อ ระบบจะสร้างเลขที่คำสั่งซื้อและตัดสต็อกสินค้าในฐานข้อมูลทันที จากนั้นท่านสามารถชำระเงินและแนบสลิปหลักฐานเพื่อให้เจ้าหน้าที่ตรวจสอบและออกใบเสร็จ PDF
+            </p>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+            ยืนยันการสั่งซื้อ (สร้างคำสั่งซื้อ) &rarr;
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Order Items Column -->
+    <div>
+      <div class="summary-card">
+        <h3>2. สรุปรายการในคำสั่งซื้อและภาษีมูลค่าเพิ่ม</h3>
+
+        <div style="margin-bottom: 1rem;">
+          {% for it in items %}
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px dashed var(--border-light);">
+              <div>
+                <div style="font-weight: 700; font-size: 0.95rem;">{{ it.product.model }}</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">
+                  {{ it.product.brand }} | {{ it.product.engine_cc }} cc &times; {{ it.quantity }} คัน
+                </div>
+              </div>
+              <div style="font-weight: 700; color: var(--dark-bg); font-size: 0.95rem;">
+                ฿{{ it.subtotal|currency }}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="summary-row">
+          <span style="color: var(--text-muted);">ราคาสินค้าก่อนภาษี:</span>
+          <strong>฿{{ net_before_vat|currency }}</strong>
+        </div>
+
+        <div class="summary-row">
+          <span style="color: var(--text-muted);">ภาษีมูลค่าเพิ่ม (VAT 7%):</span>
+          <strong>฿{{ vat_amount|currency }}</strong>
+        </div>
+
+        {% if discount > 0 %}
+        <div class="summary-row">
+          <span style="color: var(--text-muted);">ส่วนลด:</span>
+          <strong style="color: #dc2626;">-฿{{ discount|currency }}</strong>
+        </div>
+        {% endif %}
+
+        <div class="summary-row">
+          <span style="color: var(--text-muted);">ค่าจัดส่ง (ตามวิธีที่เลือก):</span>
+          <strong style="color: {% if shipping_method == 'delivery' %}var(--dark-bg){% else %}#059669{% endif %};">
+            {% if shipping_method == 'delivery' %}
+              {% if is_shipping_estimated %}
+                รอประเมิน
+              {% else %}
+                ฿{{ shipping_fee|currency }}
+              {% endif %}
+            {% else %}
+              รับที่ร้าน ฟรี
+            {% endif %}
+          </strong>
+        </div>
+
+        <div class="summary-total" style="border-top: 2px solid var(--border-light); margin-top: 0.75rem; padding-top: 0.75rem;">
+          <span>ยอดชำระสุทธิ:</span>
+          <span style="color: var(--primary-red); font-size: 1.4rem;">฿{{ grand_total|currency }}</span>
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.35rem; line-height: 1.4;">
+          * ราคารถหน้าร้านรวมภาษีมูลค่าเพิ่ม 7% แล้ว (ระบบแยกแสดงราคาก่อนภาษีและภาษีให้ตรวจสอบอย่างชัดเจน)
+        </p>
+
+        <div style="margin-top: 1.5rem; text-align: center;">
+          <a href="{{ url_for('shop.cart') }}" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none;">
+            &larr; แก้ไขรายการในตะกร้า
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

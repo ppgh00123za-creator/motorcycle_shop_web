@@ -1,0 +1,319 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import product_card %}
+
+{% block title %}{{ product.model }} ({{ product.brand }}) - รายละเอียดรถ{% endblock %}
+
+{% block content %}
+  <!-- Breadcrumb -->
+  <div style="margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+    <a href="{{ url_for('shop.home') }}" style="color: inherit; text-decoration: none;">หน้าแรก</a> &rsaquo;
+    <a href="{{ url_for('shop.products') }}" style="color: inherit; text-decoration: none;">รถมอเตอร์ไซค์</a> &rsaquo;
+    <a href="{{ url_for('shop.products', category=product.category) }}" style="color: inherit; text-decoration: none;">{{ product.category }}</a> &rsaquo;
+    <span style="color: var(--dark-bg); font-weight: 600;">{{ product.model }}</span>
+  </div>
+
+  <div class="product-detail-layout">
+    <!-- Image Column -->
+    <div class="detail-img-wrap">
+      <img src="{{ product.image_url|bike_img }}" 
+           alt="{{ product.model }}">
+    </div>
+
+    <!-- Info Column -->
+    <div class="detail-info">
+      <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+        <span class="brand-pill" style="font-size: 0.85rem; padding: 0.25rem 0.75rem;">{{ product.brand }}</span>
+        <span class="cc-pill" style="font-size: 0.85rem; padding: 0.25rem 0.75rem;">{{ product.engine_cc }} cc</span>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">ปี {{ product.model_year }}</span>
+      </div>
+
+      <h1>{{ product.model }}</h1>
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;">
+        รหัสสินค้าประจำร้าน: <strong>{{ product.code }}</strong>
+      </p>
+
+      <!-- Price Box -->
+      <div class="detail-price-box">
+        <div>
+          <span style="font-size: 0.85rem; color: var(--text-muted); display: block;">ราคาเงินสด</span>
+          <span class="price">฿{{ product.price|currency }}</span>
+        </div>
+        <div>
+          {% if product.status == 'available' %}
+            {% if product.stock < 3 %}
+              <span class="badge-status badge-low-stock" style="position: static;">ใกล้หมด เหลือ {{ product.stock }} คัน</span>
+            {% else %}
+              <span class="badge-status badge-available" style="position: static;">มีสินค้าพร้อมส่งมอบ</span>
+            {% endif %}
+          {% elif product.status == 'out_of_stock' %}
+            <span class="badge-status badge-out-of-stock" style="position: static;">สินค้าหมดชั่วคราว</span>
+          {% else %}
+            <span class="badge-status badge-discontinued" style="position: static;">รุ่นเลิกจำหน่าย (สำหรับแสดงในแค็ตตาล็อก)</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Specs Table -->
+      <table class="specs-table">
+        <tbody>
+          <tr>
+            <th>ยี่ห้อ (Brand)</th>
+            <td>{{ product.brand }}</td>
+          </tr>
+          <tr>
+            <th>รุ่น (Model)</th>
+            <td>{{ product.model }}</td>
+          </tr>
+          <tr>
+            <th>ปีรุ่น (Model Year)</th>
+            <td>{{ product.model_year }}</td>
+          </tr>
+          <tr>
+            <th>ความจุเครื่องยนต์</th>
+            <td>{{ product.engine_cc }} ซีซี (ไม่เกิน 160 cc)</td>
+          </tr>
+          <tr>
+            <th>ประเภทรถ</th>
+            <td>{{ product.category }}</td>
+          </tr>
+          <tr>
+            <th>จำนวนคงเหลือในสต็อก</th>
+            <td>
+              {% if product.stock > 0 %}
+                <span style="color: #059669; font-weight: 700;">{{ product.stock }} คัน</span>
+              {% else %}
+                <span style="color: #dc2626; font-weight: 700;">0 คัน</span>
+              {% endif %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Description -->
+      <div style="margin: 1.5rem 0;">
+        <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem;">รายละเอียดและจุดเด่น</h3>
+        <p style="color: #374151; font-size: 0.95rem; line-height: 1.7; background: #f8fafc; padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light);">
+          {{ product.description }}
+        </p>
+      </div>
+
+      <!-- Purchase / Add to Cart Form -->
+      {% if product.status == 'available' and product.stock > 0 %}
+        <form action="{{ url_for('shop.add_to_cart') }}" method="POST" class="ajax-cart-form" style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: flex-end;">
+          <input type="hidden" name="product_id" value="{{ product.id }}">
+          
+          <div class="form-group" style="width: 120px;">
+            <label for="quantity">จำนวน (คัน)</label>
+            <input type="number" name="quantity" id="quantity" class="form-control" value="1" min="1" max="{{ product.stock }}" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg" style="flex: 1;">
+            เพิ่มลงตะกร้าสินค้า
+          </button>
+        </form>
+      {% elif product.status == 'discontinued' %}
+        <div style="padding: 1rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius-sm); color: #991b1b; font-weight: 600; text-align: center; margin-top: 1.5rem;">
+          <span style="display: block; font-size: 1rem; margin-bottom: 0.25rem;">รถรุ่นสำหรับแสดงแค็ตตาล็อก</span>
+          รถรุ่นนี้เลิกจำหน่ายอย่างเป็นทางการแล้ว ข้อมูลนี้จัดเก็บไว้เพื่อแสดงในแค็ตตาล็อกประวัติรุ่นรถ
+        </div>
+      {% else %}
+        <div style="padding: 1rem; background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius-sm); color: #92400e; font-weight: 600; text-align: center; margin-top: 1.5rem;">
+          ขออภัย สินค้าหมดสต็อกชั่วคราว อยู่ระหว่างรอเติมสต็อก
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Detailed Technical Specifications (Clean Honda White Design) -->
+  <div class="specs-container">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2rem; border-bottom: 2px solid var(--dark-black); padding-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+      <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--dark-black); margin: 0;">
+        ข้อมูลสเปกทางเทคนิค (Technical Specifications)
+      </h2>
+      <span style="font-size: 0.85rem; color: var(--primary-red); font-weight: 700;">
+        {{ product.model }} &bull; {{ product.engine_cc }} ซีซี
+      </span>
+    </div>
+
+    {% if specs %}
+      <!-- 1. ข้อมูลเครื่องยนต์และสมรรถนะ -->
+      <div style="margin-bottom: 2.5rem;">
+        <h3 class="specs-section-title">
+          1. ข้อมูลเครื่องยนต์และสมรรถนะ
+        </h3>
+        <table class="specs-table">
+          <tbody>
+            <tr>
+              <th>ประเภทเครื่องยนต์</th>
+              <td>{{ specs.engine.engine_type }}</td>
+            </tr>
+            <tr>
+              <th>จำนวนวาล์ว</th>
+              <td>{{ specs.engine.valves }}</td>
+            </tr>
+            <tr>
+              <th>ระบบจ่ายน้ำมัน</th>
+              <td>{{ specs.engine.fuel_system }}</td>
+            </tr>
+            <tr>
+              <th>ระบบระบายความร้อน</th>
+              <td>{{ specs.engine.cooling_system }}</td>
+            </tr>
+            <tr>
+              <th>ระบบเกียร์ / ส่งกำลัง</th>
+              <td>{{ specs.engine.transmission }}</td>
+            </tr>
+            <tr>
+              <th>ความจุถังน้ำมัน</th>
+              <td>{{ specs.engine.fuel_tank_capacity }}</td>
+            </tr>
+            <tr>
+              <th>อัตราสิ้นเปลืองน้ำมัน</th>
+              <td>{{ specs.engine.fuel_consumption }}</td>
+            </tr>
+            <tr>
+              <th>กำลังสูงสุด</th>
+              <td>{{ specs.engine.max_power }}</td>
+            </tr>
+            <tr>
+              <th>แรงบิดสูงสุด</th>
+              <td>{{ specs.engine.max_torque }}</td>
+            </tr>
+            <tr>
+              <th>ชนิดน้ำมันเชื้อเพลิงที่รองรับ</th>
+              <td>{{ specs.engine.fuel_type }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 2. ขนาดและโครงสร้างตัวรถ -->
+      <div style="margin-bottom: 2.5rem;">
+        <h3 class="specs-section-title">
+          2. ขนาดและโครงสร้างตัวรถ
+        </h3>
+        <table class="specs-table">
+          <tbody>
+            <tr>
+              <th>ขนาดกว้าง × ยาว × สูง</th>
+              <td>{{ specs.dimensions.dimensions_wlh }}</td>
+            </tr>
+            <tr>
+              <th>น้ำหนักตัวรถ</th>
+              <td>{{ specs.dimensions.curb_weight }}</td>
+            </tr>
+            <tr>
+              <th>ระยะฐานล้อ</th>
+              <td>{{ specs.dimensions.wheelbase }}</td>
+            </tr>
+            <tr>
+              <th>ความสูงเบาะ</th>
+              <td>{{ specs.dimensions.seat_height }}</td>
+            </tr>
+            <tr>
+              <th>ระยะห่างจากพื้น</th>
+              <td>{{ specs.dimensions.ground_clearance }}</td>
+            </tr>
+            <tr>
+              <th>ความจุช่องเก็บของ</th>
+              <td>{{ specs.dimensions.storage_capacity }}</td>
+            </tr>
+            <tr>
+              <th>ระบบไฟส่องสว่าง</th>
+              <td>{{ specs.dimensions.lighting }}</td>
+            </tr>
+            <tr>
+              <th>ระบบสตาร์ท</th>
+              <td>{{ specs.dimensions.starter }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 3. ระบบช่วงล่างและความปลอดภัย -->
+      <div style="margin-bottom: 2.5rem;">
+        <h3 class="specs-section-title">
+          3. ระบบช่วงล่างและความปลอดภัย
+        </h3>
+        <table class="specs-table">
+          <tbody>
+            <tr>
+              <th>ระบบกันสะเทือนหน้า</th>
+              <td>{{ specs.chassis.front_suspension }}</td>
+            </tr>
+            <tr>
+              <th>ระบบกันสะเทือนหลัง</th>
+              <td>{{ specs.chassis.rear_suspension }}</td>
+            </tr>
+            <tr>
+              <th>เบรกหน้า</th>
+              <td>{{ specs.chassis.front_brake }}</td>
+            </tr>
+            <tr>
+              <th>เบรกหลัง</th>
+              <td>{{ specs.chassis.rear_brake }}</td>
+            </tr>
+            <tr>
+              <th>ระบบช่วยเบรก (ABS / CBS / UBS)</th>
+              <td>{{ specs.chassis.brake_system }}</td>
+            </tr>
+            <tr>
+              <th>ขนาดยางหน้า</th>
+              <td>{{ specs.chassis.front_tire }}</td>
+            </tr>
+            <tr>
+              <th>ขนาดยางหลัง</th>
+              <td>{{ specs.chassis.rear_tire }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 4. จุดเด่นและการใช้งาน -->
+      <div style="margin-bottom: 2.5rem;">
+        <h3 class="specs-section-title">
+          4. จุดเด่นและการใช้งาน
+        </h3>
+        <div class="specs-highlight-box">
+          {{ specs.highlights }}
+        </div>
+      </div>
+
+      <!-- 5. แหล่งอ้างอิงข้อมูล -->
+      <div style="background-color: var(--bg-light); padding: 1rem 1.25rem; font-size: 0.85rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; border-left: 3px solid var(--primary-red);">
+        <div>
+          <strong style="color: var(--dark-black);">🌐 แหล่งอ้างอิงข้อมูลทางการ:</strong> 
+          <a href="{{ specs.reference_url }}" target="_blank" rel="noopener noreferrer" style="color: var(--primary-red); text-decoration: underline; margin-left: 0.5rem; word-break: break-all;">
+            {{ specs.reference_url }}
+          </a>
+        </div>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">
+          * สเปกอ้างอิงตามคู่มือ/เว็บไซต์ทางการของผู้ผลิตในประเทศไทย
+        </span>
+      </div>
+
+    {% else %}
+      <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
+        {{ product.description }}
+      </p>
+    {% endif %}
+  </div>
+
+  <!-- Related Products -->
+  {% if related %}
+    <div style="margin-top: 3rem;">
+      <div class="section-header">
+        <div>
+          <h2>รถรุ่นอื่นในหมวดหมู่นี้</h2>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">รถในกลุ่ม {{ product.category }} ที่คุณอาจสนใจ</p>
+        </div>
+      </div>
+
+      <div class="product-grid">
+        {% for r in related %}
+          {{ product_card(r, show_cart=False) }}
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

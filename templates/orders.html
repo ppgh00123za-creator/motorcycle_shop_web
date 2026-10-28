@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import status_badge, payment_badge %}
+
+{% block title %}ประวัติคำสั่งซื้อของฉัน - MOTO 160 BIKE SHOP{% endblock %}
+
+{% block content %}
+  <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h2>ประวัติคำสั่งซื้อของคุณ</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        {% if show_archived %}
+          คลังประวัติคำสั่งซื้อที่จัดเก็บย้อนหลัง (Archived Orders)
+        {% else %}
+          แสดง 3 คำสั่งซื้อล่าสุดที่เสร็จสิ้น และคำสั่งซื้อที่อยู่ระหว่างดำเนินการ
+        {% endif %}
+      </p>
+    </div>
+    {% if archived_count > 0 %}
+      <div>
+        {% if show_archived %}
+          <a href="{{ url_for('customer.orders') }}" class="btn btn-outline btn-sm">← กลับไปยังประวัติหลัก</a>
+        {% else %}
+          <a href="{{ url_for('customer.orders', show_archived=1) }}" class="btn btn-outline btn-sm">📦 ดูคลังประวัติที่จัดเก็บ ({{ archived_count }})</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+  {% if orders %}
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>เลขที่คำสั่งซื้อ</th>
+            <th>วันที่สั่งซื้อ</th>
+            <th style="text-align: center;">จำนวนรายการ</th>
+            <th style="text-align: right;">ยอดรวม (บาท)</th>
+            <th style="text-align: center;">สถานะคำสั่งซื้อ</th>
+            <th style="text-align: center;">สถานะชำระเงิน</th>
+            <th style="text-align: center;">การดำเนินการ</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in orders %}
+            <tr>
+              <td>
+                <a href="{{ url_for('customer.order_detail', order_id=o.id) }}" style="font-weight: 700; color: var(--primary-red); text-decoration: none;">
+                  {{ o.order_number }}
+                </a>
+              </td>
+              <td style="color: var(--text-muted); font-size: 0.85rem;">
+                {{ o.created_at|thai_date }}
+              </td>
+              <td style="text-align: center; font-weight: 600;">
+                {{ o.item_count }} รายการ
+              </td>
+              <td style="text-align: right; font-weight: 700; color: var(--dark-bg);">
+                ฿{{ o.total_amount|currency }}
+              </td>
+              <td style="text-align: center;">
+                {{ status_badge(o.status) }}
+              </td>
+              <td style="text-align: center;">
+                {{ payment_badge(o.payment_status) }}
+              </td>
+              <td style="text-align: center;">
+                <div style="display: flex; gap: 0.4rem; justify-content: center;">
+                  <a href="{{ url_for('customer.order_detail', order_id=o.id) }}" class="btn btn-outline btn-sm">
+                    รายละเอียด
+                  </a>
+                  {% if o.payment_status == 'approved' %}
+                    <a href="{{ url_for('customer.download_receipt', order_id=o.id) }}" class="btn btn-primary btn-sm" title="ดาวน์โหลดใบเสร็จ PDF">
+                      PDF ใบเสร็จ
+                    </a>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div style="background: white; padding: 4rem 2rem; border-radius: var(--radius-md); text-align: center; border: 1px solid var(--border-light);">
+      <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--dark-bg);">คุณยังไม่มีประวัติการสั่งซื้อ</h3>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem;">เลือกรถจักรยานยนต์ที่คุณชื่นชอบแล้วทำรายการสั่งซื้อได้ทันที</p>
+      <a href="{{ url_for('shop.products') }}" class="btn btn-primary">ดูรถมอเตอร์ไซค์ทั้งหมด</a>
+    </div>
+  {% endif %}
+{% endblock %}

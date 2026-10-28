@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141416" />
+      <stop offset="100%" stop-color="#1f2026" />
+    </linearGradient>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#003566" />
+      <stop offset="100%" stop-color="#0077b6" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="400" rx="16" fill="url(#bgGrad)"/>
+  <circle cx="500" cy="110" r="160" fill="#003566" opacity="0.08"/>
+  <circle cx="100" cy="300" r="130" fill="#0077b6" opacity="0.05"/>
+
+  <!-- Top Brand Tag -->
+  <path d="M 0 0 L 220 0 L 180 54 L 0 54 Z" fill="url(#brandGrad)" />
+  <text x="32" y="35" font-family="'Prompt', 'Segoe UI', sans-serif" font-size="22" font-weight="900" fill="#ffffff" letter-spacing="1.5">YAMAHA</text>
+
+  <!-- Status badge -->
+  
+
+  <!-- Motorcycle Chassis Graphic -->
+  <g transform="translate(75, 80)" filter="url(#shadow)">
+    
+        <!-- Wheels with Wide Rim -->
+        <circle cx="85" cy="180" r="52" fill="none" stroke="#1f2024" stroke-width="16"/>
+        <circle cx="85" cy="180" r="42" fill="none" stroke="#0077b6" stroke-width="4" opacity="0.8"/>
+        <circle cx="85" cy="180" r="20" fill="#111" stroke="#666" stroke-width="4"/>
+        <circle cx="365" cy="180" r="52" fill="none" stroke="#1f2024" stroke-width="16"/>
+        <circle cx="365" cy="180" r="42" fill="none" stroke="#0077b6" stroke-width="4" opacity="0.8"/>
+        <circle cx="365" cy="180" r="20" fill="#111" stroke="#666" stroke-width="4"/>
+        <!-- Racing Deltabox Frame & Full Fairing -->
+        <polygon points="100,140 180,130 250,90 320,80 375,115 340,170 230,170 160,165" fill="#003566"/>
+        <!-- Lower Fairing Belly Pan -->
+        <polygon points="180,165 310,165 330,150 200,150" fill="#001233"/>
+        <!-- Windscreen & Clip-on Handlebars -->
+        <polygon points="310,80 340,45 365,58 340,95" fill="rgba(255,255,255,0.4)" stroke="#aaa" stroke-width="1.5"/>
+        <line x1="320" y1="85" x2="335" y2="65" stroke="#ccc" stroke-width="6"/>
+        <!-- Split Headlight -->
+        <polygon points="345,95 375,110 360,118" fill="#ffffff"/>
+        <!-- Racing Upward Seat Tail -->
+        <polygon points="90,140 150,130 190,135 150,150" fill="#111" stroke="#444" stroke-width="1.5"/>
+        <!-- Sport Exhaust -->
+        <polygon points="90,170 170,150 175,165 100,182" fill="#555" stroke="#777" stroke-width="1.5"/>
+        
+  </g>
+
+  <!-- Bottom Info Container -->
+  <rect x="24" y="300" width="552" height="76" rx="12" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1"/>
+
+  <!-- Model Title & Specs -->
+  <text x="44" y="333" font-family="'Prompt', 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#ffffff">R15</text>
+  <text x="44" y="357" font-family="'Prompt', 'Segoe UI', sans-serif" font-size="13" fill="#9999a5">ประเภท: สปอร์ต/มินิ | พิกัด ≤ 160 cc (2024)</text>
+
+  <!-- CC Badge -->
+  <rect x="456" y="316" width="100" height="42" rx="8" fill="#003566"/>
+  <text x="506" y="343" font-family="'Prompt', 'Segoe UI', sans-serif" font-size="17" font-weight="800" fill="#ffffff" text-anchor="middle">155 cc</text>
+</svg>

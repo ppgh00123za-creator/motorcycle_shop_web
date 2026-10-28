@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141416" />
+      <stop offset="100%" stop-color="#1f2026" />
+    </linearGradient>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d90429" />
+      <stop offset="100%" stop-color="#ef233c" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="600" height="400" rx="16" fill="url(#bgGrad)"/>
+  <circle cx="500" cy="110" r="160" fill="#d90429" opacity="0.08"/>
+  <circle cx="100" cy="300" r="130" fill="#ef233c" opacity="0.05"/>
+
+  <!-- Top Brand Tag -->
+  <path d="M 0 0 L 220 0 L 180 54 L 0 54 Z" fill="url(#brandGrad)" />
+  <text x="32" y="35" font-family="'Prompt', 'Segoe UI', sans-serif" font-size="22" font-weight="900" fill="#ffffff" letter-spacing="1.5">HONDA</text>
+
+  <!-- Status badge -->
+  
+
+  <!-- Motorcycle Chassis Graphic -->
+  <g transform="translate(75, 80)" filter="url(#shadow)">
+    
+        <!-- Wheels -->
+        <circle cx="85" cy="182" r="50" fill="none" stroke="#222" stroke-width="16"/>
+        <circle cx="85" cy="182" r="40" fill="none" stroke="#ef233c" stroke-width="3" opacity="0.6"/>
+        <circle cx="85" cy="182" r="18" fill="#111" stroke="#555" stroke-width="4"/>
+        <circle cx="365" cy="182" r="50" fill="none" stroke="#222" stroke-width="16"/>
+        <circle cx="365" cy="182" r="40" fill="none" stroke="#ef233c" stroke-width="3" opacity="0.6"/>
+        <circle cx="365" cy="182" r="18" fill="#111" stroke="#555" stroke-width="4"/>
+        <!-- Angular Sharp Body (Click / Aerox V-Shape) -->
+        <polygon points="120,150 200,125 280,125 350,95 375,130 330,165 240,165 170,160" fill="#2b2d42"/>
+        <polygon points="190,125 270,125 340,105 320,135 220,145" fill="#d90429"/>
+        <!-- Sharp V-Headlight -->
+        <polygon points="345,100 375,115 355,130" fill="#ffffff"/>
+        <!-- Sharp Seat -->
+        <path d="M 130 130 C 165 120, 205 120, 240 130 L 235 145 L 135 140 Z" fill="#1a1a1c" stroke="#444" stroke-width="2"/>
+        <!-- Upswept Exhaust -->
+        <polygon points="75,175 160,155 165,170 85,185" fill="#444" stroke="#666" stroke-width="1"/>
+        
+  </g>
+
+  <!-- Bottom Info Container -->
+  <rect x="24" y="300" width="552" height="76" rx="12" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1"/>
+
+  <!-- Model Title & Specs -->
+  <text x="44" y="333" font-family="'Prompt', 'Segoe UI', sans-serif" font-size="20" font-weight="700" fill="#ffffff">Click 125i</text>
+  <text x="44" y="357" font-family="'Prompt', 'Segoe UI', sans-serif" font-size="13" fill="#9999a5">ประเภท: ออโตเมติก | พิกัด ≤ 160 cc (2024)</text>
+
+  <!-- CC Badge -->
+  <rect x="456" y="316" width="100" height="42" rx="8" fill="#d90429"/>
+  <text x="506" y="343" font-family="'Prompt', 'Segoe UI', sans-serif" font-size="17" font-weight="800" fill="#ffffff" text-anchor="middle">124 cc</text>
+</svg>

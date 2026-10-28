@@ -1,0 +1,102 @@
+{# ============================================================
+   templates/macros.html
+   คอมโพเนนต์ Jinja2 แบบนำกลับมาใช้ซ้ำ (Reusable UI Macros)
+   ช่วยลดโค้ดซ้ำซ้อน (DRY) ในการแสดงผลการ์ดสินค้า และป้ายสถานะ
+   ============================================================ #}
+
+{% macro product_card(product, show_cart=True) %}
+<div class="product-card">
+  <a href="{{ url_for('shop.product_detail', product_id=product.id) }}" class="card-image-wrap">
+    <img src="{{ product.image_url|bike_img }}" 
+         alt="{{ product.model }}" 
+         loading="lazy">
+    
+    {% if product.status == 'available' %}
+      {% if product.stock < 3 %}
+        <span class="badge-status badge-low-stock">เหลือ {{ product.stock }} คัน</span>
+      {% else %}
+        <span class="badge-status badge-available">พร้อมส่ง</span>
+      {% endif %}
+    {% elif product.status == 'out_of_stock' %}
+      <span class="badge-status badge-out-of-stock">หมดสต็อก</span>
+    {% else %}
+      <span class="badge-status badge-discontinued">แค็ตตาล็อก</span>
+    {% endif %}
+  </a>
+
+  <div class="card-body">
+    <div class="card-meta">
+      <span class="brand-pill">{{ product.brand }}</span>
+      <span class="cc-pill">{{ product.engine_cc }} ซีซี</span>
+    </div>
+
+    <h3 class="card-title">
+      <a href="{{ url_for('shop.product_detail', product_id=product.id) }}">{{ product.model }}</a>
+    </h3>
+    <p class="card-category">{{ product.category }} &bull; รหัส: {{ product.code }}</p>
+
+    <div class="card-price-row">
+      <span class="price-label">ราคา</span>
+      <span class="price-value">฿{{ product.price|currency }}</span>
+    </div>
+
+    <div class="card-actions">
+      <a href="{{ url_for('shop.product_detail', product_id=product.id) }}" class="btn btn-outline btn-sm">
+        ดูสเปกรถ
+      </a>
+
+      {% if show_cart %}
+        {% if product.status == 'available' and product.stock > 0 %}
+          <form action="{{ url_for('shop.add_to_cart') }}" method="POST" style="width: 100%;">
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+            <input type="hidden" name="quantity" value="1">
+            <button type="submit" class="btn btn-primary btn-sm" style="width: 100%;">
+              ใส่ตะกร้า
+            </button>
+          </form>
+        {% else %}
+          <button class="btn btn-outline btn-sm" disabled>
+            {% if product.status == 'discontinued' %}แค็ตตาล็อก{% else %}หมดชั่วคราว{% endif %}
+          </button>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
+
+{% macro status_badge(status, size='normal') %}
+{% set font_size = 'font-size: 0.82rem;' if size == 'small' else 'font-size: 0.9rem;' %}
+{% if status == 'รอชำระเงิน' %}
+  <span class="badge-status badge-low-stock" style="position: static; {{ font_size }}">รอชำระเงิน</span>
+{% elif status == 'รอตรวจสอบการชำระเงิน' %}
+  <span class="badge-status" style="position: static; background-color: #2563eb; {{ font_size }}">รอตรวจสอบสลิป</span>
+{% elif status == 'ชำระเงินแล้ว' %}
+  <span class="badge-status badge-available" style="position: static; {{ font_size }}">ชำระเงินแล้ว</span>
+{% elif status == 'กำลังจัดเตรียมสินค้า' %}
+  <span class="badge-status" style="position: static; background-color: #8b5cf6; {{ font_size }}">เตรียมสินค้า</span>
+{% elif status == 'จัดส่งแล้ว' %}
+  <span class="badge-status" style="position: static; background-color: #059669; {{ font_size }}">จัดส่งเรียบร้อย</span>
+{% elif status == 'ยกเลิก' %}
+  <span class="badge-status badge-discontinued" style="position: static; {{ font_size }}">ยกเลิก</span>
+{% else %}
+  <span class="badge-status badge-discontinued" style="position: static; {{ font_size }}">{{ status }}</span>
+{% endif %}
+{% endmacro %}
+
+
+{% macro payment_badge(status, reject_reason=None) %}
+{% if status == 'approved' %}
+  <span style="color: #059669; font-weight: 700; font-size: 0.95rem;">✓ อนุมัติแล้ว</span>
+{% elif status == 'pending' %}
+  <span style="color: #2563eb; font-weight: 600; font-size: 0.95rem;">รอตรวจสอบ</span>
+{% elif status == 'rejected' %}
+  <span style="color: #dc2626; font-weight: 700; font-size: 0.95rem;">ปฏิเสธสลิป</span>
+  {% if reject_reason %}
+    <div style="font-size: 0.82rem; color: #dc2626; margin-top: 0.2rem;">{{ reject_reason }}</div>
+  {% endif %}
+{% else %}
+  <span style="color: var(--text-muted); font-size: 0.95rem;">ยังไม่แนบสลิป</span>
+{% endif %}
+{% endmacro %}

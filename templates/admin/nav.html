@@ -1,0 +1,55 @@
+{# ============================================================
+   templates/admin/nav.html
+   แถบเมนูนำทางของผู้ดูแลระบบ (Admin Navigation Bar)
+   สไตล์ Honda Thailand: เรียบ สะอาด ทันสมัย สปอร์ต (ขาว เทา แดง)
+   ============================================================ #}
+<div class="admin-top-subnav" style="background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 0.75rem 1.25rem; margin-bottom: 1.75rem; display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+  <div style="display: flex; align-items: center; gap: 0.85rem;">
+    <a href="{{ url_for('admin.dashboard') }}" style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none;">
+      <img src="{{ shop_config.logo_url }}" alt="Logo" style="width: 42px; height: 42px; min-width: 42px; border-radius: 50%; object-fit: cover; border: 2px solid #da291c;">
+      <div>
+        <div style="font-weight: 800; color: #111827; font-size: 1.05rem; line-height: 1.3;">
+          160 <span style="color: #da291c;">ธีระ สายซิ่ง</span>
+          <span style="font-size: 0.8rem; background: #fee2e2; color: #da291c; padding: 2px 7px; border-radius: 4px; font-weight: 700; margin-left: 0.35rem; letter-spacing: 0.5px;">ADMIN</span>
+        </div>
+        <div style="font-size: 0.85rem; color: #6b7280; font-weight: 500; margin-top: 2px;">ระบบบริหารจัดการร้าน</div>
+      </div>
+    </a>
+  </div>
+  
+  <div style="display: flex; gap: 0.35rem; flex-wrap: wrap; align-items: center;">
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-sm {% if request.endpoint == 'admin.dashboard' %}btn-primary{% else %}btn-outline{% endif %}">
+      หน้าหลัก
+    </a>
+    <a href="{{ url_for('admin.products') }}" class="btn btn-sm {% if request.endpoint in ['admin.products', 'admin.product_add', 'admin.product_edit'] %}btn-primary{% else %}btn-outline{% endif %}">
+      จัดการสินค้า
+    </a>
+    <a href="{{ url_for('admin.stock_history') }}" class="btn btn-sm {% if request.endpoint == 'admin.stock_history' %}btn-primary{% else %}btn-outline{% endif %}">
+      ประวัติสต็อก
+    </a>
+    <a href="{{ url_for('admin.orders') }}" class="btn btn-sm {% if request.endpoint in ['admin.orders', 'admin.order_detail'] %}btn-primary{% else %}btn-outline{% endif %}">
+      คำสั่งซื้อ
+    </a>
+    <a href="{{ url_for('admin.customers') }}" class="btn btn-sm {% if request.endpoint in ['admin.customers', 'admin.customer_detail', 'admin.customer_ban'] %}btn-primary{% else %}btn-outline{% endif %}">
+      ลูกค้า
+    </a>
+    <a href="{{ url_for('admin.tickets') }}" class="btn btn-sm {% if request.endpoint in ['admin.tickets', 'admin.ticket_detail'] %}btn-primary{% else %}btn-outline{% endif %}">
+      แจ้งปัญหา
+    </a>
+    <a href="{{ url_for('admin.payments') }}" class="btn btn-sm {% if request.endpoint == 'admin.payments' %}btn-primary{% else %}btn-outline{% endif %}">
+      การชำระเงิน
+    </a>
+    <a href="{{ url_for('admin.reports') }}" class="btn btn-sm {% if request.endpoint == 'admin.reports' %}btn-primary{% else %}btn-outline{% endif %}">
+      รายงาน
+    </a>
+    <a href="{{ url_for('admin.settings') }}" class="btn btn-sm {% if request.endpoint == 'admin.settings' %}btn-primary{% else %}btn-outline{% endif %}">
+      ตั้งค่าเว็บไซต์
+    </a>
+    <a href="{{ url_for('shop.home') }}" class="btn btn-sm btn-outline" target="_blank" style="margin-left: 0.25rem;">
+      ดูหน้าร้าน
+    </a>
+    <a href="{{ url_for('auth.logout') }}" class="btn btn-sm btn-outline" style="color: #da291c; border-color: #fca5a5;">
+      ออกจากระบบ
+    </a>
+  </div>
+</div>

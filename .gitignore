@@ -1,0 +1,35 @@
+# Python Virtual Environment
+.venv/
+venv/
+env/
+ENV/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Flask instance folder (contains local SQLite DB)
+# Uncomment the line below if you don't want to push the database:
+# instance/
+
+# Web page archives and overly long cache files
+*_files/
+*.download
+static/รูปภาพ/พื้นหลัง/*_files/
+static/รูปภาพ/พื้นหลัง/อธิบาย*
+
+# Environment Variables
+.env
+.env.local
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.swp

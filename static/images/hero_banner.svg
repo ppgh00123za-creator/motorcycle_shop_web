@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 480" width="100%" height="100%">
+  <defs>
+    <linearGradient id="heroBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0c" />
+      <stop offset="50%" stop-color="#141418" />
+      <stop offset="100%" stop-color="#1d0a0e" />
+    </linearGradient>
+    <linearGradient id="redAccent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d90429" />
+      <stop offset="100%" stop-color="#ef233c" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1400" height="480" fill="url(#heroBg)"/>
+  
+  <!-- Red decorative angular stripes -->
+  <polygon points="900,0 1020,0 760,480 640,480" fill="url(#redAccent)" opacity="0.2"/>
+  <polygon points="1050,0 1200,0 920,480 770,480" fill="url(#redAccent)" opacity="0.4"/>
+  <polygon points="1230,0 1400,0 1100,480 930,480" fill="url(#redAccent)" opacity="0.8"/>
+  
+  <!-- Glow circle -->
+  <circle cx="1150" cy="240" r="220" fill="#d90429" opacity="0.15"/>
+
+  <!-- Motorcycle Silhouette Outline in Banner -->
+  <g transform="translate(850, 100)" opacity="0.9">
+    <circle cx="100" cy="220" r="70" fill="none" stroke="#ffffff" stroke-width="12" opacity="0.3"/>
+    <circle cx="420" cy="220" r="70" fill="none" stroke="#ffffff" stroke-width="12" opacity="0.3"/>
+    <path d="M 100 220 L 220 180 L 300 110 L 400 90 L 420 220" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" opacity="0.5"/>
+    <path d="M 200 150 C 240 80, 320 80, 360 110 L 400 140 L 290 170 Z" fill="url(#redAccent)" opacity="0.8"/>
+  </g>
+
+  <!-- Typography -->
+  <rect x="100" y="90" width="220" height="36" rx="6" fill="url(#redAccent)"/>
+  <text x="115" y="114" font-family="'Prompt', sans-serif" font-size="14" font-weight="700" fill="#ffffff" letter-spacing="2">ศูนย์รวมรถจักรยานยนต์</text>
+  
+  <text x="100" y="185" font-family="'Prompt', sans-serif" font-size="52" font-weight="900" fill="#ffffff">
+    MOTO SPORT 160 SHOP
+  </text>
+  <text x="100" y="240" font-family="'Prompt', sans-serif" font-size="28" font-weight="600" fill="#ef233c">
+    มาตรฐานความแรง พิกัดเครื่องยนต์ไม่เกิน 160 ซีซี
+  </text>
+  <text x="100" y="285" font-family="'Prompt', sans-serif" font-size="17" fill="#cccccc">
+    พร้อมส่งมอบรถครอบครัว ออโตเมติก และสปอร์ตไบค์ชั้นนำ รับประกันคุณภาพ พร้อมบริการหลังการขาย
+  </text>
+
+  <!-- Feature Pills -->
+  <g transform="translate(100, 340)">
+    <rect x="0" y="0" width="160" height="42" rx="21" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+    <text x="80" y="26" font-family="'Prompt', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">✓ รถแท้ 100%</text>
+
+    <rect x="180" y="0" width="180" height="42" rx="21" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+    <text x="270" y="26" font-family="'Prompt', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">✓ ตรวจเช็กพร้อมขับ</text>
+
+    <rect x="380" y="0" width="170" height="42" rx="21" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+    <text x="465" y="26" font-family="'Prompt', sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">✓ ออกใบเสร็จทันที</text>
+  </g>
+</svg>

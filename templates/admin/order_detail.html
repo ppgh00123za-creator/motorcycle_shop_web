@@ -1,0 +1,275 @@
+{% extends 'admin/base_admin.html' %}
+{% from 'macros.html' import status_badge, payment_badge %}
+
+{% block title %}คำสั่งซื้อ {{ order.order_number }} - {{ shop_config.name }}{% endblock %}
+
+{% block page_title %}รายละเอียดคำสั่งซื้อ: {{ order.order_number }}{% endblock %}
+{% block page_desc %}สร้างเมื่อ {{ order.created_at|thai_date }} • อัปเดตล่าสุด {{ order.updated_at|thai_date }}{% endblock %}
+
+{% block admin_content %}
+<div class="admin-section-header">
+  <div>
+    <a href="{{ url_for('admin.orders') }}" class="admin-btn admin-btn-outline admin-btn-sm" style="margin-bottom: 0.5rem;">
+      &larr; กลับหน้ารวมคำสั่งซื้อ
+    </a>
+    <h2 class="section-header-title">
+      คำสั่งซื้อเลขที่: <span style="color: var(--admin-red);">{{ order.order_number }}</span>
+    </h2>
+  </div>
+
+  <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+    {% if payment and payment.status == 'approved' %}
+      <a href="{{ url_for('customer.download_receipt', order_id=order.id) }}" class="admin-btn admin-btn-primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="12" y1="18" x2="12" y2="12"></line>
+          <line x1="9" y1="15" x2="15" y2="15"></line>
+        </svg>
+        ดาวน์โหลดใบเสร็จ PDF
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="analytics-grid-two">
+  <!-- ฝั่งซ้าย: ข้อมูลสินค้าและลูกค้า -->
+  <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+    <!-- รายการสินค้า -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3 class="admin-card-title">รายการสินค้าในคำสั่งซื้อ</h3>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>รายการรถ</th>
+              <th class="text-right">ราคาต่อคัน</th>
+              <th class="text-center">จำนวน</th>
+              <th class="text-right">รวม (บาท)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for it in items %}
+              <tr>
+                <td>
+                  <strong style="color: var(--admin-gray-900);">{{ it.product_name }}</strong>
+                  <div style="font-size: 0.85rem; color: var(--admin-gray-500);">รหัส: {{ it.product_code or '-' }}</div>
+                </td>
+                <td class="text-right price-text">฿{{ it.price|currency }}</td>
+                <td class="text-center" style="font-weight: 700;">{{ it.quantity }} คัน</td>
+                <td class="text-right price-text red">฿{{ it.subtotal|currency }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- สรุปยอดเงิน -->
+      <div style="padding-top: 1rem; border-top: 1px solid var(--admin-gray-200); margin-top: 1rem; font-size: 0.9rem;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem; color: var(--admin-gray-600);">
+          <span>ราคาสินค้าก่อนภาษี:</span>
+          <strong style="color: var(--admin-gray-900);">฿{{ ((order.subtotal or order.total_amount) - (order.vat_amount or 0))|currency }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem; color: var(--admin-gray-600);">
+          <span>ภาษีมูลค่าเพิ่ม (VAT {{ ((order.vat_rate or 0.07) * 100)|int }}%):</span>
+          <strong style="color: var(--admin-gray-900);">฿{{ (order.vat_amount or 0)|currency }}</strong>
+        </div>
+        {% if order.discount and order.discount > 0 %}
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem; color: var(--admin-gray-600);">
+            <span>ส่วนลด:</span>
+            <strong style="color: #dc2626;">-฿{{ order.discount|currency }}</strong>
+          </div>
+        {% endif %}
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: var(--admin-gray-600);">
+          <span>ค่าบริการจัดส่ง:</span>
+          <strong style="color: var(--admin-gray-900);">฿{{ (order.shipping_fee or 0)|currency }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding-top: 0.65rem; border-top: 1px dashed var(--admin-gray-300); font-size: 1.15rem; font-weight: 800;">
+          <span style="color: var(--admin-gray-900);">ยอดรวมสุทธิทั้งสิ้น:</span>
+          <span class="price-text red">฿{{ order.total_amount|currency }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ข้อมูลลูกค้า -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3 class="admin-card-title">ข้อมูลลูกค้าและรูปแบบการรับสินค้า</h3>
+      </div>
+      
+      <table class="admin-table">
+        <tbody>
+          <tr>
+            <th style="width: 140px;">ชื่อลูกค้า:</th>
+            <td>{{ order.customer_name }}</td>
+          </tr>
+          <tr>
+            <th>เบอร์โทรศัพท์:</th>
+            <td>{{ order.customer_phone }}</td>
+          </tr>
+          <tr>
+            <th>ที่อยู่จัดส่ง / รับรถ:</th>
+            <td>{{ order.customer_address }}</td>
+          </tr>
+          <tr>
+            <th>รูปแบบรับสินค้า:</th>
+            <td>
+              {% if order.shipping_method == 'pickup' %}
+                <span class="admin-badge badge-info">🏪 รับสินค้าที่หน้าร้าน</span>
+              {% else %}
+                <span class="admin-badge badge-purple">🚚 บริการจัดส่งถึงบ้าน</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% if order.delivery_notes or order.notes %}
+            <tr>
+              <th>หมายเหตุลูกค้า:</th>
+              <td style="color: var(--admin-gray-600); font-style: italic;">{{ order.delivery_notes or order.notes }}</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- บันทึกประวัติสถานะ (Order Audit Logs) -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3 class="admin-card-title">ประวัติการเปลี่ยนสถานะคำสั่งซื้อ (Audit Log)</h3>
+      </div>
+
+      {% if status_history %}
+        <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+          {% for log in status_history %}
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.75rem; background: var(--admin-gray-50); border: 1px solid var(--admin-gray-200); border-radius: 4px; font-size: 0.95rem;">
+              <div>
+                <span style="font-weight: 700; color: var(--admin-gray-900);">{{ log.status }}</span>
+                {% if log.notes or log.note %}
+                  <div style="font-size: 0.88rem; color: var(--admin-gray-600); margin-top: 2px;">{{ log.notes or log.note }}</div>
+                {% endif %}
+              </div>
+              <div class="text-right">
+                <div style="font-size: 0.85rem; color: var(--admin-gray-500);">{{ log.created_at|thai_date }}</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--admin-gray-700);">โดย: {{ log.changed_by or log.changed_by_name or 'ระบบ' }}</div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p style="color: var(--admin-gray-500); font-size: 0.85rem;">ยังไม่มีบันทึกประวัติสถานะ</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ฝั่งขวา: การตรวจสอบชำระเงิน และการเปลี่ยนสถานะ -->
+  <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+    <!-- ตรวจสอบการชำระเงิน -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3 class="admin-card-title">การชำระเงินและสลิปโอนเงิน</h3>
+        {{ payment_badge(order.payment_status) }}
+      </div>
+
+      {% if payment %}
+        <div style="margin-bottom: 1rem;">
+          <div style="margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--admin-gray-700);">
+            <strong>ยอดเงินที่แจ้ง:</strong> ฿{{ payment.amount|currency }} | <strong>วันที่แนบ:</strong> {{ payment.payment_date|thai_date }}
+          </div>
+          {% if payment.slip_image %}
+            <div style="text-align: center; background: #222; border-radius: var(--admin-radius-sm); padding: 0.75rem; margin-bottom: 1rem;">
+              <a href="{{ url_for('static', filename='ไฟล์ที่ผู้ใช้อัปโหลด/slips/' + payment.slip_image) }}" target="_blank" title="คลิกเพื่อดูภาพขยาย">
+                <img src="{{ url_for('static', filename='ไฟล์ที่ผู้ใช้อัปโหลด/slips/' + payment.slip_image) }}" alt="สลิปโอนเงิน" style="max-height: 280px; max-width: 100%; object-fit: contain;">
+              </a>
+            </div>
+          {% endif %}
+
+          {% if payment.status == 'pending' %}
+            <form action="{{ url_for('admin.payment_verify', order_id=order.id) }}" method="POST" style="display: flex; flex-direction: column; gap: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--admin-gray-200);">
+              <div class="admin-form-group">
+                <label for="reject_reason" class="admin-form-label">เหตุผลที่ปฏิเสธ (กรณีไม่อนุมัติ):</label>
+                <input type="text" name="reject_reason" id="reject_reason" class="admin-form-control" placeholder="เช่น ยอดเงินไม่ตรง, สลิปซ้ำ">
+              </div>
+              <div style="display: flex; gap: 0.5rem;">
+                <button type="submit" name="action" value="approve" class="admin-btn admin-btn-success" style="flex: 1;" onclick="return confirm('ยืนยันอนุมัติการชำระเงินนี้?');">
+                  ✓ อนุมัติการชำระเงิน
+                </button>
+                <button type="submit" name="action" value="reject" class="admin-btn admin-btn-danger" style="flex: 1;" onclick="return confirm('ยืนยันปฏิเสธสลิปการชำระเงินนี้?');">
+                  ✕ ปฏิเสธสลิป
+                </button>
+              </div>
+            </form>
+          {% elif payment.status == 'approved' %}
+            <div class="admin-flash-pill flash-success">
+              ✓ สลิปได้รับการอนุมัติแล้ว (ตรวจโดย {{ payment.verified_by_name or 'แอดมิน' }})
+            </div>
+          {% elif payment.status == 'rejected' %}
+            <div class="admin-flash-pill flash-danger">
+              ✕ สลิปถูกปฏิเสธ: {{ payment.reject_reason or 'ไม่ระบุเหตุผล' }}
+            </div>
+          {% endif %}
+        </div>
+      {% else %}
+        <div style="padding: 1.5rem; text-align: center; color: var(--admin-gray-500); font-size: 0.88rem;">
+          ลูกค้ารายนี้ยังไม่ได้แนบหลักฐานสลิปการโอนเงิน
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- ฟอร์มเปลี่ยนสถานะคำสั่งซื้อ -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3 class="admin-card-title">เปลี่ยนสถานะคำสั่งซื้อ</h3>
+        {{ status_badge(order.status) }}
+      </div>
+
+      <form action="{{ url_for('admin.order_update_status', order_id=order.id) }}" method="POST" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="admin-form-group">
+          <label for="status" class="admin-form-label">สถานะใหม่ <span class="required">*</span></label>
+          <select name="status" id="status" class="admin-form-control" required>
+            <option value="รอชำระเงิน" {% if order.status == 'รอชำระเงิน' %}selected{% endif %}>รอชำระเงิน</option>
+            <option value="รอตรวจสอบการชำระเงิน" {% if order.status == 'รอตรวจสอบการชำระเงิน' %}selected{% endif %}>รอตรวจสอบการชำระเงิน</option>
+            <option value="ชำระเงินแล้ว" {% if order.status == 'ชำระเงินแล้ว' %}selected{% endif %}>ชำระเงินแล้ว</option>
+            <option value="กำลังจัดเตรียมสินค้า" {% if order.status == 'กำลังจัดเตรียมสินค้า' %}selected{% endif %}>กำลังจัดเตรียมสินค้า</option>
+            <option value="จัดส่งแล้ว" {% if order.status == 'จัดส่งแล้ว' %}selected{% endif %}>จัดส่งแล้ว</option>
+            <option value="ยกเลิก" {% if order.status == 'ยกเลิก' %}selected{% endif %}>ยกเลิกคำสั่งซื้อ (คืนสต็อก)</option>
+          </select>
+        </div>
+
+        <div class="admin-form-group">
+          <label for="note" class="admin-form-label">หมายเหตุการเปลี่ยนสถานะ</label>
+          <input type="text" name="note" id="note" class="admin-form-control" placeholder="เช่น แจ้งลูกค้าเตรียมรับรถ, จัดส่งผ่าน Kerry...">
+        </div>
+
+        <button type="submit" class="admin-btn admin-btn-primary" onclick="return confirm('ยืนยันการเปลี่ยนสถานะคำสั่งซื้อ?');">
+          บันทึกการเปลี่ยนสถานะ
+        </button>
+      </form>
+    </div>
+
+    <!-- ข้อมูลการจัดส่ง / เลขพัสดุ -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3 class="admin-card-title">บันทึกข้อมูลการจัดส่ง</h3>
+      </div>
+
+      <form action="{{ url_for('admin.order_update_shipping', order_id=order.id) }}" method="POST" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="admin-form-group">
+          <label for="tracking_number" class="admin-form-label">เลขพัสดุ / หมายเลขติดตาม (Tracking Number)</label>
+          <input type="text" name="tracking_number" id="tracking_number" class="admin-form-control" value="{{ order.tracking_number or '' }}" placeholder="เช่น TH0123456789">
+        </div>
+
+        <div class="admin-form-group">
+          <label for="shipping_provider" class="admin-form-label">ผู้ให้บริการจัดส่ง</label>
+          <input type="text" name="shipping_provider" id="shipping_provider" class="admin-form-control" value="{{ order.shipping_provider or '' }}" placeholder="เช่น รถสไลด์ของร้าน, ขนส่งเอกชน">
+        </div>
+
+        <button type="submit" class="admin-btn admin-btn-outline">
+          บันทึกข้อมูลการจัดส่ง
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

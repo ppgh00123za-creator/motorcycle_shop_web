@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DFD & Context Diagram (มาตรฐานไทยสารบัญ 100%) - 160 ธีระ สายซิ่ง</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'TH Sarabun New';
+      src: local('TH Sarabun New'), local('THSarabunNew'), local('TH Sarabun PSK'), url('https://fonts.gstatic.com/s/sarabun/v13/DtVjJx26TKEr37c9aAFJn2QN.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'TH Sarabun New';
+      src: local('TH Sarabun New Bold'), local('THSarabunNew-Bold'), local('TH Sarabun PSK Bold'), url('https://fonts.gstatic.com/s/sarabun/v13/DtVhJx26TKEr37c9YBBLlGE6S9A.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    :root {
+      --font-sarabun: 'TH Sarabun New', 'THSarabunNew', 'TH Sarabun PSK', 'Sarabun', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-sarabun) !important;
+    }
+
+    body {
+      font-family: var(--font-sarabun) !important;
+      background-color: #f1f5f9;
+      color: #000000;
+      line-height: 1.4;
+      padding: 1.5rem 1rem;
+      font-size: 19px;
+    }
+
+    .container {
+      max-width: 1560px;
+      margin: 0 auto;
+    }
+
+    .header-bar {
+      background: #ffffff;
+      padding: 1.5rem 2rem;
+      border: 1px solid #cbd5e1;
+      margin-bottom: 1.5rem;
+      border-left: 6px solid #b91c1c;
+    }
+
+    .header-bar h1 {
+      font-size: 30px;
+      font-weight: 700;
+      color: #000000;
+      margin-bottom: 0.25rem;
+    }
+
+    .header-bar p {
+      font-size: 21px;
+      color: #334155;
+    }
+
+    .nav-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tab-btn {
+      padding: 0.6rem 1.25rem;
+      font-size: 19px;
+      font-weight: 700;
+      border: 1.5px solid #000000;
+      background: #ffffff;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tab-btn:hover {
+      background: #e2e8f0;
+    }
+
+    .tab-btn.active {
+      background: #000000;
+      color: #ffffff;
+      border-color: #000000;
+    }
+
+    .diagram-card {
+      background: #ffffff;
+      border: 1px solid #000000;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+
+    .diagram-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #000000;
+      margin-bottom: 0.5rem;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 0.5rem;
+    }
+
+    .diagram-desc {
+      font-size: 19px;
+      color: #475569;
+      margin-bottom: 1.25rem;
+    }
+
+    .legend-box {
+      background: #ffffff;
+      border: 1.5px solid #000000;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      align-items: center;
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .btn-print {
+      display: inline-block;
+      padding: 0.6rem 1.4rem;
+      background: #000000;
+      color: #ffffff;
+      border: none;
+      font-weight: 700;
+      font-size: 20px;
+      cursor: pointer;
+      margin-left: auto;
+    }
+
+    .btn-print:hover {
+      background: #334155;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+      .nav-tabs, .btn-print, .legend-box {
+        display: none !important;
+      }
+      .diagram-card {
+        border: none;
+        padding: 0.5rem 0;
+        page-break-after: always;
+      }
+    }
+
+    svg {
+      display: block;
+      margin: 0 auto;
+      background: #ffffff;
+    }
+
+    svg text, text, tspan {
+      font-family: var(--font-sarabun) !important;
+      user-select: none;
+    }
+
+    /* สไตล์ตัวอักษรบนเส้นทาง Flow: มี White Halo ป้องกันเส้นขีดทับ 100% */
+    .lbl {
+      font-size: 18px;
+      font-weight: 700;
+      fill: #000000;
+      paint-order: stroke fill;
+      stroke: #ffffff;
+      stroke-width: 6px;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+      font-size: 19px;
+    }
+
+    .data-table th, .data-table td {
+      border: 1px solid #000000;
+      padding: 0.65rem 0.9rem;
+      text-align: left;
+    }
+
+    .data-table th {
+      background-color: #f1f5f9;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header-bar">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h1>แผนภาพการไหลข้อมูล (Data Flow Diagram: DFD) — 160 ธีระ สายซิ่ง</h1>
+          <p>ฟอนต์ไทยสารบัญ (TH Sarabun New) • ขอบเหลี่ยมคมไม่มีเงา • เส้นทึบฉากไม่เอียง • แยกเส้นชัดเจนไม่ทับกัน 100%</p>
+        </div>
+        <button class="btn-print" onclick="window.print()">🖨️ พิมพ์เอกสาร / บันทึกเป็น PDF</button>
+      </div>
+    </div>
+
+    <!-- แถบอธิบายสัญลักษณ์ตามสเปกสไลด์เป๊ะๆ -->
+    <div class="legend-box">
+      <div class="legend-item">
+        <svg width="45" height="26" viewBox="0 0 45 26">
+          <rect x="0" y="0" width="45" height="26" fill="#fce7f3" stroke="#000" stroke-width="1.8" />
+        </svg>
+        <span>External Entity: ขอบเหลี่ยมคม ไม่มีเงา</span>
+      </div>
+      <div class="legend-item">
+        <svg width="45" height="26" viewBox="0 0 45 26">
+          <rect x="0" y="0" width="45" height="26" rx="8" fill="#ffffff" stroke="#000" stroke-width="1.8" />
+          <path d="M 0 8 A 8 8 0 0 1 8 0 L 37 0 A 8 8 0 0 1 45 8 L 45 10 L 0 10 Z" fill="#e0f2fe" />
+          <line x1="0" y1="10" x2="45" y2="10" stroke="#000" stroke-width="1.5" />
+        </svg>
+        <span>Process: สี่เหลี่ยมขอบมน มีหัวข้อหมายเลข</span>
+      </div>
+      <div class="legend-item">
+        <svg width="60" height="26" viewBox="0 0 60 26">
+          <polygon points="0,0 60,0 60,26 0,26" fill="#e0f2fe" />
+          <line x1="0" y1="0" x2="60" y2="0" stroke="#000" stroke-width="1.8" />
+          <line x1="0" y1="26" x2="60" y2="26" stroke="#000" stroke-width="1.8" />
+          <line x1="0" y1="0" x2="0" y2="26" stroke="#000" stroke-width="1.8" />
+          <line x1="20" y1="0" x2="20" y2="26" stroke="#000" stroke-width="1.8" />
+          <text x="10" y="18" font-size="13" font-weight="700" fill="#ef4444" text-anchor="middle">D1</text>
+        </svg>
+        <span>Data Store: ปลายขวาเปิด แบ่ง 2 ช่อง ข้อความสีแดง (ตามรูปเป๊ะๆ)</span>
+      </div>
+      <div class="legend-item">
+        <svg width="45" height="26" viewBox="0 0 45 26">
+          <line x1="0" y1="13" x2="38" y2="13" stroke="#000" stroke-width="2" />
+          <polygon points="34,9 42,13 34,17" fill="#000" />
+        </svg>
+        <span>Data Flow: เส้นทึบตั้งฉาก (ไม่เอียงทับตัวอักษร ไม่ขาด ไม่ประ แยกรางชัดเจน)</span>
+      </div>
+    </div>
+
+    <!-- แท็บเมนูสลับหน้า -->
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('tab-context')">1. Context Diagram</button>
+      <button class="tab-btn" onclick="switchTab('tab-dfd1')">2. DFD Level 1 (Diagram 0)</button>
+      <button class="tab-btn" onclick="switchTab('tab-dfd2-1')">3. DFD Level 2 (1.0 สมาชิก & สิทธิ์)</button>
+      <button class="tab-btn" onclick="switchTab('tab-dfd2-2')">4. DFD Level 2 (2.0 สินค้า & สต็อก 160cc)</button>
+      <button class="tab-btn" onclick="switchTab('tab-dfd2-3')">5. DFD Level 2 (3.0 คำสั่งซื้อ & ตัดสต็อก)</button>
+      <button class="tab-btn" onclick="switchTab('tab-dfd2-4')">6. DFD Level 2 (4.0 ชำระเงิน & ใบเสร็จ PDF)</button>
+      <button class="tab-btn" onclick="switchTab('tab-dfd2-5')">7. DFD Level 2 (5.0 สถานะคำสั่งซื้อ & คืนสต็อก)</button>
+      <button class="tab-btn" onclick="switchTab('tab-dfd2-6')">8. DFD Level 2 (6.0 แจ้งปัญหา Tickets)</button>
+      <button class="tab-btn" onclick="switchTab('tab-dictionary')">9. พจนานุกรมข้อมูล (Data Dictionary)</button>
+    </div>
+
+    <!-- ==========================================
+         1. CONTEXT DIAGRAM
+         ========================================== -->
+    <div id="tab-context" class="tab-content">
+      <div class="diagram-card">
+        <div class="diagram-title">Context Diagram (แผนภาพบริบท ระดับ 0)</div>
+        <div class="diagram-desc">โครงสร้างตรงตามหน้า 1 ของเอกสาร PDF เดิม: ลูกค้าอยู่ด้านบน, Process 0 อยู่ตรงกลาง, ผู้ดูแลระบบอยู่ด้านล่าง ข้อความและเส้นแยกออกจากกันอย่างสมบูรณ์ 100%</div>
+
+        <svg width="1520" height="940" viewBox="0 0 1520 940">
+          <defs>
+            <marker id="arrSolid" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill="#000000" />
+            </marker>
+          </defs>
+
+          <!-- External Entity: ลูกค้า (Customer) ด้านบน -->
+          <g transform="translate(580, 40)">
+            <rect x="0" y="0" width="360" height="85" fill="#fce7f3" stroke="#000000" stroke-width="2" />
+            <text x="180" y="38" font-size="24" font-weight="700" text-anchor="middle">ลูกค้า</text>
+            <text x="180" y="66" font-size="20" font-weight="700" text-anchor="middle">(Customer)</text>
+          </g>
+
+          <!-- Process 0: ระบบร้านขายมอเตอร์ไซค์ (ตรงกลาง) -->
+          <g transform="translate(440, 380)">
+            <rect x="0" y="0" width="640" height="135" rx="20" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 20 A 20 20 0 0 1 20 0 L 620 0 A 20 20 0 0 1 640 20 L 640 40 L 0 40 Z" fill="#e0f2fe" />
+            <line x1="0" y1="40" x2="640" y2="40" stroke="#000000" stroke-width="2" />
+            <text x="320" y="28" font-size="22" font-weight="700" text-anchor="middle">0</text>
+            <text x="320" y="82" font-size="26" font-weight="700" text-anchor="middle">ระบบร้านขายมอเตอร์ไซค์</text>
+            <text x="320" y="115" font-size="20" font-weight="700" text-anchor="middle" fill="#0369a1">(160 ธีระ สายซิ่ง พิกัดไม่เกิน 160 cc)</text>
+          </g>
+
+          <!-- External Entity: ผู้ดูแลระบบ (Admin) ด้านล่าง -->
+          <g transform="translate(580, 760)">
+            <rect x="0" y="0" width="400" height="85" fill="#dcfce7" stroke="#000000" stroke-width="2" />
+            <text x="200" y="38" font-size="24" font-weight="700" text-anchor="middle">ผู้ดูแลระบบ</text>
+            <text x="200" y="66" font-size="20" font-weight="700" text-anchor="middle">(Admin)</text>
+          </g>
+
+          <!-- FLOWS: ด้านบน -->
+          <!-- 1. Loop ซ้ายบน -->
+          <path d="M 580 82 L 180 82 L 180 425 L 440 425" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrSolid)" />
+          <text class="lbl" x="380" y="70" text-anchor="middle">คำขอค้นหารถ / ข้อมูลคำสั่งซื้อ</text>
+
+          <!-- 2. ดิ่งลง 1 (x=620) -->
+          <line x1="620" y1="125" x2="620" y2="380" stroke="#000000" stroke-width="2" marker-end="url(#arrSolid)" />
+          <text class="lbl" x="608" y="210" text-anchor="end">ข้อมูลสมาชิก / เข้าสู่ระบบ</text>
+
+          <!-- 3. ดิ่งลง 2 (x=740) -->
+          <line x1="740" y1="125" x2="740" y2="380" stroke="#000000" stroke-width="2" marker-end="url(#arrSolid)" />
+          <text class="lbl" x="752" y="295" text-anchor="start">ข้อมูลการชำระเงิน</text>
+          <text class="lbl" x="752" y="318" text-anchor="start">/ สลิปโอนเงิน</text>
+
+          <!-- 4. ดิ่งขึ้น (x=900) -->
+          <line x1="900" y1="380" x2="900" y2="125" stroke="#000000" stroke-width="2" marker-end="url(#arrSolid)" />
+          <text class="lbl" x="912" y="245" text-anchor="start">ผลการเข้าสู่ระบบ,</text>
+          <text class="lbl" x="912" y="270" text-anchor="start">รายละเอียดสินค้า / ผลการสั่งซื้อ</text>
+
+          <!-- 5. Loop ขวาบน -->
+          <path d="M 1080 425 L 1340 425 L 1340 82 L 940 82" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrSolid)" />
+          <text class="lbl" x="1140" y="70" text-anchor="middle">สถานะการชำระเงิน / ใบเสร็จ PDF</text>
+
+          <!-- FLOWS: ด้านล่าง -->
+          <!-- 6. Loop ซ้ายล่าง -->
+          <path d="M 440 465 L 220 465 L 220 805 L 580 805" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrSolid)" />
+          <text class="lbl" x="400" y="825" text-anchor="middle">ผลการจัดการข้อมูลคำสั่งซื้อ</text>
+
+          <!-- 7. หักลง 1 (ดิ่งลงซ้าย x=520 -> x=610) -->
+          <path d="M 520 515 L 520 640 L 610 640 L 610 760" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrSolid)" />
+          <text class="lbl" x="510" y="600" text-anchor="end">ข้อมูลสลิป / รายละเอียดคำสั่งซื้อ</text>
+
+          <!-- 8. ดิ่งลงตรง (x=690) -->
+          <line x1="690" y1="515" x2="690" y2="760" stroke="#000000" stroke-width="2" marker-end="url(#arrSolid)" />
+          <text class="lbl" x="702" y="700" text-anchor="start">รายงานผลสรุป</text>
+
+          <!-- 9. ดิ่งขึ้น 1 (x=810) -->
+          <line x1="810" y1="760" x2="810" y2="515" stroke="#000000" stroke-width="2" marker-end="url(#arrSolid)" />
+          <text class="lbl" x="822" y="635" text-anchor="start">ข้อมูลสินค้า</text>
+          <text class="lbl" x="822" y="658" text-anchor="start">/ จัดการสต็อก</text>
+
+          <!-- 10. ดิ่งขึ้น 2 (x=940) -->
+          <line x1="940" y1="760" x2="940" y2="515" stroke="#000000" stroke-width="2" marker-end="url(#arrSolid)" />
+          <text class="lbl" x="952" y="705" text-anchor="start">การปรับราคา</text>
+
+          <!-- 11. หักขึ้น 3 (x=980 -> x=1050) -->
+          <path d="M 980 785 L 1050 785 L 1050 515" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrSolid)" />
+          <text class="lbl" x="1062" y="670" text-anchor="start">การปรับสถานะคำสั่งซื้อ</text>
+
+          <!-- 12. Loop ขวาล่าง -->
+          <path d="M 980 825 L 1320 825 L 1320 465 L 1080 465" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrSolid)" />
+          <text class="lbl" x="1330" y="650" text-anchor="start">ผลตรวจสอบสลิป /</text>
+          <text class="lbl" x="1330" y="675" text-anchor="start">ยืนยันหรือปฏิเสธการชำระเงิน</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         2. DFD LEVEL 1 (DIAGRAM 0)
+         ========================================== -->
+    <div id="tab-dfd1" class="tab-content" style="display: none;">
+      <div class="diagram-card">
+        <div class="diagram-title">DFD Level 1 (Diagram 0: แผนภาพระดับ 1)</div>
+        <div class="diagram-desc">โครงสร้างกระบวนการเรียงแถวตามหน้า 2 ของเอกสาร PDF เดิม: เส้นทุกเส้นเป็นแนวนอนและแนวตั้งฉาก 100% ตัวหนังสืออยู่เหนือหรือใต้เส้นอย่างชัดเจน ไม่มีเส้นเอียงทับตัวหนังสือ</div>
+
+        <svg width="1520" height="2250" viewBox="0 0 1520 2250">
+          <defs>
+            <marker id="arrL1" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill="#000000" />
+            </marker>
+          </defs>
+
+          <!-- ==================== PROCESS 1.0 ROW ==================== -->
+          <g transform="translate(60, 50)">
+            <rect x="0" y="0" width="220" height="74" fill="#fce7f3" stroke="#000000" stroke-width="2" />
+            <text x="110" y="34" font-size="22" font-weight="700" text-anchor="middle">ลูกค้า</text>
+            <text x="110" y="58" font-size="18" font-weight="700" text-anchor="middle">(Customer)</text>
+          </g>
+
+          <g transform="translate(580, 50)">
+            <rect x="0" y="0" width="300" height="74" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">1.0</text>
+            <text x="150" y="55" font-size="20" font-weight="700" text-anchor="middle">จัดการสมาชิกและเข้าสู่ระบบ</text>
+          </g>
+
+          <g transform="translate(1160, 60)">
+            <polygon points="0,0 260,0 260,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="260" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="260" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D1</text>
+            <text x="64" y="34" font-size="20" font-weight="700" fill="#dc2626">ข้อมูลสมาชิก</text>
+          </g>
+
+          <!-- Flows Row 1 -->
+          <line x1="280" y1="70" x2="580" y2="70" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="430" y="60" text-anchor="middle">ข้อมูลสมัครสมาชิก / เข้าสู่ระบบ</text>
+
+          <line x1="580" y1="105" x2="280" y2="105" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="430" y="127" text-anchor="middle">ผลการสมัคร / ผลการเข้าสู่ระบบ</text>
+
+          <line x1="1160" y1="75" x2="880" y2="75" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="1020" y="67" text-anchor="middle">ข้อมูลสมาชิก</text>
+
+          <line x1="880" y1="100" x2="1160" y2="100" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="1020" y="122" text-anchor="middle">ข้อมูลสมาชิก</text>
+
+          <!-- ==================== PROCESS 2.0 ROW ==================== -->
+          <g transform="translate(60, 200)">
+            <rect x="0" y="0" width="220" height="74" fill="#dcfce7" stroke="#000000" stroke-width="2" />
+            <text x="110" y="34" font-size="22" font-weight="700" text-anchor="middle">ผู้ดูแลระบบ</text>
+            <text x="110" y="58" font-size="18" font-weight="700" text-anchor="middle">(Admin)</text>
+          </g>
+
+          <g transform="translate(60, 340)">
+            <rect x="0" y="0" width="220" height="74" fill="#fce7f3" stroke="#000000" stroke-width="2" />
+            <text x="110" y="34" font-size="22" font-weight="700" text-anchor="middle">ลูกค้า</text>
+            <text x="110" y="58" font-size="18" font-weight="700" text-anchor="middle">(Customer)</text>
+          </g>
+
+          <g transform="translate(580, 270)">
+            <rect x="0" y="0" width="300" height="74" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">2.0</text>
+            <text x="150" y="55" font-size="20" font-weight="700" text-anchor="middle">จัดการข้อมูลสินค้า</text>
+          </g>
+
+          <g transform="translate(1160, 280)">
+            <polygon points="0,0 260,0 260,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="260" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="260" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D2</text>
+            <text x="64" y="34" font-size="20" font-weight="700" fill="#dc2626">ข้อมูลสินค้า</text>
+          </g>
+
+          <!-- Flows Row 2 -->
+          <path d="M 280 235 L 620 235 L 620 270" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="430" y="225" text-anchor="middle">ข้อมูลสินค้า / ราคา / สต็อก</text>
+
+          <path d="M 720 270 L 720 205 L 280 205" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="470" y="195" text-anchor="middle">ผลการจัดการสินค้า</text>
+
+          <path d="M 280 355 L 430 355 L 430 315 L 580 315" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="505" y="305" text-anchor="middle">คำขอค้นหารถ</text>
+
+          <path d="M 580 335 L 470 335 L 470 395 L 280 395" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="375" y="385" text-anchor="middle">รายละเอียดสินค้า</text>
+
+          <line x1="880" y1="290" x2="1160" y2="290" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="1020" y="280" text-anchor="middle">คำขอค้นหารถ / ดูรายละเอียด</text>
+
+          <line x1="1160" y1="318" x2="880" y2="318" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="1020" y="338" text-anchor="middle">ข้อมูลสินค้าและราคา</text>
+
+          <!-- ==================== PROCESS 3.0 ROW ==================== -->
+          <g transform="translate(60, 500)">
+            <rect x="0" y="0" width="220" height="74" fill="#fce7f3" stroke="#000000" stroke-width="2" />
+            <text x="110" y="34" font-size="22" font-weight="700" text-anchor="middle">ลูกค้า</text>
+            <text x="110" y="58" font-size="18" font-weight="700" text-anchor="middle">(Customer)</text>
+          </g>
+
+          <g transform="translate(580, 500)">
+            <rect x="0" y="0" width="300" height="74" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">3.0</text>
+            <text x="150" y="55" font-size="20" font-weight="700" text-anchor="middle">จัดการคำสั่งซื้อ</text>
+          </g>
+
+          <g transform="translate(1160, 450)">
+            <polygon points="0,0 260,0 260,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="260" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="260" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D3</text>
+            <text x="64" y="34" font-size="20" font-weight="700" fill="#dc2626">ข้อมูลคำสั่งซื้อ</text>
+          </g>
+
+          <g transform="translate(1160, 550)">
+            <polygon points="0,0 290,0 290,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="290" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="290" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D4</text>
+            <text x="60" y="34" font-size="19" font-weight="700" fill="#dc2626">รายละเอียดคำสั่งซื้อและการชำระเงิน</text>
+          </g>
+
+          <!-- Flows Row 3 -->
+          <line x1="280" y1="520" x2="580" y2="520" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="430" y="510" text-anchor="middle">ข้อมูลคำสั่งซื้อ</text>
+
+          <line x1="580" y1="555" x2="280" y2="555" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="430" y="575" text-anchor="middle">ผลการสั่งซื้อ</text>
+
+          <!-- เชื่อม D2 ลง 3.0 แบบฉาก -->
+          <path d="M 1240 334 L 1240 420 L 720 420 L 720 500" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="980" y="410" text-anchor="middle">ข้อมูลสินค้าและราคา</text>
+
+          <path d="M 880 520 L 1020 520 L 1020 475 L 1160 475" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="1090" y="465" text-anchor="middle">บันทึกคำสั่งซื้อ</text>
+
+          <path d="M 880 555 L 1080 555 L 1080 575 L 1160 575" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="980" y="545" text-anchor="middle">บันทึกรายการสินค้า</text>
+
+          <!-- ==================== PROCESS 4.0 ROW ==================== -->
+          <g transform="translate(60, 730)">
+            <rect x="0" y="0" width="220" height="74" fill="#dcfce7" stroke="#000000" stroke-width="2" />
+            <text x="110" y="34" font-size="22" font-weight="700" text-anchor="middle">ผู้ดูแลระบบ</text>
+            <text x="110" y="58" font-size="18" font-weight="700" text-anchor="middle">(Admin)</text>
+          </g>
+
+          <g transform="translate(580, 730)">
+            <rect x="0" y="0" width="340" height="74" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 326 0 A 14 14 0 0 1 340 14 L 340 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="340" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="170" y="19" font-size="18" font-weight="700" text-anchor="middle">4.0</text>
+            <text x="170" y="55" font-size="20" font-weight="700" text-anchor="middle">ตรวจสอบการชำระเงินและออกใบเสร็จ</text>
+          </g>
+
+          <g transform="translate(1160, 730)">
+            <rect x="0" y="0" width="220" height="74" fill="#fce7f3" stroke="#000000" stroke-width="2" />
+            <text x="110" y="34" font-size="22" font-weight="700" text-anchor="middle">ลูกค้า</text>
+            <text x="110" y="58" font-size="18" font-weight="700" text-anchor="middle">(Customer)</text>
+          </g>
+
+          <!-- Flows Row 4 -->
+          <path d="M 170 574 L 170 655 L 600 655 L 600 730" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="385" y="645" text-anchor="middle">ข้อมูลการชำระเงิน / สลิปโอนเงิน</text>
+
+          <line x1="280" y1="750" x2="580" y2="750" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="430" y="740" text-anchor="middle">ผลตรวจสอบสลิป / ยืนยันหรือปฏิเสธ</text>
+
+          <line x1="580" y1="785" x2="280" y2="785" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="430" y="805" text-anchor="middle">ข้อมูลสลิปและรายละเอียดคำสั่งซื้อ</text>
+
+          <line x1="920" y1="765" x2="1160" y2="765" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="1040" y="755" text-anchor="middle">สถานะชำระเงิน / ใบเสร็จ PDF</text>
+
+          <!-- เชื่อม D4 เข้า 4.0 แบบฉาก -->
+          <path d="M 1240 604 L 1240 670 L 750 670 L 750 730" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="995" y="662" text-anchor="middle">รายละเอียดคำสั่งซื้อและข้อมูลการชำระเงิน</text>
+
+          <path d="M 820 730 L 820 645 L 1280 645 L 1280 604" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="1050" y="638" text-anchor="middle">บันทึกผลการชำระเงิน</text>
+
+          <!-- ==================== PROCESS 5.0 ROW ==================== -->
+          <g transform="translate(60, 940)">
+            <rect x="0" y="0" width="220" height="74" fill="#dcfce7" stroke="#000000" stroke-width="2" />
+            <text x="110" y="34" font-size="22" font-weight="700" text-anchor="middle">ผู้ดูแลระบบ</text>
+            <text x="110" y="58" font-size="18" font-weight="700" text-anchor="middle">(Admin)</text>
+          </g>
+
+          <g transform="translate(580, 940)">
+            <rect x="0" y="0" width="300" height="74" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">5.0</text>
+            <text x="150" y="55" font-size="20" font-weight="700" text-anchor="middle">จัดการสถานะคำสั่งซื้อ</text>
+          </g>
+
+          <g transform="translate(1160, 940)">
+            <polygon points="0,0 260,0 260,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="260" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="260" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D3</text>
+            <text x="64" y="34" font-size="20" font-weight="700" fill="#dc2626">ข้อมูลคำสั่งซื้อ</text>
+          </g>
+
+          <!-- Flows Row 5 -->
+          <line x1="700" y1="804" x2="700" y2="940" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="712" y="870" text-anchor="start">ผลการตรวจสอบการชำระเงิน</text>
+
+          <path d="M 580 960 L 250 960 L 250 860 L 140 860 L 140 574" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="260" y="852" text-anchor="start">สถานะคำสั่งซื้อ</text>
+
+          <line x1="280" y1="960" x2="580" y2="960" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="430" y="950" text-anchor="middle">คำสั่งปรับสถานะ</text>
+
+          <line x1="580" y1="995" x2="280" y2="995" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="430" y="1017" text-anchor="middle">ผลการจัดการสถานะ</text>
+
+          <line x1="880" y1="955" x2="1160" y2="955" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="1020" y="945" text-anchor="middle">สถานะคำสั่งซื้อ</text>
+
+          <line x1="1160" y1="980" x2="880" y2="980" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="1020" y="1000" text-anchor="middle">ข้อมูลคำสั่งซื้อปัจจุบัน</text>
+
+          <!-- ==================== PROCESS 6.0 ROW ==================== -->
+          <g transform="translate(60, 1130)">
+            <rect x="0" y="0" width="220" height="74" fill="#fce7f3" stroke="#000000" stroke-width="2" />
+            <text x="110" y="34" font-size="22" font-weight="700" text-anchor="middle">ลูกค้า</text>
+            <text x="110" y="58" font-size="18" font-weight="700" text-anchor="middle">(Customer)</text>
+          </g>
+
+          <g transform="translate(60, 1280)">
+            <rect x="0" y="0" width="220" height="74" fill="#dcfce7" stroke="#000000" stroke-width="2" />
+            <text x="110" y="34" font-size="22" font-weight="700" text-anchor="middle">ผู้ดูแลระบบ</text>
+            <text x="110" y="58" font-size="18" font-weight="700" text-anchor="middle">(Admin)</text>
+          </g>
+
+          <g transform="translate(580, 1130)">
+            <rect x="0" y="0" width="300" height="225" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 28 L 0 28 Z" fill="#e0f2fe" />
+            <line x1="0" y1="28" x2="300" y2="28" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="21" font-size="19" font-weight="700" text-anchor="middle">6.0</text>
+            <text x="150" y="125" font-size="22" font-weight="700" text-anchor="middle">จัดการแจ้งปัญหาและบริการ</text>
+            <text x="150" y="155" font-size="18" font-weight="700" text-anchor="middle" fill="#0369a1">(Support Tickets)</text>
+          </g>
+
+          <g transform="translate(1160, 1215)">
+            <polygon points="0,0 260,0 260,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="260" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="260" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D6</text>
+            <text x="64" y="34" font-size="20" font-weight="700" fill="#dc2626">ข้อมูลแจ้งปัญหา</text>
+          </g>
+
+          <!-- Flows Row 6 -->
+          <line x1="280" y1="1150" x2="580" y2="1150" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="430" y="1140" text-anchor="middle">ข้อมูลแจ้งปัญหา / ข้อร้องเรียน</text>
+
+          <line x1="580" y1="1185" x2="280" y2="1185" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="430" y="1205" text-anchor="middle">ผลการรับเรื่อง / สถานะการแก้ไข</text>
+
+          <line x1="580" y1="1300" x2="280" y2="1300" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="430" y="1290" text-anchor="middle">รายการแจ้งปัญหาจากลูกค้า</text>
+
+          <line x1="280" y1="1335" x2="580" y2="1335" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="430" y="1355" text-anchor="middle">ข้อมูลการตอบกลับ / อัปเดตสถานะ</text>
+
+          <line x1="880" y1="1230" x2="1160" y2="1230" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="1020" y="1220" text-anchor="middle">บันทึกข้อมูลแจ้งปัญหา</text>
+
+          <line x1="1160" y1="1255" x2="880" y2="1255" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="1020" y="1275" text-anchor="middle">ข้อมูลคำร้องและประวัติ</text>
+
+          <!-- ==================== PROCESS 7.0 ROW ==================== -->
+          <g transform="translate(60, 1490)">
+            <rect x="0" y="0" width="220" height="74" fill="#dcfce7" stroke="#000000" stroke-width="2" />
+            <text x="110" y="34" font-size="22" font-weight="700" text-anchor="middle">ผู้ดูแลระบบ</text>
+            <text x="110" y="58" font-size="18" font-weight="700" text-anchor="middle">(Admin)</text>
+          </g>
+
+          <g transform="translate(580, 1490)">
+            <rect x="0" y="0" width="300" height="74" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">7.0</text>
+            <text x="150" y="55" font-size="20" font-weight="700" text-anchor="middle">จัดทำรายงาน</text>
+          </g>
+
+          <g transform="translate(1160, 1450)">
+            <polygon points="0,0 260,0 260,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="260" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="260" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D3</text>
+            <text x="64" y="34" font-size="20" font-weight="700" fill="#dc2626">ข้อมูลคำสั่งซื้อ</text>
+          </g>
+
+          <g transform="translate(1160, 1550)">
+            <polygon points="0,0 290,0 290,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="290" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="290" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D4</text>
+            <text x="60" y="34" font-size="19" font-weight="700" fill="#dc2626">รายละเอียดคำสั่งซื้อและการชำระเงิน</text>
+          </g>
+
+          <!-- Flows Row 7 -->
+          <line x1="580" y1="1527" x2="280" y2="1527" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="430" y="1517" text-anchor="middle">รายงานผลสรุป</text>
+
+          <path d="M 1160 1475 L 980 1475 L 980 1510 L 880 1510" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="1070" y="1465" text-anchor="middle">ข้อมูลคำสั่งซื้อ</text>
+
+          <path d="M 1160 1575 L 1050 1575 L 1050 1540 L 880 1540" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL1)" />
+          <text class="lbl" x="965" y="1530" text-anchor="middle">รายละเอียดคำสั่งซื้อ</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         3. DFD LEVEL 2: 1.0 จัดการสมาชิกและสิทธิ์
+         ========================================== -->
+    <div id="tab-dfd2-1" class="tab-content" style="display: none;">
+      <div class="diagram-card">
+        <div class="diagram-title">DFD Level 2: กระบวนการ 1.0 — จัดการสมาชิกและเข้าสู่ระบบ</div>
+        <div class="diagram-desc">แสดงการแตกรายละเอียดของ Process 1.0: สมัครสมาชิก, ล็อกอิน, ระงับสิทธิ์, และรีเซ็ตรหัสผ่าน โดยใช้เส้นตั้งฉาก แยกรางอิสระ 100% ตัวหนังสือไม่ถูกเส้นขีดทับ</div>
+
+        <svg width="1440" height="740" viewBox="0 0 1440 740">
+          <defs>
+            <marker id="arrL21" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill="#000000" />
+            </marker>
+          </defs>
+
+          <!-- Entities ซ้าย (x=50..250) -->
+          <g transform="translate(50, 120)">
+            <rect x="0" y="0" width="200" height="74" fill="#fce7f3" stroke="#000000" stroke-width="2" />
+            <text x="100" y="34" font-size="22" font-weight="700" text-anchor="middle">ลูกค้า</text>
+            <text x="100" y="58" font-size="18" font-weight="700" text-anchor="middle">(Customer)</text>
+          </g>
+
+          <g transform="translate(50, 540)">
+            <rect x="0" y="0" width="200" height="74" fill="#dcfce7" stroke="#000000" stroke-width="2" />
+            <text x="100" y="34" font-size="22" font-weight="700" text-anchor="middle">ผู้ดูแลระบบ</text>
+            <text x="100" y="58" font-size="18" font-weight="700" text-anchor="middle">(Admin)</text>
+          </g>
+
+          <!-- Processes กลาง (x=580..880) -->
+          <g transform="translate(580, 50)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">1.1</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">สมัครสมาชิก</text>
+          </g>
+
+          <g transform="translate(580, 200)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">1.2</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">ตรวจสอบการเข้าสู่ระบบ</text>
+          </g>
+
+          <g transform="translate(580, 360)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">1.3</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">รีเซ็ตรหัสผ่าน (Forgot Password)</text>
+          </g>
+
+          <g transform="translate(580, 530)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">1.4</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">จัดการสิทธิ์ / ระงับผู้ใช้ (Ban)</text>
+          </g>
+
+          <!-- Data Stores ขวา (x=1160..1420) -->
+          <g transform="translate(1160, 160)">
+            <polygon points="0,0 260,0 260,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="260" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="260" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D1</text>
+            <text x="64" y="34" font-size="20" font-weight="700" fill="#dc2626">ข้อมูลสมาชิก</text>
+          </g>
+
+          <g transform="translate(1160, 370)">
+            <polygon points="0,0 260,0 260,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="260" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="260" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D7</text>
+            <text x="64" y="34" font-size="19" font-weight="700" fill="#dc2626">โทเค็นรีเซ็ตรหัสผ่าน</text>
+          </g>
+
+          <!-- Flows: ฝั่งซ้าย (x=250..580) -->
+          <!-- 1.1 สมัครสมาชิก -->
+          <path d="M 250 135 L 360 135 L 360 70 L 580 70" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL21)" />
+          <text class="lbl" x="470" y="60" text-anchor="middle">ข้อมูลสมัครสมาชิก</text>
+
+          <path d="M 580 95 L 430 95 L 430 155 L 250 155" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL21)" />
+          <text class="lbl" x="340" y="145" text-anchor="middle">ผลการสมัครสมาชิก</text>
+
+          <!-- 1.2 ล็อกอิน -->
+          <path d="M 250 175 L 380 175 L 380 220 L 580 220" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL21)" />
+          <text class="lbl" x="515" y="195" text-anchor="middle">ข้อมูล</text>
+          <text class="lbl" x="515" y="213" text-anchor="middle">เข้าสู่ระบบ</text>
+
+          <path d="M 580 245 L 450 245 L 450 190 L 250 190" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL21)" />
+          <text class="lbl" x="515" y="265" text-anchor="middle">ผลการยืนยันตัวตน</text>
+
+          <!-- 1.3 รีเซ็ต -->
+          <path d="M 250 160 L 300 160 L 300 375 L 580 375" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL21)" />
+          <text class="lbl" x="440" y="365" text-anchor="middle">คำขอรีเซ็ตรหัส / รหัสใหม่</text>
+
+          <path d="M 580 405 L 275 405 L 275 180 L 250 180" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL21)" />
+          <text class="lbl" x="425" y="425" text-anchor="middle">ลิงก์ / ผลการตั้งรหัสผ่านใหม่</text>
+
+          <!-- 1.4 จัดการสิทธิ์ -->
+          <line x1="250" y1="550" x2="580" y2="550" stroke="#000000" stroke-width="2" marker-end="url(#arrL21)" />
+          <text class="lbl" x="415" y="540" text-anchor="middle">คำสั่งระงับ / ปลดระงับ</text>
+
+          <line x1="580" y1="580" x2="250" y2="580" stroke="#000000" stroke-width="2" marker-end="url(#arrL21)" />
+          <text class="lbl" x="415" y="600" text-anchor="middle">ผลการปรับสถานะผู้ใช้</text>
+
+          <!-- Flows: ฝั่งขวา (x=880..1160) แยกรางอิสระ 100% -->
+          <!-- 1.1 -> D1: ใช้ราง x=940 -->
+          <path d="M 880 85 L 940 85 L 940 175 L 1160 175" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL21)" />
+          <text class="lbl" x="1050" y="165" text-anchor="middle">บันทึกสมาชิกใหม่</text>
+
+          <!-- D1 -> 1.2: ใช้ราง x=1010 -->
+          <path d="M 1160 200 L 1010 200 L 1010 235 L 880 235" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL21)" />
+          <text class="lbl" x="1085" y="175" text-anchor="middle">ตรวจสอบรหัสผ่าน</text>
+          <text class="lbl" x="1085" y="193" text-anchor="middle">และสิทธิ์ผู้ใช้</text>
+
+          <!-- 1.3 -> D7: เส้นตรงแนวนอน y=390 -->
+          <line x1="880" y1="390" x2="1160" y2="390" stroke="#000000" stroke-width="2" marker-end="url(#arrL21)" />
+          <text class="lbl" x="980" y="380" text-anchor="middle">บันทึก Reset Token</text>
+
+          <!-- 1.4 -> D1: ใช้ราง x=1100 -->
+          <path d="M 880 565 L 1100 565 L 1100 215 L 1160 215" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL21)" />
+          <text class="lbl" x="990" y="550" text-anchor="middle">อัปเดตสถานะ</text>
+          <text class="lbl" x="990" y="572" text-anchor="middle">การระงับสิทธิ์</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         4. DFD LEVEL 2: 2.0 จัดการข้อมูลสินค้า
+         ========================================== -->
+    <div id="tab-dfd2-2" class="tab-content" style="display: none;">
+      <div class="diagram-card">
+        <div class="diagram-title">DFD Level 2: กระบวนการ 2.0 — จัดการข้อมูลสินค้าและสต็อก (พิกัด ≤ 160 cc)</div>
+        <div class="diagram-desc">แสดงการแตกรายละเอียดของ Process 2.0: ค้นหากรองรถ, ดูรายละเอียด, จัดการสต็อก เส้นทุกเส้นตั้งฉาก แยกรางอิสระ ไม่เอียงทับตัวหนังสือ</div>
+
+        <svg width="1440" height="700" viewBox="0 0 1440 700">
+          <defs>
+            <marker id="arrL22" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill="#000000" />
+            </marker>
+          </defs>
+
+          <!-- Entities ซ้าย (x=50..250) -->
+          <g transform="translate(50, 140)">
+            <rect x="0" y="0" width="200" height="74" fill="#fce7f3" stroke="#000000" stroke-width="2" />
+            <text x="100" y="34" font-size="22" font-weight="700" text-anchor="middle">ลูกค้า</text>
+            <text x="100" y="58" font-size="18" font-weight="700" text-anchor="middle">(Customer)</text>
+          </g>
+
+          <g transform="translate(50, 480)">
+            <rect x="0" y="0" width="200" height="74" fill="#dcfce7" stroke="#000000" stroke-width="2" />
+            <text x="100" y="34" font-size="22" font-weight="700" text-anchor="middle">ผู้ดูแลระบบ</text>
+            <text x="100" y="58" font-size="18" font-weight="700" text-anchor="middle">(Admin)</text>
+          </g>
+
+          <!-- Processes กลาง (x=580..880) -->
+          <g transform="translate(580, 70)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">2.1</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">ค้นหาและกรองรถ (≤ 160cc)</text>
+          </g>
+
+          <g transform="translate(580, 270)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">2.2</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">ตรวจสอบรายละเอียดและสต็อก</text>
+          </g>
+
+          <g transform="translate(580, 480)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">2.3</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">เพิ่ม/แก้ไขข้อมูลรถและสต็อก</text>
+          </g>
+
+          <!-- Data Store ขวา (x=1160..1420) -->
+          <g transform="translate(1160, 270)">
+            <polygon points="0,0 260,0 260,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="260" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="260" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D2</text>
+            <text x="64" y="34" font-size="20" font-weight="700" fill="#dc2626">ข้อมูลสินค้า</text>
+          </g>
+
+          <!-- Flows: ฝั่งซ้าย (x=250..580) -->
+          <!-- 2.1 -->
+          <path d="M 250 155 L 360 155 L 360 85 L 580 85" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL22)" />
+          <text class="lbl" x="470" y="75" text-anchor="middle">เงื่อนไขค้นหารถ</text>
+
+          <path d="M 580 115 L 430 115 L 430 180 L 250 180" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL22)" />
+          <text class="lbl" x="340" y="170" text-anchor="middle">รายการรถพิกัด ≤ 160 cc</text>
+
+          <!-- 2.2 -->
+          <path d="M 250 195 L 380 195 L 380 285 L 580 285" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL22)" />
+          <text class="lbl" x="515" y="260" text-anchor="middle">รหัสรถ</text>
+          <text class="lbl" x="515" y="278" text-anchor="middle">ที่ต้องการดู</text>
+
+          <path d="M 580 315 L 450 315 L 450 220 L 250 220" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL22)" />
+          <text class="lbl" x="515" y="340" text-anchor="middle">สเปกและ</text>
+          <text class="lbl" x="515" y="358" text-anchor="middle">จำนวนคงเหลือ</text>
+
+          <!-- 2.3 -->
+          <line x1="250" y1="500" x2="580" y2="500" stroke="#000000" stroke-width="2" marker-end="url(#arrL22)" />
+          <text class="lbl" x="415" y="490" text-anchor="middle">ข้อมูลรถ / ราคา / ปรับสต็อก</text>
+
+          <line x1="580" y1="530" x2="250" y2="530" stroke="#000000" stroke-width="2" marker-end="url(#arrL22)" />
+          <text class="lbl" x="415" y="550" text-anchor="middle">ผลการบันทึกข้อมูลสินค้า</text>
+
+          <!-- Flows: ฝั่งขวา (x=880..1160) แยกรางอิสระ 100% -->
+          <!-- D2 -> 2.1: ใช้ราง x=940 -->
+          <path d="M 1160 280 L 940 280 L 940 105 L 880 105" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL22)" />
+          <text class="lbl" x="1050" y="270" text-anchor="middle">ดึงข้อมูลรถตามเงื่อนไข</text>
+
+          <!-- D2 -> 2.2: เส้นตรงแนวนอน y=300 -->
+          <line x1="1160" y1="300" x2="880" y2="300" stroke="#000000" stroke-width="2" marker-end="url(#arrL22)" />
+          <text class="lbl" x="1020" y="290" text-anchor="middle">ดึงข้อมูลสต็อกปัจจุบัน</text>
+
+          <!-- 2.3 -> D2: ใช้ราง x=1020 -->
+          <path d="M 880 515 L 1020 515 L 1020 315 L 1160 315" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL22)" />
+          <text class="lbl" x="950" y="490" text-anchor="middle">อัปเดตข้อมูลรถ</text>
+          <text class="lbl" x="950" y="510" text-anchor="middle">และสต็อก</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         5. DFD LEVEL 2: 3.0 จัดการคำสั่งซื้อ
+         ========================================== -->
+    <div id="tab-dfd2-3" class="tab-content" style="display: none;">
+      <div class="diagram-card">
+        <div class="diagram-title">DFD Level 2: กระบวนการ 3.0 — จัดการคำสั่งซื้อและตัดสต็อก</div>
+        <div class="diagram-desc">แสดงการแตกรายละเอียดของ Process 3.0: สร้างตะกร้า, ตรวจสต็อก, คำนวณเงิน, ตัดสต็อกทันที เส้นตั้งฉาก แยกรางอิสระ ตัวหนังสือชัดเจน</div>
+
+        <svg width="1440" height="700" viewBox="0 0 1440 700">
+          <defs>
+            <marker id="arrL23" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill="#000000" />
+            </marker>
+          </defs>
+
+          <!-- Entity ซ้าย (x=50..250) -->
+          <g transform="translate(50, 220)">
+            <rect x="0" y="0" width="200" height="74" fill="#fce7f3" stroke="#000000" stroke-width="2" />
+            <text x="100" y="34" font-size="22" font-weight="700" text-anchor="middle">ลูกค้า</text>
+            <text x="100" y="58" font-size="18" font-weight="700" text-anchor="middle">(Customer)</text>
+          </g>
+
+          <!-- Processes กลาง (x=580..880) -->
+          <g transform="translate(580, 80)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">3.1</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">สร้างตะกร้าและตรวจสอบสต็อก</text>
+          </g>
+
+          <g transform="translate(580, 260)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">3.2</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">คำนวณยอดเงินและยืนยันสั่งซื้อ</text>
+          </g>
+
+          <g transform="translate(580, 440)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">3.3</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">ตัดสต็อกและบันทึกออเดอร์</text>
+          </g>
+
+          <!-- Data Stores ขวา (x=1160..1420) -->
+          <g transform="translate(1160, 80)">
+            <polygon points="0,0 260,0 260,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="260" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="260" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D2</text>
+            <text x="64" y="34" font-size="20" font-weight="700" fill="#dc2626">ข้อมูลสินค้า</text>
+          </g>
+
+          <g transform="translate(1160, 260)">
+            <polygon points="0,0 260,0 260,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="260" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="260" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D3</text>
+            <text x="64" y="34" font-size="20" font-weight="700" fill="#dc2626">ข้อมูลคำสั่งซื้อ</text>
+          </g>
+
+          <g transform="translate(1160, 440)">
+            <polygon points="0,0 290,0 290,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="290" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="290" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D4</text>
+            <text x="60" y="34" font-size="19" font-weight="700" fill="#dc2626">รายละเอียดคำสั่งซื้อและการชำระเงิน</text>
+          </g>
+
+          <!-- Flows: ฝั่งซ้าย (x=250..580) -->
+          <path d="M 250 235 L 360 235 L 360 105 L 580 105" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL23)" />
+          <text class="lbl" x="470" y="95" text-anchor="middle">รายการรถที่เลือก</text>
+
+          <line x1="250" y1="275" x2="580" y2="275" stroke="#000000" stroke-width="2" marker-end="url(#arrL23)" />
+          <text class="lbl" x="415" y="265" text-anchor="middle">ข้อมูลยืนยันสั่งซื้อ</text>
+
+          <line x1="580" y1="305" x2="250" y2="305" stroke="#000000" stroke-width="2" marker-end="url(#arrL23)" />
+          <text class="lbl" x="415" y="325" text-anchor="middle">ใบแจ้งยอดชำระเงิน</text>
+
+          <!-- ระหว่าง Process ดิ่งตรง -->
+          <line x1="730" y1="150" x2="730" y2="260" stroke="#000000" stroke-width="2" marker-end="url(#arrL23)" />
+          <text class="lbl" x="742" y="210" text-anchor="start">ข้อมูลตะกร้าที่พร้อมสั่งซื้อ</text>
+
+          <line x1="730" y1="330" x2="730" y2="440" stroke="#000000" stroke-width="2" marker-end="url(#arrL23)" />
+          <text class="lbl" x="742" y="390" text-anchor="start">คำสั่งบันทึกออเดอร์</text>
+
+          <!-- Flows: ฝั่งขวา (x=880..1160) สลับราง: 3.3->D3 ใช้ราง 940, 3.3->D2 ใช้ราง 1050 -->
+          <!-- D2 -> 3.1: เส้นตรงแนวนอน y=105 -->
+          <line x1="1160" y1="105" x2="880" y2="105" stroke="#000000" stroke-width="2" marker-end="url(#arrL23)" />
+          <text class="lbl" x="1020" y="95" text-anchor="middle">ตรวจสอบจำนวนคงเหลือ</text>
+
+          <!-- 3.3 -> D2: ใช้ราง x=1050 -->
+          <path d="M 880 455 L 1050 455 L 1050 125 L 1160 125" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL23)" />
+          <text class="lbl" x="995" y="435" text-anchor="middle">ตัดสต็อก</text>
+          <text class="lbl" x="995" y="452" text-anchor="middle">รถทันที</text>
+
+          <!-- 3.3 -> D3: ใช้ราง x=940 -->
+          <path d="M 880 475 L 940 475 L 940 290 L 1160 290" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL23)" />
+          <text class="lbl" x="995" y="275" text-anchor="middle">บันทึก Order</text>
+          <text class="lbl" x="995" y="293" text-anchor="middle">Header</text>
+
+          <!-- 3.3 -> D4: เส้นตรงแนวนอน y=495 -->
+          <line x1="880" y1="495" x2="1160" y2="495" stroke="#000000" stroke-width="2" marker-end="url(#arrL23)" />
+          <text class="lbl" x="1020" y="515" text-anchor="middle">บันทึก Order Items</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         6. DFD LEVEL 2: 4.0 ตรวจสอบชำระเงิน & ใบเสร็จ PDF
+         ========================================== -->
+    <div id="tab-dfd2-4" class="tab-content" style="display: none;">
+      <div class="diagram-card">
+        <div class="diagram-title">DFD Level 2: กระบวนการ 4.0 — ตรวจสอบการชำระเงินและออกใบเสร็จ PDF</div>
+        <div class="diagram-desc">แสดงการแตกรายละเอียดของ Process 4.0: อัปโหลดสลิป, ตรวจสอบ, และออกใบเสร็จ PDF เส้นตั้งฉาก แยกรางอิสระ ตัวหนังสือชัดเจน</div>
+
+        <svg width="1440" height="700" viewBox="0 0 1440 700">
+          <defs>
+            <marker id="arrL24" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill="#000000" />
+            </marker>
+          </defs>
+
+          <!-- Entities ซ้าย (x=50..250) -->
+          <g transform="translate(50, 100)">
+            <rect x="0" y="0" width="200" height="74" fill="#fce7f3" stroke="#000000" stroke-width="2" />
+            <text x="100" y="34" font-size="22" font-weight="700" text-anchor="middle">ลูกค้า</text>
+            <text x="100" y="58" font-size="18" font-weight="700" text-anchor="middle">(Customer)</text>
+          </g>
+
+          <g transform="translate(50, 460)">
+            <rect x="0" y="0" width="200" height="74" fill="#dcfce7" stroke="#000000" stroke-width="2" />
+            <text x="100" y="34" font-size="22" font-weight="700" text-anchor="middle">ผู้ดูแลระบบ</text>
+            <text x="100" y="58" font-size="18" font-weight="700" text-anchor="middle">(Admin)</text>
+          </g>
+
+          <!-- Processes กลาง (x=580..880) -->
+          <g transform="translate(580, 70)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">4.1</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">อัปโหลดสลิปโอนเงิน</text>
+          </g>
+
+          <g transform="translate(580, 260)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">4.2</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">ตรวจสลิปและยืนยันยอดเงิน</text>
+          </g>
+
+          <g transform="translate(580, 460)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">4.3</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">สร้างใบเสร็จรับเงิน PDF</text>
+          </g>
+
+          <!-- Data Store ขวา (x=1160..1420) -->
+          <g transform="translate(1160, 260)">
+            <polygon points="0,0 260,0 260,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="260" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="260" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D5</text>
+            <text x="64" y="34" font-size="20" font-weight="700" fill="#dc2626">ข้อมูลการชำระเงิน</text>
+          </g>
+
+          <!-- Flows: ฝั่งซ้าย (x=250..580) -->
+          <!-- 4.1 -->
+          <path d="M 250 120 L 360 120 L 360 85 L 580 85" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL24)" />
+          <text class="lbl" x="470" y="75" text-anchor="middle">ไฟล์สลิปและยอดชำระ</text>
+
+          <path d="M 580 115 L 430 115 L 430 150 L 250 150" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL24)" />
+          <text class="lbl" x="340" y="140" text-anchor="middle">ผลการส่งหลักฐาน</text>
+
+          <!-- 4.2 -->
+          <path d="M 250 480 L 380 480 L 380 280 L 580 280" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL24)" />
+          <text class="lbl" x="480" y="260" text-anchor="middle">ผลตรวจสลิป</text>
+          <text class="lbl" x="480" y="278" text-anchor="middle">(อนุมัติ / ปฏิเสธ)</text>
+
+          <path d="M 580 310 L 450 310 L 450 515 L 250 515" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL24)" />
+          <text class="lbl" x="350" y="535" text-anchor="middle">สลิปและข้อมูลคำสั่งซื้อ</text>
+
+          <!-- 4.3 -> ลูกค้า (Loop ด้านบนสุดผ่าน y=35) -->
+          <path d="M 880 495 L 1120 495 L 1120 35 L 150 35 L 150 100" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL24)" />
+          <text class="lbl" x="635" y="25" text-anchor="middle">ใบเสร็จรับเงิน PDF ดาวน์โหลดได้</text>
+
+          <!-- Flows: ฝั่งขวา (x=880..1160) แยกรางอิสระ 100% -->
+          <!-- 4.1 -> D5: ใช้ราง x=940 -->
+          <path d="M 880 105 L 940 105 L 940 275 L 1160 275" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL24)" />
+          <text class="lbl" x="1030" y="255" text-anchor="middle">บันทึกสลิป</text>
+          <text class="lbl" x="1030" y="272" text-anchor="middle">และเวลาโอนเงิน</text>
+
+          <!-- 4.2 -> D5: เส้นตรงแนวนอน y=290 -->
+          <line x1="880" y1="290" x2="1160" y2="290" stroke="#000000" stroke-width="2" marker-end="url(#arrL24)" />
+          <text class="lbl" x="1020" y="280" text-anchor="middle">อัปเดตสถานะชำระเงิน</text>
+
+          <!-- D5 -> 4.3: ใช้ราง x=1020 -->
+          <path d="M 1160 305 L 1020 305 L 1020 480 L 880 480" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL24)" />
+          <text class="lbl" x="950" y="465" text-anchor="middle">ดึงข้อมูล</text>
+          <text class="lbl" x="950" y="482" text-anchor="middle">ออกใบเสร็จ</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         7. DFD LEVEL 2: 5.0 จัดการสถานะคำสั่งซื้อ & คืนสต็อก
+         (แก้ไขจุดทับซ้อน 100% แยกราง x=940, x=1010, x=1080 ชัดเจน)
+         ========================================== -->
+    <div id="tab-dfd2-5" class="tab-content" style="display: none;">
+      <div class="diagram-card">
+        <div class="diagram-title">DFD Level 2: กระบวนการ 5.0 — จัดการสถานะคำสั่งซื้อและคืนสต็อก</div>
+        <div class="diagram-desc">แสดงการแตกรายละเอียดของ Process 5.0: ติดตามสถานะ, อัปเดตสถานะ, ยกเลิกและคืนสต็อกเข้า D2 แยกรางข้อมูลเป็นอิสระ 100% ไม่มีเส้นทับกัน ตัวหนังสืออ่านง่ายชัดเจน</div>
+
+        <svg width="1440" height="700" viewBox="0 0 1440 700">
+          <defs>
+            <marker id="arrL25" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill="#000000" />
+            </marker>
+          </defs>
+
+          <!-- Entities ซ้าย (x=50..250) -->
+          <g transform="translate(50, 110)">
+            <rect x="0" y="0" width="200" height="74" fill="#fce7f3" stroke="#000000" stroke-width="2" />
+            <text x="100" y="34" font-size="22" font-weight="700" text-anchor="middle">ลูกค้า</text>
+            <text x="100" y="58" font-size="18" font-weight="700" text-anchor="middle">(Customer)</text>
+          </g>
+
+          <g transform="translate(50, 480)">
+            <rect x="0" y="0" width="200" height="74" fill="#dcfce7" stroke="#000000" stroke-width="2" />
+            <text x="100" y="34" font-size="22" font-weight="700" text-anchor="middle">ผู้ดูแลระบบ</text>
+            <text x="100" y="58" font-size="18" font-weight="700" text-anchor="middle">(Admin)</text>
+          </g>
+
+          <!-- Processes กลาง (x=580..880) -->
+          <g transform="translate(580, 80)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">5.1</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">ติดตามสถานะคำสั่งซื้อ</text>
+          </g>
+
+          <g transform="translate(580, 280)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">5.2</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">เปลี่ยนสถานะ (จัดส่ง/สำเร็จ)</text>
+          </g>
+
+          <g transform="translate(580, 480)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">5.3</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">ยกเลิกคำสั่งซื้อและคืนสต็อก</text>
+          </g>
+
+          <!-- Data Stores ขวา (x=1160..1420) -->
+          <g transform="translate(1160, 160)">
+            <polygon points="0,0 260,0 260,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="260" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="260" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D3</text>
+            <text x="64" y="34" font-size="20" font-weight="700" fill="#dc2626">ข้อมูลคำสั่งซื้อ</text>
+          </g>
+
+          <g transform="translate(1160, 480)">
+            <polygon points="0,0 260,0 260,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="260" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="260" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D2</text>
+            <text x="64" y="34" font-size="20" font-weight="700" fill="#dc2626">ข้อมูลสินค้า</text>
+          </g>
+
+          <!-- Flows: ฝั่งซ้าย (x=250..580) -->
+          <!-- 1. ลูกค้า -> 5.1 ตรวจสอบสถานะ -->
+          <path d="M 250 130 L 360 130 L 360 95 L 580 95" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL25)" />
+          <text class="lbl" x="470" y="85" text-anchor="middle">ตรวจสอบสถานะรถที่สั่ง</text>
+
+          <!-- 2. 5.1 -> ลูกค้า สถานะปัจจุบัน (วางที่ x=340 ใต้เส้น 160) -->
+          <path d="M 580 125 L 430 125 L 430 160 L 250 160" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL25)" />
+          <text class="lbl" x="340" y="180" text-anchor="middle">สถานะปัจจุบัน</text>
+          <text class="lbl" x="340" y="202" text-anchor="middle">(กำลังจัดส่ง/สำเร็จ)</text>
+
+          <!-- 3. แอดมิน -> 5.2 อัปเดตพัสดุ -->
+          <path d="M 250 500 L 380 500 L 380 305 L 580 305" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL25)" />
+          <text class="lbl" x="480" y="270" text-anchor="middle">อัปเดตเลขพัสดุ / สำเร็จ</text>
+
+          <!-- 4. แอดมิน -> 5.3 คำสั่งยกเลิก -->
+          <line x1="250" y1="530" x2="580" y2="530" stroke="#000000" stroke-width="2" marker-end="url(#arrL25)" />
+          <text class="lbl" x="415" y="520" text-anchor="middle">คำสั่งยกเลิกออเดอร์</text>
+
+          <!-- Flows: ฝั่งขวา (x=880..1160) แยกรางอิสระ 100% ไม่ทับซ้อนกันแน่นอน -->
+          <!-- รางที่ 1 (x=940): D3 -> 5.1 ดึงสถานะออเดอร์ -->
+          <path d="M 1160 175 L 940 175 L 940 115 L 880 115" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL25)" />
+          <text class="lbl" x="1050" y="165" text-anchor="middle">ดึงสถานะออเดอร์</text>
+
+          <!-- รางที่ 2 (x=1010): 5.2 -> D3 บันทึกสถานะใหม่ -->
+          <path d="M 880 305 L 1010 305 L 1010 190 L 1160 190" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL25)" />
+          <text class="lbl" x="1085" y="180" text-anchor="middle">บันทึกสถานะใหม่</text>
+
+          <!-- รางที่ 3 (x=1080): 5.3 -> D3 เปลี่ยนสถานะเป็น Cancelled -->
+          <path d="M 880 495 L 1080 495 L 1080 205 L 1160 205" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL25)" />
+          <text class="lbl" x="980" y="475" text-anchor="middle">เปลี่ยนสถานะ</text>
+          <text class="lbl" x="980" y="495" text-anchor="middle">เป็น Cancelled</text>
+
+          <!-- เส้นตรงแนวนอน y=525: 5.3 -> D2 คืนสต็อกรถ -->
+          <line x1="880" y1="525" x2="1160" y2="525" stroke="#000000" stroke-width="2" marker-end="url(#arrL25)" />
+          <text class="lbl" x="1020" y="548" text-anchor="middle">คืนสต็อกรถตามจำนวนที่จอง</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         8. DFD LEVEL 2: 6.0 แจ้งปัญหา Tickets
+         ========================================== -->
+    <div id="tab-dfd2-6" class="tab-content" style="display: none;">
+      <div class="diagram-card">
+        <div class="diagram-title">DFD Level 2: กระบวนการ 6.0 — จัดการแจ้งปัญหาและบริการ (Support Tickets)</div>
+        <div class="diagram-desc">แสดงการแตกรายละเอียดของ Process 6.0: เปิด Ticket, ตอบกลับประสานงาน, ปิดงานคำร้อง เส้นทุกเส้นเป็นแนวนอนและแนวตั้งฉาก แยกรางอิสระ 100% ตัวหนังสืออ่านง่ายชัดเจน</div>
+
+        <svg width="1440" height="700" viewBox="0 0 1440 700">
+          <defs>
+            <marker id="arrL26" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1.5 L 7 5 L 0 8.5 z" fill="#000000" />
+            </marker>
+          </defs>
+
+          <!-- Entities ซ้าย (x=50..250) -->
+          <g transform="translate(50, 100)">
+            <rect x="0" y="0" width="200" height="74" fill="#fce7f3" stroke="#000000" stroke-width="2" />
+            <text x="100" y="34" font-size="22" font-weight="700" text-anchor="middle">ลูกค้า</text>
+            <text x="100" y="58" font-size="18" font-weight="700" text-anchor="middle">(Customer)</text>
+          </g>
+
+          <g transform="translate(50, 460)">
+            <rect x="0" y="0" width="200" height="74" fill="#dcfce7" stroke="#000000" stroke-width="2" />
+            <text x="100" y="34" font-size="22" font-weight="700" text-anchor="middle">ผู้ดูแลระบบ</text>
+            <text x="100" y="58" font-size="18" font-weight="700" text-anchor="middle">(Admin)</text>
+          </g>
+
+          <!-- Processes กลาง (x=580..880) -->
+          <g transform="translate(580, 70)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">6.1</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">เปิดคำร้องแจ้งปัญหา (Ticket)</text>
+          </g>
+
+          <g transform="translate(580, 260)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">6.2</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">ตรวจสอบและตอบกลับข้อความ</text>
+          </g>
+
+          <g transform="translate(580, 460)">
+            <rect x="0" y="0" width="300" height="70" rx="14" fill="#ffffff" stroke="#000000" stroke-width="2" />
+            <path d="M 0 14 A 14 14 0 0 1 14 0 L 286 0 A 14 14 0 0 1 300 14 L 300 26 L 0 26 Z" fill="#e0f2fe" />
+            <line x1="0" y1="26" x2="300" y2="26" stroke="#000000" stroke-width="1.8" />
+            <text x="150" y="19" font-size="18" font-weight="700" text-anchor="middle">6.3</text>
+            <text x="150" y="53" font-size="20" font-weight="700" text-anchor="middle">สรุปผลและปิดงาน (Resolve)</text>
+          </g>
+
+          <!-- Data Store ขวา (x=1160..1420) -->
+          <g transform="translate(1160, 260)">
+            <polygon points="0,0 260,0 260,54 0,54" fill="#e0f2fe" />
+            <line x1="0" y1="0" x2="260" y2="0" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="54" x2="260" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="0" y1="0" x2="0" y2="54" stroke="#000000" stroke-width="2" />
+            <line x1="48" y1="0" x2="48" y2="54" stroke="#000000" stroke-width="2" />
+            <text x="24" y="34" font-size="20" font-weight="700" fill="#ef4444" text-anchor="middle">D6</text>
+            <text x="64" y="34" font-size="20" font-weight="700" fill="#dc2626">ข้อมูลแจ้งปัญหา</text>
+          </g>
+
+          <!-- Flows: ฝั่งซ้าย (x=250..580) -->
+          <!-- 6.1 -->
+          <path d="M 250 120 L 360 120 L 360 85 L 580 85" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL26)" />
+          <text class="lbl" x="470" y="75" text-anchor="middle">หัวข้อและรายละเอียดปัญหา</text>
+
+          <path d="M 580 115 L 430 115 L 430 150 L 250 150" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL26)" />
+          <text class="lbl" x="340" y="140" text-anchor="middle">เลข Ticket / ผลการส่ง</text>
+
+          <!-- 6.2 -->
+          <path d="M 580 275 L 360 275 L 360 165 L 250 165" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL26)" />
+          <text class="lbl" x="490" y="265" text-anchor="middle">ข้อความตอบกลับจากร้าน</text>
+
+          <path d="M 250 480 L 380 480 L 380 295 L 580 295" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL26)" />
+          <text class="lbl" x="480" y="285" text-anchor="middle">คำตอบ / คำแนะนำการแก้ไข</text>
+
+          <path d="M 580 320 L 450 320 L 450 510 L 250 510" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL26)" />
+          <text class="lbl" x="350" y="490" text-anchor="middle">รายการคำร้อง</text>
+          <text class="lbl" x="350" y="508" text-anchor="middle">ที่รอดำเนินการ</text>
+
+          <!-- 6.3 -->
+          <line x1="250" y1="535" x2="580" y2="535" stroke="#000000" stroke-width="2" marker-end="url(#arrL26)" />
+          <text class="lbl" x="415" y="525" text-anchor="middle">คำสั่งปิดเคส (Closed)</text>
+
+          <!-- Flows: ฝั่งขวา (x=880..1160) แยกรางอิสระ 100% -->
+          <!-- 6.1 -> D6: ใช้ราง x=940 -->
+          <path d="M 880 105 L 940 105 L 940 275 L 1160 275" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL26)" />
+          <text class="lbl" x="1050" y="265" text-anchor="middle">บันทึก Ticket ใหม่</text>
+
+          <!-- 6.2 -> D6: เส้นตรงแนวนอน y=290 -->
+          <line x1="880" y1="290" x2="1160" y2="290" stroke="#000000" stroke-width="2" marker-end="url(#arrL26)" />
+          <text class="lbl" x="1020" y="280" text-anchor="middle">บันทึกบทสนทนาตอบกลับ</text>
+
+          <!-- 6.3 -> D6: ใช้ราง x=1020 -->
+          <path d="M 880 480 L 1020 480 L 1020 305 L 1160 305" fill="none" stroke="#000000" stroke-width="2" marker-end="url(#arrL26)" />
+          <text class="lbl" x="950" y="470" text-anchor="middle">อัปเดตสถานะ</text>
+          <text class="lbl" x="950" y="492" text-anchor="middle">Resolved / Closed</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         9. DATA DICTIONARY (พจนานุกรมข้อมูล)
+         ========================================== -->
+    <div id="tab-dictionary" class="tab-content" style="display: none;">
+      <div class="diagram-card">
+        <div class="diagram-title">พจนานุกรมข้อมูล (Data Dictionary) — ระบบร้านขายมอเตอร์ไซค์ 160 ธีระ สายซิ่ง</div>
+        <div class="diagram-desc">คำอธิบายโครงสร้าง Data Store และ Data Flow ทั้งหมดในระบบ ตรงตามฐานข้อมูลจริง 100%</div>
+
+        <h3 style="font-size: 24px; font-weight: 700; margin-top: 1.5rem;">1. ตารางคำอธิบาย Data Store (แหล่งเก็บข้อมูล)</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">รหัส</th>
+              <th style="width: 220px;">ชื่อแหล่งเก็บข้อมูล</th>
+              <th style="width: 200px;">ตารางจริงในระบบ</th>
+              <th>คำอธิบายโครงสร้างและฟิลด์สำคัญ</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>D1</b></td>
+              <td>ข้อมูลสมาชิก</td>
+              <td><code>users</code>, <code>user_ban_logs</code></td>
+              <td>เก็บข้อมูลบัญชีผู้ใช้ (id, username, email, password_hash, role='customer'/'admin', is_banned, ban_reason)</td>
+            </tr>
+            <tr>
+              <td><b>D2</b></td>
+              <td>ข้อมูลสินค้า</td>
+              <td><code>motorcycles</code></td>
+              <td>เก็บข้อมูลรถมอเตอร์ไซค์พิกัด ≤ 160 cc (id, name, brand, model_year, engine_cc, price, stock, image_url, description)</td>
+            </tr>
+            <tr>
+              <td><b>D3</b></td>
+              <td>ข้อมูลคำสั่งซื้อ</td>
+              <td><code>orders</code></td>
+              <td>เก็บข้อมูลหัวคำสั่งซื้อ (id, user_id, order_number, total_amount, status='Pending'/'Slip_Uploaded'/'Paid'/'Shipped'/'Completed'/'Cancelled', created_at)</td>
+            </tr>
+            <tr>
+              <td><b>D4</b></td>
+              <td>รายละเอียดคำสั่งซื้อและการชำระเงิน</td>
+              <td><code>order_items</code>, <code>payments</code></td>
+              <td>เก็บรายการสินค้าในออเดอร์ (order_id, motorcycle_id, quantity, unit_price, subtotal) และข้อมูลการเงิน</td>
+            </tr>
+            <tr>
+              <td><b>D5</b></td>
+              <td>ข้อมูลการชำระเงิน</td>
+              <td><code>payments</code></td>
+              <td>เก็บหลักฐานการชำระเงิน (id, order_id, slip_image, transfer_amount, transfer_time, verified_by, verified_at, rejection_reason)</td>
+            </tr>
+            <tr>
+              <td><b>D6</b></td>
+              <td>ข้อมูลแจ้งปัญหา</td>
+              <td><code>tickets</code>, <code>ticket_replies</code></td>
+              <td>เก็บคำร้องและบริการหลังการขาย (id, user_id, subject, status='Open'/'In_Progress'/'Resolved'/'Closed', category, priority)</td>
+            </tr>
+            <tr>
+              <td><b>D7</b></td>
+              <td>โทเค็นรีเซ็ตรหัสผ่าน</td>
+              <td><code>password_resets</code></td>
+              <td>เก็บข้อมูลลิงก์รีเซ็ตรหัสผ่านชั่วคราว (id, email, token, expires_at, used)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 style="font-size: 24px; font-weight: 700; margin-top: 2rem;">2. ตารางคำอธิบาย Data Flow (เส้นทางการไหลของข้อมูล)</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 240px;">ชื่อกระแสข้อมูล (Data Flow)</th>
+              <th style="width: 180px;">ต้นทาง (Source)</th>
+              <th style="width: 180px;">ปลายทาง (Destination)</th>
+              <th>รายละเอียดและข้อมูลที่ส่ง</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ข้อมูลสมัครสมาชิก / เข้าสู่ระบบ</td>
+              <td>ลูกค้า</td>
+              <td>1.0 จัดการสมาชิก</td>
+              <td>ชื่อผู้ใช้, อีเมล, รหัสผ่านที่เข้ารหัส</td>
+            </tr>
+            <tr>
+              <td>ผลการสมัคร / ผลการเข้าสู่ระบบ</td>
+              <td>1.0 จัดการสมาชิก</td>
+              <td>ลูกค้า</td>
+              <td>Session Login, ผลการตรวจสอบความถูกต้อง</td>
+            </tr>
+            <tr>
+              <td>คำขอค้นหารถ / ข้อมูลสต็อก</td>
+              <td>ลูกค้า / แอดมิน</td>
+              <td>2.0 จัดการข้อมูลสินค้า</td>
+              <td>แบรนด์ (Honda, Yamaha, Vespa), ช่วงราคา, พิกัด cc (≤ 160cc)</td>
+            </tr>
+            <tr>
+              <td>ข้อมูลคำสั่งซื้อ</td>
+              <td>ลูกค้า</td>
+              <td>3.0 จัดการคำสั่งซื้อ</td>
+              <td>รหัสรถ, จำนวนที่ซื้อ, ที่อยู่จัดส่ง</td>
+            </tr>
+            <tr>
+              <td>ไฟล์สลิปและยอดชำระ</td>
+              <td>ลูกค้า</td>
+              <td>4.0 ตรวจสอบการชำระเงิน</td>
+              <td>รูปถ่ายสลิปโอนเงิน, ยอดเงิน, วันเวลาที่โอน</td>
+            </tr>
+            <tr>
+              <td>สถานะการชำระเงิน / ใบเสร็จ PDF</td>
+              <td>4.0 ตรวจสอบการชำระเงิน</td>
+              <td>ลูกค้า</td>
+              <td>ไฟล์ PDF ใบเสร็จรับเงินที่ดาวน์โหลดได้ทันที</td>
+            </tr>
+            <tr>
+              <td>คำสั่งปรับสถานะ / ยกเลิก</td>
+              <td>ผู้ดูแลระบบ</td>
+              <td>5.0 จัดการสถานะคำสั่งซื้อ</td>
+              <td>รหัสคำสั่งซื้อ, สถานะใหม่ (จัดส่ง/สำเร็จ/ยกเลิก), เลขพัสดุ</td>
+            </tr>
+            <tr>
+              <td>คืนสต็อกรถตามจำนวนที่จอง</td>
+              <td>5.0 จัดการสถานะคำสั่งซื้อ</td>
+              <td>D2 ข้อมูลสินค้า</td>
+              <td>บวกจำนวนสต็อกรถกลับคืนเมื่อมีคำสั่ง Cancelled</td>
+            </tr>
+            <tr>
+              <td>หัวข้อและรายละเอียดปัญหา</td>
+              <td>ลูกค้า</td>
+              <td>6.0 จัดการแจ้งปัญหา</td>
+              <td>หมวดหมู่ปัญหา, รายละเอียดข้อร้องเรียน</td>
+            </tr>
+            <tr>
+              <td>รายงานผลสรุป</td>
+              <td>7.0 จัดทำรายงาน</td>
+              <td>ผู้ดูแลระบบ</td>
+              <td>ยอดขายรวม, จำนวนรถที่ขายได้, รายงานคำสั่งซื้อ</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(function(el) {
+        el.style.display = 'none';
+      });
+      document.querySelectorAll('.tab-btn').forEach(function(el) {
+        el.classList.remove('active');
+      });
+      var activeTab = document.getElementById(tabId);
+      if (activeTab) {
+        activeTab.style.display = 'block';
+      }
+      var btns = document.querySelectorAll('.tab-btn');
+      btns.forEach(function(btn) {
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').indexOf(tabId) !== -1) {
+          btn.classList.add('active');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

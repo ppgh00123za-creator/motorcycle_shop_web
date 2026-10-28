@@ -1,0 +1,126 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}จัดการสินค้า - {{ shop_config.name }}{% endblock %}
+
+{% block page_title %}จัดการสินค้า (รถจักรยานยนต์ ≤ 160 cc){% endblock %}
+{% block page_desc %}เพิ่ม แก้ไข ปรับปรุงสต็อก และปิดการขายสินค้า มีทั้งหมด {{ products|length }} รายการ{% endblock %}
+
+{% block admin_content %}
+<div class="admin-section-header">
+  <div>
+    <h2 class="section-header-title">รายการสินค้าทั้งหมดในระบบ</h2>
+    <p class="section-header-desc">ตรวจสอบรายละเอียดราคา จำนวนสต็อก และสถานะการจำหน่ายของรถทุกรุ่น</p>
+  </div>
+  <a href="{{ url_for('admin.product_add') }}" class="admin-btn admin-btn-primary">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+    + เพิ่มสินค้ารถใหม่
+  </a>
+</div>
+
+<!-- Search & Filter Card -->
+<div class="admin-card">
+  <form action="{{ url_for('admin.products') }}" method="GET" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+    <div class="admin-form-group" style="flex: 2; min-width: 220px;">
+      <label for="search" class="admin-form-label">ค้นหาด้วยชื่อรุ่น หรือ รหัสสินค้า</label>
+      <input type="text" name="search" id="search" class="admin-form-control" placeholder="เช่น Wave, Scoopy, Click..." value="{{ search }}">
+    </div>
+
+    <div class="admin-form-group" style="flex: 1; min-width: 160px;">
+      <label for="category" class="admin-form-label">ประเภทรถ</label>
+      <select name="category" id="category" class="admin-form-control">
+        <option value="">-- ทุกประเภท --</option>
+        <option value="ครอบครัว" {% if category == 'ครอบครัว' %}selected{% endif %}>ครอบครัว</option>
+        <option value="ออโตเมติก" {% if category == 'ออโตเมติก' %}selected{% endif %}>ออโตเมติก</option>
+        <option value="สปอร์ต/มินิ" {% if category == 'สปอร์ต/มินิ' %}selected{% endif %}>สปอร์ต/มินิ</option>
+      </select>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem;">
+      <button type="submit" class="admin-btn admin-btn-primary" style="height: 38px;">ค้นหา</button>
+      <a href="{{ url_for('admin.products') }}" class="admin-btn admin-btn-outline" style="height: 38px;">รีเซ็ต</a>
+    </div>
+  </form>
+</div>
+
+<!-- Products Table -->
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th style="width: 70px;">รูปภาพ</th>
+        <th>รหัส / รุ่นรถ</th>
+        <th>ยี่ห้อ</th>
+        <th class="text-center">ซีซี (≤160)</th>
+        <th>ประเภท</th>
+        <th class="text-right">ราคาจำหน่าย</th>
+        <th class="text-center" style="width: 170px;">สต็อกคงเหลือ</th>
+        <th class="text-center">สถานะ</th>
+        <th class="text-center" style="width: 140px;">การดำเนินการ</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in products %}
+        <tr>
+          <td>
+            <img src="{{ p.image_url|bike_img }}" 
+                 alt="{{ p.model }}" 
+                 style="width: 55px; height: 38px; object-fit: contain; border-radius: 4px; background: #111;">
+          </td>
+          <td>
+            <strong style="color: var(--admin-gray-900); font-size: 0.95rem;">{{ p.model }}</strong>
+            <div style="font-size: 0.88rem; color: var(--admin-gray-500);">
+              รหัส: {{ p.code }} | ปี: {{ p.model_year }}
+            </div>
+          </td>
+          <td style="font-weight: 600;">{{ p.brand }}</td>
+          <td class="text-center">
+            <span class="admin-badge badge-gray">{{ p.engine_cc }} cc</span>
+          </td>
+          <td>{{ p.category }}</td>
+          <td class="text-right price-text red">
+            ฿{{ p.price|currency }}
+          </td>
+          <td>
+            <form action="{{ url_for('admin.product_stock_update', product_id=p.id) }}" method="POST" style="display: flex; gap: 0.35rem; justify-content: center; align-items: center;">
+              <input type="number" name="stock" value="{{ p.stock }}" min="0" class="admin-form-control" style="width: 65px; text-align: center; padding: 0.25rem; font-size: 0.85rem;">
+              <button type="submit" class="admin-btn admin-btn-outline admin-btn-sm" title="บันทึกสต็อก">
+                บันทึก
+              </button>
+            </form>
+          </td>
+          <td class="text-center">
+            {% if p.status == 'available' %}
+              <span class="admin-badge badge-success">วางขาย</span>
+            {% elif p.status == 'out_of_stock' %}
+              <span class="admin-badge badge-danger">หมดสต็อก</span>
+            {% else %}
+              <span class="admin-badge badge-gray">เลิกจำหน่าย</span>
+            {% endif %}
+          </td>
+          <td class="text-center">
+            <div class="admin-actions-cell">
+              <a href="{{ url_for('admin.product_edit', product_id=p.id) }}" class="admin-btn admin-btn-outline admin-btn-sm" title="แก้ไขข้อมูล">
+                แก้ไข
+              </a>
+              <form action="{{ url_for('admin.product_delete', product_id=p.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('คุณต้องการลบหรือปิดการขายสินค้านี้ใช่หรือไม่?');">
+                <button type="submit" class="admin-btn admin-btn-danger admin-btn-sm" title="ลบสินค้า">
+                  ลบ
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="9" class="text-center" style="padding: 3rem; color: var(--admin-gray-500);">
+            ไม่พบรายการสินค้าตามเงื่อนไขที่ค้นหา
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

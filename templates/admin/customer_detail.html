@@ -1,0 +1,174 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}ข้อมูลลูกค้า {{ customer.name }} - {{ shop_config.name }}{% endblock %}
+
+{% block page_title %}ข้อมูลสมาชิกลูกค้า: {{ customer.name }}{% endblock %}
+{% block page_desc %}รหัส #CUST-{{ "%04d"|format(customer.id) }} • ลงทะเบียนเมื่อ {{ customer.created_at|thai_date }}{% endblock %}
+
+{% block admin_content %}
+<div class="admin-section-header">
+  <div>
+    <a href="{{ url_for('admin.customers') }}" class="admin-btn admin-btn-outline admin-btn-sm" style="margin-bottom: 0.5rem;">
+      &larr; กลับหน้ารายชื่อลูกค้า
+    </a>
+    <h2 class="section-header-title">
+      {{ customer.name }}
+      <span style="font-size: 0.85rem; color: var(--admin-red); font-weight: normal;">(#CUST-{{ "%04d"|format(customer.id) }})</span>
+    </h2>
+  </div>
+
+  <div style="display: flex; gap: 0.5rem; align-items: center;">
+    {% if customer.is_banned %}
+      <form action="{{ url_for('admin.customer_unban', user_id=customer.id) }}" method="POST">
+        <button type="submit" class="admin-btn admin-btn-success" onclick="return confirm('ยืนยันปลดระงับบัญชีนี้?');">
+          ✓ ปลดระงับบัญชีนี้
+        </button>
+      </form>
+    {% else %}
+      <a href="{{ url_for('admin.customer_ban', user_id=customer.id) }}" class="admin-btn admin-btn-danger">
+        🚫 ระงับการใช้งานบัญชีนี้
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="analytics-grid-two">
+  <!-- ฝั่งซ้าย: ข้อมูลโปรไฟล์และสถิติ -->
+  <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3 class="admin-card-title">ข้อมูลโปรไฟล์ทั่วไป</h3>
+        {% if customer.is_banned %}
+          <span class="admin-badge badge-danger">ถูกระงับการใช้งาน</span>
+        {% else %}
+          <span class="admin-badge badge-success">บัญชีปกติ</span>
+        {% endif %}
+      </div>
+
+      <div style="display: flex; gap: 1.25rem; align-items: center; margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--admin-gray-200);">
+        {% if customer.avatar %}
+          <img src="{{ url_for('static', filename='ไฟล์ที่ผู้ใช้อัปโหลด/avatars/' + customer.avatar) }}" alt="{{ customer.name }}" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid {% if customer.is_banned %}#ef4444{% else %}var(--admin-red){% endif %};">
+        {% else %}
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--admin-red-light); color: var(--admin-red); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.6rem; border: 2px solid var(--admin-red-border);">
+            {{ customer.name[:1] }}
+          </div>
+        {% endif %}
+        <div>
+          <h3 style="margin: 0; font-size: 1.15rem; color: var(--admin-gray-900);">{{ customer.name }}</h3>
+          <span style="font-size: 0.85rem; color: var(--admin-gray-500);">สมาชิกร้าน 160 ธีระ สายซิ่ง</span>
+        </div>
+      </div>
+
+      <table class="admin-table">
+        <tbody>
+          <tr>
+            <th style="width: 140px;">อีเมล:</th>
+            <td>{{ customer.email }}</td>
+          </tr>
+          <tr>
+            <th>เบอร์โทรศัพท์:</th>
+            <td>{{ customer.phone or '-' }}</td>
+          </tr>
+          <tr>
+            <th>ที่อยู่จัดส่ง:</th>
+            <td>{{ customer.address or '-' }}</td>
+          </tr>
+          <tr>
+            <th>ยอดสั่งซื้อสะสม:</th>
+            <td style="font-weight: 800; color: var(--admin-red); font-size: 1.05rem;">฿{{ (total_spent or 0)|currency }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- บันทึกประวัติการระงับบัญชี (Ban Logs) -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3 class="admin-card-title">ประวัติการระงับบัญชี (Audit Log)</h3>
+      </div>
+
+      {% if ban_logs %}
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          {% for b in ban_logs %}
+            <div style="background: var(--admin-gray-50); border: 1px solid var(--admin-gray-200); border-radius: 6px; padding: 0.75rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                <span class="admin-badge {% if b.action == 'ban' %}badge-danger{% else %}badge-success{% endif %}">
+                  {% if b.action == 'ban' %}🚫 ระงับการใช้งาน{% else %}✓ ปลดระงับ{% endif %}
+                </span>
+                <span style="font-size: 0.88rem; color: var(--admin-gray-500);">{{ b.created_at|thai_date }}</span>
+              </div>
+              <div style="font-size: 0.85rem; color: var(--admin-gray-800); margin-top: 0.25rem;">
+                <strong>หมวดหมู่:</strong> {{ b.reason_category }}
+              </div>
+              <div style="font-size: 0.82rem; color: var(--admin-gray-600); margin-top: 0.2rem;">
+                {{ b.reason_detail }}
+              </div>
+              <div style="font-size: 0.85rem; color: var(--admin-gray-500); margin-top: 0.35rem;">
+                บันทึกโดย: {{ b.admin_name or 'ผู้ดูแลระบบ' }}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p style="color: var(--admin-gray-500); font-size: 0.85rem; margin: 0;">ไม่เคยมีประวัติการถูกระงับบัญชี</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ฝั่งขวา: ประวัติคำสั่งซื้อของลูกค้า -->
+  <div>
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3 class="admin-card-title">ประวัติคำสั่งซื้อ ({{ orders|length }} รายการ)</h3>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>เลขที่คำสั่งซื้อ</th>
+              <th>วันที่</th>
+              <th class="text-right">ยอดสุทธิ</th>
+              <th class="text-center">สถานะ</th>
+              <th class="text-center">ดู</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for o in orders %}
+              <tr>
+                <td>
+                  <a href="{{ url_for('admin.order_detail', order_id=o.id) }}" style="font-weight: 700; color: var(--admin-red); text-decoration: none;">
+                    {{ o.order_number }}
+                  </a>
+                </td>
+                <td style="font-size: 0.8rem; color: var(--admin-gray-500);">
+                  {{ o.created_at|thai_date }}
+                </td>
+                <td class="text-right price-text red">
+                  ฿{{ o.total_amount|currency }}
+                </td>
+                <td class="text-center">
+                  <span class="admin-badge {% if o.status in ['ชำระเงินแล้ว', 'จัดส่งแล้ว'] %}badge-success{% elif o.status == 'ยกเลิก' %}badge-danger{% else %}badge-warning{% endif %}">
+                    {{ o.status }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <a href="{{ url_for('admin.order_detail', order_id=o.id) }}" class="admin-btn admin-btn-outline admin-btn-sm">
+                    ดู
+                  </a>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="5" class="text-center" style="padding: 2.5rem; color: var(--admin-gray-500);">
+                  ลูกค้ารายนี้ยังไม่มีประวัติการสั่งซื้อ
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,1255 @@
+/* ====================================================================
+   160 TEERA SAI SING - ADMIN DASHBOARD STYLESHEET (PROFESSIONAL & CLEAN)
+   ฟอนต์ตระกูล Unknow-Zero:
+   - "Unknow-Zero Light" (300): ข้อความรอง
+   - "Unknow-Zero" (400): เนื้อหาทั่วไป
+   - "Unknow-Zero Bold" (700): หัวข้อและปุ่ม
+   - "Unknow-Zero ExtraBold" (800): หัวข้อใหญ่
+   Zero JavaScript | Pure CSS 100%
+   ==================================================================== */
+
+@font-face {
+  font-family: 'Unknow-Zero';
+  src: url('/static/fonts/Unknow-Zero%20Light.ttf') format('truetype'),
+       url('/static/fonts/Unknow-Zero Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Unknow-Zero';
+  src: url('/static/fonts/Unknow-Zero.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Unknow-Zero';
+  src: url('/static/fonts/Unknow-Zero%20Bold.ttf') format('truetype'),
+       url('/static/fonts/Unknow-Zero Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Unknow-Zero';
+  src: url('/static/fonts/Unknow-Zero%20ExtraBold.ttf') format('truetype'),
+       url('/static/fonts/Unknow-Zero ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --admin-font: 'Unknow-Zero', sans-serif;
+  --admin-red: #da291c;
+  --admin-red-hover: #b91c1c;
+  --admin-red-light: #fef2f2;
+  --admin-red-border: #fecaca;
+  --admin-dark: #111827;
+  --admin-gray-900: #111827;
+  --admin-gray-800: #1f2937;
+  --admin-gray-700: #374151;
+  --admin-gray-600: #4b5563;
+  --admin-gray-500: #6b7280;
+  --admin-gray-400: #9ca3af;
+  --admin-gray-300: #d1d5db;
+  --admin-gray-200: #e5e7eb;
+  --admin-gray-100: #f3f4f6;
+  --admin-gray-50: #f9fafb;
+  --admin-bg: #f8fafc;
+  --admin-card-bg: #ffffff;
+  --admin-sidebar-width: 295px;
+  --admin-topbar-height: 72px;
+  --admin-radius-sm: 6px;
+  --admin-radius-md: 8px;
+  --admin-radius-lg: 12px;
+  --admin-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --admin-shadow-md: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* Global Reset & Base Typography (ปรับขนาดให้อ่านง่าย ชัดเจน ขนาดใหญ่ขึ้น) */
+html {
+  font-size: 20px;
+}
+
+.admin-html,
+.admin-body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--admin-bg) !important;
+  color: var(--admin-gray-800);
+  font-family: var(--admin-font) !important;
+  font-size: 1.08rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.admin-layout * {
+  box-sizing: border-box;
+  font-family: var(--admin-font);
+}
+
+/* ลำดับน้ำหนักฟอนต์ Unknow-Zero ตามสเปก */
+/* 1. ข้อความรอง: Unknow-Zero Light (300) */
+.section-header-desc,
+.admin-card-sub,
+.kpi-metric-desc,
+.topbar-page-desc,
+.sidebar-section-title,
+.brand-sub-badge,
+.user-role-str,
+.admin-form-hint,
+.action-alert-sub,
+.text-muted,
+small {
+  font-weight: 300 !important;
+}
+
+/* 2. เนื้อหาทั่วไป: Unknow-Zero Regular (400) */
+body, p, span, td, input, select, textarea, .admin-menu-text, .admin-form-control {
+  font-weight: 400;
+}
+
+/* 3. หัวข้อและปุ่ม: Unknow-Zero Bold (700) */
+h2, h3, h4, h5, h6, th, .btn, .admin-btn, button, .admin-form-label, .admin-badge, .sidebar-menu-link.active, .price-text {
+  font-weight: 700;
+}
+
+/* 4. หัวข้อใหญ่: Unknow-Zero ExtraBold (800) */
+h1, .topbar-page-title, .section-header-title, .brand-main-title, .kpi-metric-value, .action-alert-count {
+  font-weight: 800;
+}
+
+/* Base Buttons */
+.btn-primary,
+.btn-outline,
+.btn-danger,
+.btn-secondary {
+  font-family: var(--admin-font) !important;
+  font-size: 0.95rem;
+}
+
+/* ====================================================================
+   ADMIN APP LAYOUT STRUCTURE
+   ==================================================================== */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--admin-bg);
+}
+
+/* ====================================================================
+   SIDEBAR (แถบเมนูด้านข้าง)
+   ==================================================================== */
+.admin-sidebar {
+  width: var(--admin-sidebar-width);
+  min-width: var(--admin-sidebar-width);
+  background: #ffffff;
+  border-right: 1px solid var(--admin-gray-200);
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 50;
+  overflow-y: auto;
+}
+
+.admin-sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+.admin-sidebar::-webkit-scrollbar-thumb {
+  background: var(--admin-gray-300);
+  border-radius: 4px;
+}
+
+.sidebar-brand-box {
+  padding: 1.25rem 1.35rem;
+  border-bottom: 1px solid var(--admin-gray-200);
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+}
+
+.sidebar-brand-link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.sidebar-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--admin-red);
+  flex-shrink: 0;
+}
+
+.brand-text-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-main-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--admin-gray-900);
+  line-height: 1.2;
+}
+
+.brand-main-title .text-red {
+  color: var(--admin-red);
+}
+
+.brand-sub-badge {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--admin-gray-500);
+  letter-spacing: 0.5px;
+  margin-top: 3px;
+}
+
+/* Sidebar Nav */
+.sidebar-nav-container {
+  flex: 1;
+  padding: 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sidebar-section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--admin-gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 0.75rem 0.75rem 0.35rem 0.75rem;
+}
+
+.sidebar-menu-link {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.72rem 0.95rem;
+  border-radius: var(--admin-radius-sm);
+  color: var(--admin-gray-700);
+  text-decoration: none;
+  font-size: 1.05rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-menu-link:hover {
+  background-color: var(--admin-gray-100);
+  color: var(--admin-gray-900);
+}
+
+.sidebar-menu-link.active {
+  background-color: var(--admin-red-light);
+  color: var(--admin-red);
+  font-weight: 700;
+}
+
+.sidebar-menu-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  bottom: 15%;
+  width: 4px;
+  background-color: var(--admin-red);
+  border-radius: 0 3px 3px 0;
+}
+
+.sidebar-svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  stroke: currentColor;
+}
+
+.sidebar-menu-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-pill-badge {
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--admin-gray-200);
+  color: var(--admin-gray-700);
+}
+
+.sidebar-pill-badge.pill-red {
+  background: var(--admin-red);
+  color: #ffffff;
+}
+
+.sidebar-pill-badge.pill-warning {
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+/* Sidebar Footer */
+.sidebar-footer-box {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--admin-gray-200);
+  background: #ffffff;
+}
+
+.sidebar-logout-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--admin-red);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0.5rem 0.6rem;
+  border-radius: var(--admin-radius-sm);
+  transition: background 0.15s ease;
+}
+
+.sidebar-logout-link:hover {
+  background-color: var(--admin-red-light);
+}
+
+/* ====================================================================
+   MAIN WRAPPER & TOPBAR (แถบด้านบน)
+   ==================================================================== */
+.admin-main-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background-color: var(--admin-bg);
+}
+
+.admin-topbar {
+  height: var(--admin-topbar-height);
+  background: #ffffff;
+  border-bottom: 1px solid var(--admin-gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.topbar-page-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar-page-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--admin-gray-900);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.topbar-page-desc {
+  font-size: 0.95rem;
+  color: var(--admin-gray-500);
+  margin-top: 3px;
+}
+
+.topbar-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.topbar-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.05rem;
+  font-size: 1.0rem;
+  font-weight: 600;
+  border-radius: var(--admin-radius-sm);
+  text-decoration: none;
+  border: 1px solid var(--admin-gray-300);
+  background: #ffffff;
+  color: var(--admin-gray-700);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.topbar-action-btn:hover {
+  background: var(--admin-gray-50);
+  border-color: var(--admin-gray-400);
+  color: var(--admin-gray-900);
+}
+
+.topbar-action-btn.btn-store:hover {
+  border-color: var(--admin-red-border);
+  color: var(--admin-red);
+}
+
+.topbar-action-btn.btn-logout {
+  color: var(--admin-red);
+  border-color: var(--admin-red-border);
+}
+
+.topbar-action-btn.btn-logout:hover {
+  background: var(--admin-red-light);
+}
+
+.topbar-user-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.4rem 0.85rem 0.4rem 0.5rem;
+  background: var(--admin-gray-50);
+  border: 1px solid var(--admin-gray-200);
+  border-radius: 999px;
+}
+
+.user-avatar-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--admin-red-light);
+  color: var(--admin-red);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  border: 1.5px solid var(--admin-red);
+}
+
+.user-info-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name-str {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--admin-gray-900);
+  line-height: 1.25;
+}
+
+.user-role-str {
+  font-size: 0.82rem;
+  color: var(--admin-gray-500);
+}
+
+/* ====================================================================
+   FLASH MESSAGES BANNER
+   ==================================================================== */
+.admin-flash-wrap {
+  padding: 1.25rem 2rem 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.admin-flash-pill {
+  padding: 0.85rem 1.35rem;
+  border-radius: var(--admin-radius-sm);
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.admin-flash-pill.flash-success {
+  background-color: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.admin-flash-pill.flash-error,
+.admin-flash-pill.flash-danger {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.admin-flash-pill.flash-warning {
+  background-color: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.admin-flash-pill.flash-info {
+  background-color: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+/* ====================================================================
+   MAIN CONTENT AREA (พื้นที่เนื้อหาหลัก)
+   ==================================================================== */
+.admin-content-area {
+  flex: 1;
+  padding: 1.75rem 2rem 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+/* Page Section Header */
+.admin-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.section-header-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--admin-gray-900);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.section-header-desc {
+  font-size: 0.95rem;
+  color: var(--admin-gray-500);
+  margin-top: 0.35rem;
+}
+
+/* Clean Admin Cards */
+.admin-card {
+  background: var(--admin-card-bg);
+  border: 1px solid var(--admin-gray-200);
+  border-radius: var(--admin-radius-md);
+  padding: 1.5rem 1.75rem;
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.admin-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--admin-gray-100);
+}
+
+.admin-card-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--admin-gray-900);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.admin-card-sub {
+  font-size: 0.88rem;
+  color: var(--admin-gray-500);
+  font-weight: normal;
+}
+
+/* ====================================================================
+   DASHBOARD SECTION 1: KEY METRICS CARDS (สรุปข้อมูลสำคัญ)
+   ==================================================================== */
+.kpi-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.35rem;
+}
+
+.kpi-metric-card {
+  background: #ffffff;
+  border: 1px solid var(--admin-gray-200);
+  border-radius: var(--admin-radius-md);
+  padding: 1.4rem;
+  box-shadow: var(--admin-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: border-color 0.15s ease;
+}
+
+.kpi-metric-card:hover {
+  border-color: var(--admin-gray-300);
+}
+
+.kpi-metric-card.card-primary {
+  border-top: 4px solid var(--admin-red);
+}
+
+.kpi-metric-card.card-success {
+  border-top: 4px solid #10b981;
+}
+
+.kpi-metric-card.card-warning {
+  border-top: 4px solid #f59e0b;
+}
+
+.kpi-metric-card.card-info {
+  border-top: 4px solid #3b82f6;
+}
+
+.kpi-metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.kpi-metric-label {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--admin-gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kpi-tag {
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--admin-gray-100);
+  color: var(--admin-gray-600);
+}
+
+.kpi-metric-value {
+  font-size: 2.15rem;
+  font-weight: 800;
+  color: var(--admin-gray-900);
+  line-height: 1.15;
+  margin: 0.35rem 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi-metric-value.text-red {
+  color: var(--admin-red);
+}
+
+.kpi-metric-value.text-green {
+  color: #059669;
+}
+
+.kpi-metric-value.text-amber {
+  color: #d97706;
+}
+
+.kpi-metric-unit {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--admin-gray-500);
+}
+
+.kpi-metric-desc {
+  font-size: 0.86rem;
+  color: var(--admin-gray-500);
+  margin-top: 0.35rem;
+}
+
+/* ====================================================================
+   DASHBOARD SECTION 2: ACTION ITEMS (งานที่ต้องจัดการ)
+   ==================================================================== */
+.action-items-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 1.35rem;
+}
+
+.action-status-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.1rem;
+  margin-bottom: 1.35rem;
+}
+
+.action-alert-pill {
+  background: #ffffff;
+  border: 1px solid var(--admin-gray-200);
+  border-radius: var(--admin-radius-sm);
+  padding: 0.95rem 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.15s ease;
+}
+
+.action-alert-pill:hover {
+  border-color: var(--admin-gray-400);
+  background: var(--admin-gray-50);
+}
+
+.action-alert-pill.alert-active-red {
+  border-left: 4.5px solid var(--admin-red);
+}
+
+.action-alert-pill.alert-active-amber {
+  border-left: 4.5px solid #f59e0b;
+}
+
+.action-alert-pill.alert-active-blue {
+  border-left: 4.5px solid #3b82f6;
+}
+
+.action-alert-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--admin-gray-800);
+}
+
+.action-alert-sub {
+  font-size: 0.82rem;
+  color: var(--admin-gray-500);
+  margin-top: 2px;
+}
+
+.action-alert-count {
+  font-size: 1.3rem;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--admin-gray-100);
+  color: var(--admin-gray-700);
+}
+
+.action-alert-pill.alert-active-red .action-alert-count {
+  background: var(--admin-red-light);
+  color: var(--admin-red);
+}
+
+.action-alert-pill.alert-active-amber .action-alert-count {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+/* ====================================================================
+   DASHBOARD SECTION 3: REPORTS & ANALYTICS
+   ==================================================================== */
+.analytics-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+.analytics-filter-bar {
+  background: #ffffff;
+  border: 1px solid var(--admin-gray-200);
+  border-radius: var(--admin-radius-md);
+  padding: 1.1rem 1.35rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.1rem;
+}
+
+.filter-period-buttons {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.btn-filter {
+  padding: 0.42rem 0.85rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: var(--admin-radius-sm);
+  text-decoration: none;
+  border: 1px solid var(--admin-gray-300);
+  background: #ffffff;
+  color: var(--admin-gray-700);
+  transition: all 0.15s ease;
+}
+
+.btn-filter:hover {
+  background: var(--admin-gray-100);
+}
+
+.btn-filter.active {
+  background: var(--admin-red);
+  border-color: var(--admin-red);
+  color: #ffffff;
+}
+
+.custom-date-form {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.custom-date-form label {
+  font-size: 0.88rem;
+  color: var(--admin-gray-600);
+  font-weight: 600;
+}
+
+.custom-date-input {
+  font-family: var(--admin-font);
+  font-size: 0.88rem;
+  padding: 0.38rem 0.6rem;
+  border: 1px solid var(--admin-gray-300);
+  border-radius: var(--admin-radius-sm);
+  color: var(--admin-gray-800);
+}
+
+.btn-filter-submit {
+  font-family: var(--admin-font);
+  padding: 0.4rem 0.85rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  background: var(--admin-red);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--admin-radius-sm);
+  cursor: pointer;
+}
+
+.btn-filter-submit:hover {
+  background: var(--admin-red-hover);
+}
+
+/* Analytics Split Grid */
+.analytics-grid-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.35rem;
+}
+
+/* ====================================================================
+   TABLES (ตารางข้อมูลอย่างมืออาชีพ ปรับฟอนต์ให้อ่านง่าย)
+   ==================================================================== */
+.admin-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #ffffff;
+  border: 1px solid var(--admin-gray-200);
+  border-radius: var(--admin-radius-md);
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.02rem;
+  text-align: left;
+}
+
+.admin-table th {
+  background-color: var(--admin-gray-50);
+  color: var(--admin-gray-700);
+  font-weight: 700;
+  padding: 0.95rem 1.25rem;
+  border-bottom: 1px solid var(--admin-gray-200);
+  white-space: nowrap;
+  font-size: 1.0rem;
+}
+
+.admin-table td {
+  padding: 0.95rem 1.25rem;
+  border-bottom: 1px solid var(--admin-gray-200);
+  vertical-align: middle;
+  color: var(--admin-gray-800);
+  font-size: 1.02rem;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tbody tr:hover {
+  background-color: #fafbfc;
+}
+
+/* Text alignments */
+.text-left { text-align: left !important; }
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; font-variant-numeric: tabular-nums; }
+
+.price-text {
+  font-weight: 700;
+  color: var(--admin-gray-900);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.15rem;
+}
+
+.price-text.red {
+  color: var(--admin-red);
+}
+
+/* ====================================================================
+   STATUS BADGES (ป้ายสถานะ)
+   ==================================================================== */
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-radius: 4px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.badge-success {
+  background-color: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.badge-warning {
+  background-color: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.badge-danger {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.badge-info {
+  background-color: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.badge-purple {
+  background-color: #f5f3ff;
+  color: #5b21b6;
+  border: 1px solid #ddd6fe;
+}
+
+.badge-gray {
+  background-color: var(--admin-gray-100);
+  color: var(--admin-gray-700);
+  border: 1px solid var(--admin-gray-300);
+}
+
+/* ====================================================================
+   BUTTONS (ปุ่มดำเนินการอย่างเป็นระบบ)
+   ==================================================================== */
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  font-family: var(--admin-font);
+  font-size: 0.94rem;
+  font-weight: 600;
+  padding: 0.52rem 1.05rem;
+  border-radius: var(--admin-radius-sm);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  line-height: 1.35;
+  border: 1px solid transparent;
+}
+
+.admin-btn-sm {
+  padding: 0.35rem 0.72rem;
+  font-size: 0.85rem;
+}
+
+.admin-btn-primary {
+  background-color: var(--admin-red);
+  color: #ffffff;
+  border-color: var(--admin-red);
+}
+
+.admin-btn-primary:hover {
+  background-color: var(--admin-red-hover);
+  border-color: var(--admin-red-hover);
+  color: #ffffff;
+}
+
+.admin-btn-outline {
+  background-color: #ffffff;
+  color: var(--admin-gray-700);
+  border-color: var(--admin-gray-300);
+}
+
+.admin-btn-outline:hover {
+  background-color: var(--admin-gray-50);
+  border-color: var(--admin-gray-400);
+  color: var(--admin-gray-900);
+}
+
+.admin-btn-danger {
+  background-color: #ffffff;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+.admin-btn-danger:hover {
+  background-color: #fef2f2;
+  border-color: #dc2626;
+  color: #991b1b;
+}
+
+.admin-btn-success {
+  background-color: #ffffff;
+  color: #059669;
+  border-color: #6ee7b7;
+}
+
+.admin-btn-success:hover {
+  background-color: #ecfdf5;
+  border-color: #059669;
+}
+
+.admin-actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+/* ====================================================================
+   FORMS (ฟอร์มกรอกข้อมูลอย่างเป็นระบบ)
+   ==================================================================== */
+.admin-form-wrap {
+  background: #ffffff;
+  border: 1px solid var(--admin-gray-200);
+  border-radius: var(--admin-radius-md);
+  padding: 2rem;
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.form-section-block {
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--admin-gray-200);
+}
+
+.form-section-block:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.form-section-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--admin-gray-900);
+  margin-bottom: 1.15rem;
+}
+
+.form-row {
+  display: grid;
+  gap: 1.15rem;
+  margin-bottom: 1.15rem;
+}
+
+.form-row-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.form-row-3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.admin-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.admin-form-label {
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: var(--admin-gray-800);
+}
+
+.admin-form-label .required {
+  color: var(--admin-red);
+}
+
+.admin-form-control {
+  font-family: var(--admin-font);
+  font-size: 0.96rem;
+  padding: 0.62rem 0.85rem;
+  border: 1px solid var(--admin-gray-300);
+  border-radius: var(--admin-radius-sm);
+  background-color: #ffffff;
+  color: var(--admin-gray-900);
+  transition: border-color 0.15s ease;
+  width: 100%;
+}
+
+.admin-form-control:focus {
+  outline: none;
+  border-color: var(--admin-red);
+  box-shadow: 0 0 0 2px rgba(218, 41, 28, 0.12);
+}
+
+.admin-form-control:disabled,
+.admin-form-control[readonly] {
+  background-color: var(--admin-gray-100);
+  color: var(--admin-gray-500);
+  cursor: not-allowed;
+}
+
+.admin-form-hint {
+  font-size: 0.84rem;
+  color: var(--admin-gray-500);
+}
+
+.form-actions-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: 1.75rem;
+  padding-top: 1.35rem;
+  border-top: 1px solid var(--admin-gray-200);
+}
+
+/* ====================================================================
+   PURE CSS BAR CHART (Zero JS)
+   ==================================================================== */
+.css-bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.85rem;
+  height: 220px;
+  padding: 1.25rem 0.75rem 0.6rem;
+  border-bottom: 2px solid var(--admin-gray-200);
+  background: var(--admin-gray-50);
+  border-radius: var(--admin-radius-sm);
+  margin-bottom: 0.85rem;
+}
+
+.chart-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.chart-bar-val {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--admin-gray-900);
+  margin-bottom: 0.35rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-bar-bg {
+  width: 100%;
+  max-width: 44px;
+  height: 100%;
+  background: var(--admin-red-light);
+  border-radius: 4px 4px 0 0;
+  display: flex;
+  align-items: flex-end;
+}
+
+.chart-bar-fill {
+  width: 100%;
+  background: var(--admin-red);
+  border-radius: 4px 4px 0 0;
+  transition: height 0.3s ease;
+}
+
+.chart-bar-lbl {
+  font-size: 0.8rem;
+  color: var(--admin-gray-600);
+  margin-top: 0.45rem;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+/* ====================================================================
+   RESPONSIVE DESIGN
+   ==================================================================== */
+@media (max-width: 1200px) {
+  .kpi-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .analytics-grid-two,
+  .action-items-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+  .admin-sidebar {
+    width: 100%;
+    min-width: 100%;
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--admin-gray-200);
+  }
+  .sidebar-nav-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0.6rem;
+    gap: 0.3rem;
+  }
+  .sidebar-section-title {
+    display: none;
+  }
+  .sidebar-footer-box {
+    display: none;
+  }
+  .admin-topbar {
+    padding: 0 1.25rem;
+  }
+  .admin-content-area {
+    padding: 1.25rem;
+  }
+  .action-status-strip {
+    grid-template-columns: 1fr;
+  }
+  .form-row-2,
+  .form-row-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .kpi-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .topbar-page-desc {
+    display: none;
+  }
+  .user-role-str {
+    display: none;
+  }
+}

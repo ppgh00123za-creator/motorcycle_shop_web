@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block title %}โปรไฟล์ของฉัน - {{ shop_config.name }}{% endblock %}
+
+{% block content %}
+  <div style="max-width: 800px; margin: 0 auto;">
+    <div class="section-header">
+      <div>
+        <h2>โปรไฟล์บัญชีของฉัน</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+          จัดการข้อมูลส่วนตัว ที่อยู่จัดส่ง และความปลอดภัยของบัญชี
+        </p>
+      </div>
+      <a href="{{ url_for('customer.orders') }}" class="btn btn-outline btn-sm">
+        ดูประวัติคำสั่งซื้อ &rarr;
+      </a>
+    </div>
+
+    <form action="{{ url_for('auth.profile') }}" method="POST" enctype="multipart/form-data">
+      <div style="display: grid; grid-template-columns: 240px 1fr; gap: 2rem; background: white; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 2rem; margin-bottom: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+        <!-- Avatar Column -->
+        <div style="text-align: center; border-right: 1px solid var(--border-light); padding-right: 1.5rem;">
+          <div style="margin-bottom: 1rem; position: relative; display: inline-block;">
+            {% if user.avatar %}
+              <img src="{{ url_for('static', filename='ไฟล์ที่ผู้ใช้อัปโหลด/avatars/' + user.avatar) }}" alt="{{ user.name }}" style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-red); box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+            {% else %}
+              <div style="width: 140px; height: 140px; border-radius: 50%; background: #f1f5f9; color: var(--primary-red); display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 800; border: 3px solid var(--border-light); margin: 0 auto;">
+                {{ user.name[:1] }}
+              </div>
+            {% endif %}
+          </div>
+          
+          <div class="form-group" style="text-align: left; margin-top: 0.5rem;">
+            <label for="avatar_file" style="font-size: 0.85rem; font-weight: 600;">เปลี่ยนรูปโปรไฟล์:</label>
+            <input type="file" name="avatar_file" id="avatar_file" class="form-control" style="font-size: 0.8rem; padding: 0.35rem;" accept=".png,.jpg,.jpeg,.webp">
+            <small style="color: var(--text-muted); font-size: 0.88rem; display: block; margin-top: 0.25rem;">
+              รองรับ PNG, JPG, WEBP
+            </small>
+          </div>
+        </div>
+
+        <!-- Personal Info Fields -->
+        <div>
+          <h3 style="font-size: 1.15rem; margin-bottom: 1.25rem; color: var(--dark-black); border-bottom: 1px solid var(--border-light); padding-bottom: 0.5rem;">
+            ข้อมูลทั่วไป
+          </h3>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="name">ชื่อ - นามสกุล *</label>
+            <input type="text" name="name" id="name" class="form-control" value="{{ user.name }}" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="email">อีเมล *</label>
+            <input type="email" name="email" id="email" class="form-control" value="{{ user.email }}" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label for="phone">เบอร์โทรศัพท์ติดต่อ</label>
+            <input type="tel" name="phone" id="phone" class="form-control" placeholder="เช่น 081-234-5678" value="{{ user.phone or '' }}">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label for="address">ที่อยู่จัดส่ง / ติดต่อ</label>
+            <textarea name="address" id="address" class="form-control" rows="3" placeholder="ระบุบ้านเลขที่ ถนน ตำบล/แขวง อำเภอ/เขต จังหวัด รหัสไปรษณีย์">{{ user.address or '' }}</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password Change Section -->
+      <div style="background: white; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 2rem; margin-bottom: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+        <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem; color: var(--dark-black);">
+          เปลี่ยนรหัสผ่าน
+        </h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">
+          หากไม่ต้องการเปลี่ยนรหัสผ่าน สามารถเว้นว่างช่องเหล่านี้ไว้ได้
+        </p>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label for="current_password">รหัสผ่านปัจจุบัน</label>
+          <div class="password-field-wrapper">
+            <input type="password" name="current_password" id="current_password" class="form-control" placeholder="••••••••">
+            <button type="button" class="toggle-password-btn" data-target="current_password" title="แสดงรหัสผ่าน" aria-label="แสดงรหัสผ่าน">
+              <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg class="eye-off-icon" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label for="new_password">รหัสผ่านใหม่ (อย่างน้อย 8 ตัว)</label>
+            <div class="password-field-wrapper">
+              <input type="password" name="new_password" id="new_password" class="form-control" placeholder="อย่างน้อย 8 ตัว มีตัวอักษรและตัวเลข" minlength="8">
+              <button type="button" class="toggle-password-btn" data-target="new_password" title="แสดงรหัสผ่าน" aria-label="แสดงรหัสผ่าน">
+                <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg class="eye-off-icon" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirm_new_password">ยืนยันรหัสผ่านใหม่</label>
+            <div class="password-field-wrapper">
+              <input type="password" name="confirm_new_password" id="confirm_new_password" class="form-control" placeholder="ยืนยันรหัสผ่านใหม่อีกครั้ง" minlength="8">
+              <button type="button" class="toggle-password-btn" data-target="confirm_new_password" title="แสดงรหัสผ่าน" aria-label="แสดงรหัสผ่าน">
+                <svg class="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg class="eye-off-icon" style="display:none;" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+        <a href="{{ url_for('shop.home') }}" class="btn btn-outline" style="min-width: 140px; text-align: center;">
+          ยกเลิก
+        </a>
+        <button type="submit" class="btn btn-primary" style="min-width: 180px;">
+          บันทึกการเปลี่ยนแปลง
+        </button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

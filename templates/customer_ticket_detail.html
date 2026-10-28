@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}รายละเอียดเรื่องแจ้งปัญหา {{ ticket.ticket_code }} - {{ shop_config.name }}{% endblock %}
+
+{% block content %}
+  <div class="section-header">
+    <div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.25rem;">
+        <a href="{{ url_for('customer.tickets') }}" style="color: inherit; text-decoration: none;">&larr; กลับไปหน้ารวมเรื่องแจ้งปัญหา</a>
+      </div>
+      <h2>เรื่องแจ้งปัญหา: <span style="color: var(--primary-red);">{{ ticket.ticket_code }}</span></h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">
+        ส่งเมื่อ: {{ ticket.created_at|thai_date }} | อัปเดตล่าสุด: {{ ticket.updated_at|thai_date }}
+      </p>
+    </div>
+
+    <div>
+      {% if ticket.status == 'รอตรวจสอบ' %}
+        <span class="badge-ticket badge-ticket-open" style="font-size: 0.9rem; padding: 0.4rem 0.85rem;">{{ ticket.status }}</span>
+      {% elif ticket.status == 'กำลังดำเนินการ' %}
+        <span class="badge-ticket badge-ticket-progress" style="font-size: 0.9rem; padding: 0.4rem 0.85rem;">{{ ticket.status }}</span>
+      {% elif ticket.status == 'ตอบกลับแล้ว' %}
+        <span class="badge-ticket badge-ticket-replied" style="font-size: 0.9rem; padding: 0.4rem 0.85rem;">{{ ticket.status }}</span>
+      {% else %}
+        <span class="badge-ticket badge-ticket-closed" style="font-size: 0.9rem; padding: 0.4rem 0.85rem;">{{ ticket.status }}</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <div style="max-width: 800px; margin: 0 auto;">
+    <!-- Ticket Summary Card -->
+    <div class="summary-card" style="margin-bottom: 1.5rem;">
+      <h3 style="margin-bottom: 1rem;">ข้อมูลคำร้องเรียน</h3>
+      <table class="specs-table" style="margin-bottom: 1.25rem;">
+        <tbody>
+          <tr>
+            <th style="width: 140px;">หมวดหมู่:</th>
+            <td><strong>{{ ticket.category }}</strong></td>
+          </tr>
+          <tr>
+            <th>หัวข้อ:</th>
+            <td style="font-weight: 700; font-size: 1.05rem; color: var(--dark-bg);">{{ ticket.subject }}</td>
+          </tr>
+          {% if ticket.order_number %}
+          <tr>
+            <th>คำสั่งซื้ออ้างอิง:</th>
+            <td>
+              <a href="{{ url_for('customer.order_detail', order_id=ticket.order_id) }}" style="color: var(--primary-red); font-weight: 700;">
+                {{ ticket.order_number }}
+              </a>
+            </td>
+          </tr>
+          {% endif %}
+          {% if ticket.contact_info %}
+          <tr>
+            <th>ช่องทางติดต่อกลับ:</th>
+            <td>{{ ticket.contact_info }}</td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 1.25rem;">
+        <h4 style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">รายละเอียดที่คุณส่ง:</h4>
+        <p style="font-size: 0.95rem; line-height: 1.6; color: #1e293b; white-space: pre-wrap; margin: 0;">{{ ticket.details }}</p>
+      </div>
+    </div>
+
+    <!-- Admin Response Card -->
+    {% if ticket.admin_reply %}
+      <div class="summary-card" style="border-left: 4px solid #10b981; margin-bottom: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <h3 style="color: #065f46; margin: 0;">คำตอบจากทางร้าน 160 ธีระ สายซิ่ง</h3>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">
+            ตอบเมื่อ: {{ ticket.replied_at|thai_date }}
+          </span>
+        </div>
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-sm); padding: 1.25rem;">
+          <p style="font-size: 0.95rem; line-height: 1.6; color: #14532d; white-space: pre-wrap; margin: 0;">{{ ticket.admin_reply }}</p>
+        </div>
+      </div>
+    {% else %}
+      <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-sm); padding: 1.25rem; text-align: center; color: #1e40af; margin-bottom: 1.5rem;">
+        <h4 style="margin: 0 0 0.5rem 0; font-size: 1rem;">กำลังรอเจ้าหน้าที่ร้านตรวจสอบ</h4>
+        <p style="font-size: 0.85rem; margin: 0; color: #1d4ed8;">
+          ทางร้านได้รับข้อมูลของคุณเรียบร้อยแล้ว เจ้าหน้าที่จะเร่งดำเนินการตรวจสอบและตอบกลับผ่านหน้านี้โดยเร็วที่สุด
+        </p>
+      </div>
+    {% endif %}
+
+    <div style="text-align: center;">
+      <a href="{{ url_for('customer.tickets') }}" class="btn btn-outline" style="min-width: 140px;">
+        &larr; กลับหน้ารายการแจ้งปัญหา
+      </a>
+    </div>
+  </div>
+{% endblock %}

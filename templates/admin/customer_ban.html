@@ -1,0 +1,67 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}ระงับบัญชีลูกค้า - {{ customer.name }} - {{ shop_config.name }}{% endblock %}
+
+{% block page_title %}ระงับการใช้งานบัญชีลูกค้า{% endblock %}
+{% block page_desc %}เลือกหมวดหมู่เหตุผลและระบุรายละเอียดเพื่อบันทึก Audit Log ลงระบบ SQLite{% endblock %}
+
+{% block admin_content %}
+<div style="max-width: 640px; margin: 0 auto; width: 100%;">
+  <div style="margin-bottom: 1.25rem;">
+    <a href="{{ url_for('admin.customers') }}" class="admin-btn admin-btn-outline admin-btn-sm">
+      &larr; ย้อนกลับหน้ารายชื่อลูกค้า
+    </a>
+  </div>
+
+  <div class="admin-form-wrap">
+    <!-- Customer Info Card -->
+    <div style="background: var(--admin-red-light); border: 1px solid var(--admin-red-border); border-radius: var(--admin-radius-sm); padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+      <div style="width: 48px; height: 48px; border-radius: 50%; background: #ffffff; color: var(--admin-red); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; font-weight: 800; border: 1.5px solid var(--admin-red-border); flex-shrink: 0;">
+        {{ customer.name[:1] }}
+      </div>
+      <div>
+        <div style="font-weight: 800; font-size: 1.05rem; color: var(--admin-gray-900);">
+          {{ customer.name }} <span style="font-size: 0.8rem; color: var(--admin-red); font-weight: normal;">#CUST-{{ "%04d"|format(customer.id) }}</span>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--admin-gray-600); margin-top: 2px;">
+          อีเมล: {{ customer.email }} | โทร: {{ customer.phone or '-' }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Ban Form -->
+    <form action="{{ url_for('admin.customer_ban', user_id=customer.id) }}" method="POST">
+      <div class="admin-form-group" style="margin-bottom: 1.25rem;">
+        <label for="reason_category" class="admin-form-label">
+          หมวดหมู่เหตุผลการระงับ <span class="required">* (เลือก 1 จาก 6 หมวดหมู่มาตรฐาน)</span>
+        </label>
+        <select name="reason_category" id="reason_category" class="admin-form-control" required>
+          <option value="">-- โปรดเลือกหมวดหมู่เหตุผล --</option>
+          {% for cat in reason_categories %}
+            <option value="{{ cat }}">{{ loop.index }}. {{ cat }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="admin-form-group" style="margin-bottom: 1.5rem;">
+        <label for="reason_detail" class="admin-form-label">
+          รายละเอียดและหมายเหตุเพิ่มเติม <span class="required">* (สำหรับ Audit Log และชี้แจงลูกค้า)</span>
+        </label>
+        <textarea name="reason_detail" id="reason_detail" class="admin-form-control" rows="4" required placeholder="ระบุพฤติการณ์ หลักฐาน หรือเลขอ้างอิงคำสั่งซื้อที่เกี่ยวข้อง..."></textarea>
+        <span class="admin-form-hint">
+          * ข้อมูลนี้จะถูกบันทึกลงตาราง user_ban_logs พร้อมชื่อผู้ดูแลระบบและเวลาทำรายการ
+        </span>
+      </div>
+
+      <div class="form-actions-footer">
+        <a href="{{ url_for('admin.customers') }}" class="admin-btn admin-btn-outline">
+          ยกเลิก
+        </a>
+        <button type="submit" class="admin-btn admin-btn-danger" onclick="return confirm('ยืนยันการระงับบัญชีลูกค้ารายนี้? บัญชีจะไม่สามารถเข้าสู่ระบบได้ทันที');">
+          ยืนยันระงับการใช้งานบัญชี
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

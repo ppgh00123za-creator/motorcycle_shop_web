@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 60" width="100%" height="100%">
+  <defs>
+    <linearGradient id="logoRed" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d90429" />
+      <stop offset="100%" stop-color="#ef233c" />
+    </linearGradient>
+  </defs>
+  <!-- Wing Graphic inspired by motorcycle wings -->
+  <path d="M 10 45 L 35 15 L 55 15 L 35 45 Z" fill="url(#logoRed)"/>
+  <path d="M 28 45 L 50 15 L 70 15 L 48 45 Z" fill="url(#logoRed)" opacity="0.7"/>
+  <circle cx="28" cy="20" r="5" fill="#ffffff"/>
+
+  <!-- Logo Text -->
+  <text x="80" y="32" font-family="'Prompt', sans-serif" font-size="22" font-weight="900" fill="#111111">MOTO<tspan fill="#d90429">160</tspan></text>
+  <text x="80" y="47" font-family="'Prompt', sans-serif" font-size="10" font-weight="700" fill="#666666" letter-spacing="2">BIKE SHOP</text>
+</svg>

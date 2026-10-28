@@ -1,0 +1,101 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}แจ้งปัญหาจากลูกค้า - {{ shop_config.name }}{% endblock %}
+
+{% block page_title %}แจ้งปัญหาจากลูกค้า (Support Tickets){% endblock %}
+{% block page_desc %}ระบบติดตามและตอบกลับปัญหาของลูกค้า มีเรื่องรอตรวจสอบ {{ pending_count }} รายการ{% endblock %}
+
+{% block admin_content %}
+<div class="admin-section-header">
+  <div>
+    <h2 class="section-header-title">รายการคำร้องและเรื่องแจ้งปัญหา</h2>
+    <p class="section-header-desc">ตรวจสอบเรื่องร้องเรียน สอบถามข้อมูล และติดตามการแก้ไขปัญหาให้ลูกค้า</p>
+  </div>
+</div>
+
+<!-- Filter Pills -->
+<div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+  <a href="{{ url_for('admin.tickets') }}" class="admin-btn admin-btn-sm {% if not current_status %}admin-btn-primary{% else %}admin-btn-outline{% endif %}">
+    ทั้งหมด ({{ tickets|length if not current_status else 'ดูทั้งหมด' }})
+  </a>
+  <a href="{{ url_for('admin.tickets', status='รอตรวจสอบ') }}" class="admin-btn admin-btn-sm {% if current_status == 'รอตรวจสอบ' %}admin-btn-primary{% else %}admin-btn-outline{% endif %}">
+    รอตรวจสอบ {% if pending_count > 0 %}<span style="background: #ef4444; color: white; padding: 1px 6px; border-radius: 10px; font-size: 0.85rem; margin-left: 0.25rem;">{{ pending_count }}</span>{% endif %}
+  </a>
+  <a href="{{ url_for('admin.tickets', status='กำลังดำเนินการ') }}" class="admin-btn admin-btn-sm {% if current_status == 'กำลังดำเนินการ' %}admin-btn-primary{% else %}admin-btn-outline{% endif %}">
+    กำลังดำเนินการ
+  </a>
+  <a href="{{ url_for('admin.tickets', status='ตอบกลับแล้ว') }}" class="admin-btn admin-btn-sm {% if current_status == 'ตอบกลับแล้ว' %}admin-btn-primary{% else %}admin-btn-outline{% endif %}">
+    ตอบกลับแล้ว
+  </a>
+  <a href="{{ url_for('admin.tickets', status='ปิดเรื่อง') }}" class="admin-btn admin-btn-sm {% if current_status == 'ปิดเรื่อง' %}admin-btn-primary{% else %}admin-btn-outline{% endif %}">
+    ปิดเรื่อง
+  </a>
+</div>
+
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th style="width: 100px;">รหัสคำร้อง</th>
+        <th style="width: 120px;">วันที่แจ้ง</th>
+        <th>ลูกค้า</th>
+        <th>คำสั่งซื้ออ้างอิง</th>
+        <th>หัวข้อเรื่อง / หมวดหมู่</th>
+        <th class="text-center" style="width: 130px;">สถานะ</th>
+        <th class="text-center" style="width: 110px;">การจัดการ</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in tickets %}
+        <tr>
+          <td>
+            <strong style="color: var(--admin-red);">#TCK-{{ "%04d"|format(t.id) }}</strong>
+          </td>
+          <td style="font-size: 0.8rem; color: var(--admin-gray-500);">
+            {{ t.created_at|thai_date }}
+          </td>
+          <td>
+            <div style="font-weight: 600;">{{ t.customer_name }}</div>
+            <div style="font-size: 0.85rem; color: var(--admin-gray-500);">โทร: {{ t.customer_phone or '-' }}</div>
+          </td>
+          <td>
+            {% if t.order_number %}
+              <a href="{{ url_for('admin.order_detail', order_id=t.order_id) }}" style="font-weight: 700; color: var(--admin-gray-900); text-decoration: none;">
+                {{ t.order_number }}
+              </a>
+            {% else %}
+              <span style="color: var(--admin-gray-400); font-size: 0.8rem;">- ไม่ระบุ -</span>
+            {% endif %}
+          </td>
+          <td>
+            <div style="font-weight: 700; color: var(--admin-gray-900);">{{ t.subject }}</div>
+            <div style="font-size: 0.85rem; color: var(--admin-gray-500);">หมวด: {{ t.category }}</div>
+          </td>
+          <td class="text-center">
+            {% if t.status == 'รอตรวจสอบ' %}
+              <span class="admin-badge badge-danger">รอตรวจสอบ</span>
+            {% elif t.status == 'กำลังดำเนินการ' %}
+              <span class="admin-badge badge-warning">กำลังดำเนินการ</span>
+            {% elif t.status == 'ตอบกลับแล้ว' %}
+              <span class="admin-badge badge-info">ตอบกลับแล้ว</span>
+            {% else %}
+              <span class="admin-badge badge-success">ปิดเรื่อง</span>
+            {% endif %}
+          </td>
+          <td class="text-center">
+            <a href="{{ url_for('admin.ticket_detail', ticket_id=t.id) }}" class="admin-btn admin-btn-outline admin-btn-sm">
+              เปิดดู / ตอบ
+            </a>
+          </td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="7" class="text-center" style="padding: 3rem; color: var(--admin-gray-500);">
+            ไม่มีรายการแจ้งปัญหาในสถานะนี้
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

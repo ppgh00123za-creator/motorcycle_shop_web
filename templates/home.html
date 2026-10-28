@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import product_card %}
+
+{% block title %}หน้าแรก - {{ shop_config.name }} ({{ shop_config.name_en }}){% endblock %}
+
+{% block content %}
+  <!-- Honda-Style Full-Width Banner Showcase -->
+  <section class="honda-hero-section">
+    <img src="{{ shop_config.banner_home_url }}" 
+         alt="{{ shop_config.name }} - {{ shop_config.slogan }}" 
+         class="honda-hero-banner">
+  </section>
+
+  <!-- Brand Intro & Highlights Bar (Clean & Borderless) -->
+  <div class="brand-intro-bar">
+    <div class="brand-intro-left">
+      <img src="{{ shop_config.logo_url }}" alt="{{ shop_config.name }}" class="brand-emblem-large">
+      <div>
+        <h1 class="brand-intro-title">
+          160 <span class="red">ธีระ สายซิ่ง</span>
+        </h1>
+        <div class="brand-intro-slogan">
+          &ldquo;{{ shop_config.slogan }}&rdquo;
+        </div>
+        <div class="brand-intro-meta">
+          {{ shop_config.type }} &bull; เปิดทุก{{ shop_config.opening_days }} {{ shop_config.opening_hours }} &bull; อ.เมืองขอนแก่น
+        </div>
+      </div>
+    </div>
+    <div class="brand-intro-right">
+      <a href="{{ url_for('shop.products') }}" class="btn btn-primary btn-lg">
+        ดูรถทั้งหมด ({{ total_models }} รุ่น) &rarr;
+      </a>
+      <a href="{{ url_for('shop.products', category='ออโตเมติก') }}" class="btn btn-outline btn-lg">
+        รถออโตเมติกยอดนิยม
+      </a>
+    </div>
+  </div>
+
+  <!-- Category Showcase (Clean Honda-Style Strip) -->
+  <section style="margin-bottom: 3.5rem;">
+    <div class="section-header">
+      <div>
+        <h2>หมวดหมู่รถจักรยานยนต์</h2>
+        <p>เลือกรถที่ตอบสนองการขับขี่และการใช้งานของคุณ (พิกัดความจุไม่เกิน 160 cc)</p>
+      </div>
+    </div>
+
+    <div class="category-row">
+      <a href="{{ url_for('shop.products', category='ครอบครัว') }}" class="category-tile">
+        <div class="tile-num">01</div>
+        <h3>รถครอบครัว</h3>
+        <p>ประหยัดน้ำมัน ทนทาน คุ้มค่า เช่น Wave 110i, Wave 125i, Super Cub, Finn</p>
+      </a>
+
+      <a href="{{ url_for('shop.products', category='ออโตเมติก') }}" class="category-tile">
+        <div class="tile-num">02</div>
+        <h3>รถออโตเมติก</h3>
+        <p>ขับขี่ง่าย สะดวกสบาย ดีไซน์พรีเมียม เช่น Scoopy, Click 160, PCX 160, Lead 125</p>
+      </a>
+
+      <a href="{{ url_for('shop.products', category='สปอร์ต/มินิ') }}" class="category-tile">
+        <div class="tile-num">03</div>
+        <h3>รถสปอร์ต &amp; มินิไบค์</h3>
+        <p>เร้าใจ คลัตช์มือ สไตล์เรซซิ่ง เช่น CBR150R, R15, Raider R150, MSX 125</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- Featured Products (Hero Motorcycle Focus) -->
+  <section style="margin-bottom: 3.5rem;">
+    <div class="section-header">
+      <div>
+        <h2>รถรุ่นแนะนำ</h2>
+        <p>รุ่นยอดนิยมที่มีสินค้าพร้อมส่งมอบทันที ข้อมูลสต็อกจริงจากระบบ SQLite</p>
+      </div>
+      <a href="{{ url_for('shop.products') }}" class="btn btn-outline-red btn-sm">ดูทั้งหมด &rarr;</a>
+    </div>
+
+    <div class="product-grid">
+      {% for product in featured %}
+        {{ product_card(product) }}
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- In-Stock Products Grid -->
+  <section style="margin-bottom: 4rem;">
+    <div class="section-header">
+      <div>
+        <h2>รถจักรยานยนต์พร้อมจำหน่ายในสต็อก</h2>
+        <p>รถพร้อมส่งมอบ สั่งซื้อและชำระเงินพร้อมตรวจสอบสลิปได้ทันที</p>
+      </div>
+      <a href="{{ url_for('shop.products') }}" class="btn btn-outline-red btn-sm">ค้นหารถเพิ่มเติม &rarr;</a>
+    </div>
+
+    <div class="product-grid">
+      {% for product in in_stock_bikes %}
+        {{ product_card(product) }}
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

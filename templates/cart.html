@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}ตะกร้าสินค้า - MOTO 160 BIKE SHOP{% endblock %}
+
+{% block content %}
+  <div class="section-header">
+    <div>
+      <h2>ตะกร้าสินค้าของคุณ</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">ตรวจสอบรายการรถจักรยานยนต์และจำนวนก่อนดำเนินการสั่งซื้อ</p>
+    </div>
+    {% if cart_items %}
+      <form action="{{ url_for('shop.clear_cart') }}" method="POST">
+        <button type="submit" class="btn btn-outline btn-sm" style="color: var(--text-muted);">
+          ล้างตะกร้าทั้งหมด
+        </button>
+      </form>
+    {% endif %}
+  </div>
+
+  {% if cart_items %}
+    <div class="cart-layout">
+      <!-- Items Table -->
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">รูปภาพ</th>
+              <th>รายการรถจักรยานยนต์</th>
+              <th style="text-align: right;">ราคาต่อคัน</th>
+              <th style="width: 140px; text-align: center;">จำนวน</th>
+              <th style="text-align: right;">รวม (บาท)</th>
+              <th style="width: 60px; text-align: center;">ลบ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in cart_items %}
+              <tr>
+                <td>
+                  <img src="{{ item.product.image_url|bike_img }}" alt="{{ item.product.model }}" style="width: 64px; height: 42px; object-fit: contain; border-radius: 4px; background: #111;">
+                </td>
+                <td>
+                  <a href="{{ url_for('shop.product_detail', product_id=item.product.id) }}" style="font-weight: 700; color: var(--dark-bg); text-decoration: none;">
+                    {{ item.product.model }}
+                  </a>
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">
+                    {{ item.product.brand }} | {{ item.product.engine_cc }} cc (รหัส: {{ item.product.code }})
+                  </div>
+                  {% if item.is_out_of_stock %}
+                    <span style="font-size: 0.88rem; color: #dc2626; font-weight: 700;">* สินค้าหมดในสต็อก กรุณาลบออกเพื่อสั่งซื้อ</span>
+                  {% elif item.exceeds_stock %}
+                    <span style="font-size: 0.88rem; color: #d97706; font-weight: 700;">* คงเหลือเพียง {{ item.product.stock }} คัน (ระบบปรับให้ตามสต็อกจริง)</span>
+                  {% endif %}
+                </td>
+                <td style="text-align: right; font-weight: 600;">
+                  ฿{{ item.product.price|currency }}
+                </td>
+                <td>
+                  <form action="{{ url_for('shop.update_cart') }}" method="POST" style="display: flex; gap: 0.25rem; justify-content: center;">
+                    <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                    <input type="number" name="quantity" value="{{ item.actual_qty }}" min="1" max="{{ item.product.stock }}" class="form-control" style="width: 65px; text-align: center; padding: 0.3rem;" {% if item.is_out_of_stock %}disabled{% endif %}>
+                    <button type="submit" class="btn btn-outline btn-sm" title="อัปเดต" {% if item.is_out_of_stock %}disabled{% endif %}>
+                      ✓
+                    </button>
+                  </form>
+                </td>
+                <td style="text-align: right; font-weight: 800; color: var(--primary-red);">
+                  ฿{{ item.subtotal|currency }}
+                </td>
+                <td style="text-align: center;">
+                  <form action="{{ url_for('shop.remove_from_cart', product_id=item.product.id) }}" method="POST">
+                    <button type="submit" style="background:none; border:none; color: #ef4444; font-size: 1.2rem; cursor:pointer;" title="ลบรายการนี้">&times;</button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Summary Card -->
+      <div class="summary-card">
+        <h3>สรุปคำสั่งซื้อ</h3>
+        
+        <div class="summary-row">
+          <span style="color: var(--text-muted);">จำนวนรุ่นรถ (รายการ):</span>
+          <strong>{{ items_count }} รุ่น</strong>
+        </div>
+
+        <div class="summary-row">
+          <span style="color: var(--text-muted);">จำนวนคันรวมทั้งหมด:</span>
+          <strong style="color: var(--primary-red); font-size: 1.05rem;">{{ total_units }} คัน</strong>
+        </div>
+
+        <div class="summary-row">
+          <span style="color: var(--text-muted);">ค่าจัดส่ง / เตรียมเอกสาร:</span>
+          <strong style="color: #059669;">ฟรี (บริการฟรี)</strong>
+        </div>
+
+        <div class="summary-total">
+          <span>ยอดรวมทั้งสิ้น:</span>
+          <span>฿{{ grand_total|currency }}</span>
+        </div>
+
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 1rem 0;">
+          * เมื่อคลิกดำเนินการสั่งซื้อ ระบบจะสำรองและตัดสต็อกสินค้าทันทีผ่าน Database Transaction
+        </p>
+
+        {% if is_logged_in %}
+          <a href="{{ url_for('customer.checkout') }}" class="btn btn-primary btn-lg" style="width: 100%; text-align: center;">
+            ดำเนินการสั่งซื้อ &rarr;
+          </a>
+        {% else %}
+          <a href="{{ url_for('auth.login', next=url_for('customer.checkout')) }}" class="btn btn-primary btn-lg" style="width: 100%; text-align: center;">
+            เข้าสู่ระบบเพื่อสั่งซื้อ &rarr;
+          </a>
+          <p style="font-size: 0.8rem; text-align: center; color: var(--text-muted); margin-top: 0.5rem;">
+            ต้องเข้าสู่ระบบก่อนทำการสั่งซื้อ
+          </p>
+        {% endif %}
+
+        <div style="margin-top: 1rem; text-align: center;">
+          <a href="{{ url_for('shop.products') }}" style="color: var(--text-muted); font-size: 0.9rem; text-decoration: none;">
+            &larr; เลือกดูรถรุ่นอื่นเพิ่มเติม
+          </a>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div style="background: white; padding: 4rem 2rem; border-radius: var(--radius-md); text-align: center; border: 1px solid var(--border-light);">
+      <div style="font-size: 3.5rem; color: #9ca3af; margin-bottom: 1rem;">&#128722;</div>
+      <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--dark-bg);">ไม่มีสินค้าในตะกร้าของคุณ</h3>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem;">เลือกดูรถจักรยานยนต์พิกัดไม่เกิน 160 cc เพื่อเริ่มสั่งซื้อ</p>
+      <a href="{{ url_for('shop.products') }}" class="btn btn-primary">ไปเลือกรถจักรยานยนต์</a>
+    </div>
+  {% endif %}
+{% endblock %}

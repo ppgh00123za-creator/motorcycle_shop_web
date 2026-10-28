@@ -1,0 +1,117 @@
+{% extends 'admin/base_admin.html' %}
+{% from 'macros.html' import status_badge, payment_badge %}
+
+{% block title %}จัดการคำสั่งซื้อ - {{ shop_config.name }}{% endblock %}
+
+{% block page_title %}จัดการคำสั่งซื้อ (Order Management){% endblock %}
+{% block page_desc %}
+  {% if show_archived %}
+    คลังประวัติคำสั่งซื้อที่จัดเก็บย้อนหลัง (Archived) ทั้งหมด {{ orders|length }} รายการ
+  {% else %}
+    คำสั่งซื้อในระบบหลัก (3 ออเดอร์ล่าสุดที่เสร็จสิ้น และออเดอร์ที่อยู่ระหว่างดำเนินการ) ทั้งหมด {{ orders|length }} รายการ
+  {% endif %}
+{% endblock %}
+
+{% block admin_content %}
+<!-- Navigation Tabs between Active & Archived orders -->
+<div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+  <a href="{{ url_for('admin.orders') }}" class="admin-btn {% if not show_archived %}admin-btn-primary{% else %}admin-btn-outline{% endif %} admin-btn-sm">
+    📋 คำสั่งซื้อระบบหลัก
+  </a>
+  <a href="{{ url_for('admin.orders', archived=1) }}" class="admin-btn {% if show_archived %}admin-btn-primary{% else %}admin-btn-outline{% endif %} admin-btn-sm">
+    📦 คลังประวัติคำสั่งซื้อที่จัดเก็บ ({{ archived_count }} รายการ)
+  </a>
+</div>
+
+<!-- Search & Filter Card -->
+<div class="admin-card">
+  <form action="{{ url_for('admin.orders') }}" method="GET" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+    {% if show_archived %}<input type="hidden" name="archived" value="1">{% endif %}
+    
+    <div class="admin-form-group" style="flex: 2; min-width: 220px;">
+      <label for="search" class="admin-form-label">ค้นหาเลขที่คำสั่งซื้อ หรือ ชื่อลูกค้า</label>
+      <input type="text" name="search" id="search" class="admin-form-control" placeholder="เช่น ORD-2026..., สมชาย" value="{{ search }}">
+    </div>
+
+    <div class="admin-form-group" style="flex: 1; min-width: 180px;">
+      <label for="status" class="admin-form-label">สถานะคำสั่งซื้อ</label>
+      <select name="status" id="status" class="admin-form-control">
+        <option value="">-- ทุกสถานะ --</option>
+        <option value="รอชำระเงิน" {% if current_status == 'รอชำระเงิน' %}selected{% endif %}>รอชำระเงิน</option>
+        <option value="รอตรวจสอบการชำระเงิน" {% if current_status == 'รอตรวจสอบการชำระเงิน' %}selected{% endif %}>รอตรวจสอบการชำระเงิน</option>
+        <option value="ชำระเงินแล้ว" {% if current_status == 'ชำระเงินแล้ว' %}selected{% endif %}>ชำระเงินแล้ว</option>
+        <option value="กำลังจัดเตรียมสินค้า" {% if current_status == 'กำลังจัดเตรียมสินค้า' %}selected{% endif %}>กำลังจัดเตรียมสินค้า</option>
+        <option value="จัดส่งแล้ว" {% if current_status == 'จัดส่งแล้ว' %}selected{% endif %}>จัดส่งแล้ว</option>
+        <option value="ยกเลิก" {% if current_status == 'ยกเลิก' %}selected{% endif %}>ยกเลิก</option>
+      </select>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem;">
+      <button type="submit" class="admin-btn admin-btn-primary" style="height: 38px;">กรอง</button>
+      <a href="{{ url_for('admin.orders') }}" class="admin-btn admin-btn-outline" style="height: 38px;">ล้างค่า</a>
+    </div>
+  </form>
+</div>
+
+<!-- Orders Table -->
+<div class="admin-table-wrap">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>เลขที่คำสั่งซื้อ / วันที่</th>
+        <th>ชื่อลูกค้า / เบอร์โทร</th>
+        <th>รูปแบบรับสินค้า</th>
+        <th class="text-right">ยอดสุทธิ (บาท)</th>
+        <th class="text-center">สถานะสลิป</th>
+        <th class="text-center">สถานะคำสั่งซื้อ</th>
+        <th class="text-center" style="width: 110px;">การจัดการ</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for o in orders %}
+        <tr>
+          <td>
+            <a href="{{ url_for('admin.order_detail', order_id=o.id) }}" style="font-weight: 700; color: var(--admin-red); text-decoration: none;">
+              {{ o.order_number }}
+            </a>
+            <div style="font-size: 0.85rem; color: var(--admin-gray-500);">
+              {{ o.created_at|thai_date }}
+            </div>
+          </td>
+          <td>
+            <div style="font-weight: 600; color: var(--admin-gray-900);">{{ o.customer_name }}</div>
+            <div style="font-size: 0.85rem; color: var(--admin-gray-500);">{{ o.customer_phone }}</div>
+          </td>
+          <td style="font-size: 0.82rem; color: var(--admin-gray-700);">
+            {% if o.shipping_method == 'pickup' %}
+              🏪 รับที่ร้าน
+            {% else %}
+              🚚 จัดส่งถึงบ้าน
+            {% endif %}
+          </td>
+          <td class="text-right price-text red">
+            ฿{{ o.total_amount|currency }}
+          </td>
+          <td class="text-center">
+            {{ payment_badge(o.payment_status) }}
+          </td>
+          <td class="text-center">
+            {{ status_badge(o.status, 'small') }}
+          </td>
+          <td class="text-center">
+            <a href="{{ url_for('admin.order_detail', order_id=o.id) }}" class="admin-btn admin-btn-outline admin-btn-sm">
+              ดูรายละเอียด
+            </a>
+          </td>
+        </tr>
+      {% else %}
+        <tr>
+          <td colspan="7" class="text-center" style="padding: 3rem; color: var(--admin-gray-500);">
+            ไม่พบคำสั่งซื้อที่ตรงกับเงื่อนไขการค้นหา
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
